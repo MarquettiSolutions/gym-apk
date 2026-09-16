@@ -25,6 +25,9 @@ npm start             # Metro bundler
 npm run android       # build + instalar en emulador/dispositivo
 ```
 
+Si la build falla o se cuelga (compilación nativa, NDK, etc.), ver
+[`DOCS/ANDROID_BUILD_TROUBLESHOOTING.md`](./DOCS/ANDROID_BUILD_TROUBLESHOOTING.md).
+
 ## Calidad
 
 ```bash
