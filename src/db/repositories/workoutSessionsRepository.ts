@@ -11,6 +11,7 @@ import { nowIso } from '../../shared/utils/dates';
 // saber el estado "actual" de una serie, la capa de servicio se queda con la
 // fila más reciente de `listSetsBySession` para ese `setNumber`.
 export interface WorkoutSessionsRepository {
+  // Ordenadas de más reciente a más antigua, para el historial (spec 5.4).
   listByUser(
     userId: string,
   ): Promise<Array<typeof workoutSessions.$inferSelect>>;
@@ -43,6 +44,13 @@ export interface WorkoutSessionsRepository {
   addSet(
     values: typeof workoutSessionSets.$inferInsert,
   ): Promise<typeof workoutSessionSets.$inferSelect>;
+  // Todas las series no salteadas de ese ejercicio, en cualquier sesión del
+  // usuario, de más antigua a más reciente — para el gráfico de progreso
+  // por ejercicio (spec 5.4).
+  listSetsByExercise(
+    userId: string,
+    exerciseId: string,
+  ): Promise<Array<typeof workoutSessionSets.$inferSelect>>;
 }
 
 export function createWorkoutSessionsRepository(
@@ -53,7 +61,8 @@ export function createWorkoutSessionsRepository(
       return db
         .select()
         .from(workoutSessions)
-        .where(eq(workoutSessions.userId, userId));
+        .where(eq(workoutSessions.userId, userId))
+        .orderBy(desc(workoutSessions.startedAt));
     },
     async getById(id) {
       const [row] = await db
@@ -123,6 +132,24 @@ export function createWorkoutSessionsRepository(
         .values(values)
         .returning();
       return assertDefined(created, 'No se pudo registrar la serie');
+    },
+    async listSetsByExercise(userId, exerciseId) {
+      const rows = await db
+        .select({ set: workoutSessionSets })
+        .from(workoutSessionSets)
+        .innerJoin(
+          workoutSessions,
+          eq(workoutSessionSets.sessionId, workoutSessions.id),
+        )
+        .where(
+          and(
+            eq(workoutSessions.userId, userId),
+            eq(workoutSessionSets.exerciseId, exerciseId),
+            eq(workoutSessionSets.skipped, false),
+          ),
+        )
+        .orderBy(asc(workoutSessionSets.completedAt));
+      return rows.map(row => row.set);
     },
   };
 }
