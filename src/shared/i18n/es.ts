@@ -84,6 +84,17 @@ export const es = {
       moveUp: 'Subir',
       moveDown: 'Bajar',
       dragHandleLabel: 'Mantené presionado para arrastrar y reordenar',
+      groupButton: 'Superserie',
+      cancelGroupButton: 'Cancelar',
+      confirmGroupButton: (count: number) => `Confirmar superserie (${count})`,
+      groupSelectionHint:
+        'Tocá 2 o más ejercicios para agruparlos en una superserie.',
+      ungroupButton: 'Desagrupar',
+      ungroupConfirmTitle: 'Desagrupar superserie',
+      ungroupConfirmMessage:
+        '¿Deshacer esta superserie? Los ejercicios vuelven a ejecutarse por separado.',
+      supersetBadgeLabel: 'Superserie',
+      createSupersetErrorTitle: 'No se pudo crear la superserie',
     },
     exercisePicker: {
       title: 'Elegir ejercicio',
