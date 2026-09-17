@@ -15,10 +15,6 @@ export const es = {
       title: 'Ejercicios',
       placeholder: 'El catálogo de ejercicios todavía no se importó.',
     },
-    history: {
-      title: 'Historial',
-      placeholder: 'Todavía no hay sesiones registradas.',
-    },
     settings: {
       title: 'Ajustes',
       placeholder: 'Próximamente: descanso por defecto, unidad de peso y tema.',
@@ -144,5 +140,53 @@ export const es = {
       notificationBody: 'Es hora de la siguiente serie.',
       channelName: 'Temporizador de descanso',
     },
+  },
+  history: {
+    list: {
+      title: 'Historial',
+      empty: 'Todavía no hay sesiones registradas.',
+      streakLabel: (n: number) =>
+        `${n} ${n === 1 ? 'día' : 'días'} seguidos entrenando`,
+      noStreak: 'Empieza hoy tu racha de entrenamiento.',
+      deletedPlanLabel: 'Plan eliminado',
+      bodyWeightButton: 'Peso corporal',
+      statusCompleted: 'Completada',
+      statusSkipped: 'Omitida',
+      statusInProgress: 'En curso',
+      setsFormat: (done: number, total: number) => `${done}/${total} series`,
+    },
+    detail: {
+      title: 'Detalle de sesión',
+      empty: 'Esta sesión no tiene series registradas.',
+      setLabel: (n: number) => `Serie ${n}`,
+      setDoneFormat: (
+        reps: number | null,
+        weight: number | null,
+        unit: string,
+      ) =>
+        weight !== null
+          ? `${reps ?? 0} reps x ${weight} ${unit}`
+          : `${reps ?? 0} reps`,
+      setSkippedLabel: 'Omitida',
+    },
+    exerciseProgress: {
+      title: 'Progreso del ejercicio',
+      empty: 'Todavía no hay registros de este ejercicio.',
+      weightUnit: 'kg',
+    },
+  },
+  bodyWeight: {
+    title: 'Peso corporal',
+    empty: 'Todavía no registraste tu peso.',
+    currentLabel: 'Peso actual',
+    addButton: 'Agregar registro',
+    addTitle: 'Nuevo registro de peso',
+    weightLabel: 'Peso (kg)',
+    filterWeek: 'Semana',
+    filterMonth: 'Mes',
+    filterAll: 'Todo',
+    deleteConfirmTitle: 'Eliminar registro',
+    deleteConfirmMessage:
+      '¿Eliminar este registro de peso? Esta acción no se puede deshacer.',
   },
 };
