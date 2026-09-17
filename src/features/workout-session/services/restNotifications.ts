@@ -5,7 +5,10 @@ import notifee, {
 } from '@notifee/react-native';
 import { es } from '../../../shared/i18n/es';
 
-const CHANNEL_ID = 'rest-timer';
+export interface RestNotificationOptions {
+  sound: boolean;
+  vibration: boolean;
+}
 
 // Aviso de fin de descanso programado por timestamp real (no `setInterval`),
 // para que siga disparando aunque la app esté en background o la pantalla
@@ -16,18 +19,31 @@ export async function requestNotificationPermission(): Promise<void> {
   await notifee.requestPermission();
 }
 
-async function ensureChannel(): Promise<string> {
+// Android 8+ no permite cambiar sonido/vibración de un canal ya creado, así
+// que sonido/vibración se resuelven con un canal distinto por combinación
+// (ver Ajustes → Temporizador) en vez de un único canal fijo.
+function channelId({ sound, vibration }: RestNotificationOptions): string {
+  return `rest-timer-${sound ? 's1' : 's0'}-${vibration ? 'v1' : 'v0'}`;
+}
+
+async function ensureChannel(
+  options: RestNotificationOptions,
+): Promise<string> {
+  const id = channelId(options);
   return notifee.createChannel({
-    id: CHANNEL_ID,
+    id,
     name: es.workoutSession.restTimer.channelName,
     importance: AndroidImportance.HIGH,
+    sound: options.sound ? 'default' : undefined,
+    vibration: options.vibration,
   });
 }
 
 export async function scheduleRestEndNotification(
   deadlineTimestamp: number,
+  options: RestNotificationOptions,
 ): Promise<string> {
-  await ensureChannel();
+  const id = await ensureChannel(options);
   const trigger: TimestampTrigger = {
     type: TriggerType.TIMESTAMP,
     timestamp: deadlineTimestamp,
@@ -36,7 +52,7 @@ export async function scheduleRestEndNotification(
     {
       title: es.workoutSession.restTimer.notificationTitle,
       body: es.workoutSession.restTimer.notificationBody,
-      android: { channelId: CHANNEL_ID, pressAction: { id: 'default' } },
+      android: { channelId: id, pressAction: { id: 'default' } },
     },
     trigger,
   );

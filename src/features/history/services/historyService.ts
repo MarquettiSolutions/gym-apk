@@ -126,6 +126,7 @@ export function createHistoryService(repositories: Repositories) {
       points: sets.filter(withDate).map(set => ({
         date: set.completedAt,
         weightDone: set.weightDone,
+        weightUnit: set.weightUnit,
         repsDone: set.repsDone,
       })),
     };

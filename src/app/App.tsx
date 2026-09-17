@@ -1,12 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootTabNavigator } from '../navigation/RootTabNavigator';
 import { initDatabase } from '../db/client';
 import { es } from '../shared/i18n/es';
-import { colors } from '../shared/theme/colors';
+import { SettingsProvider } from '../features/settings/context/SettingsContext';
+import { ThemeProvider, useTheme } from '../shared/theme/ThemeContext';
+import {
+  darkNavigationTheme,
+  lightNavigationTheme,
+} from '../shared/theme/navigationTheme';
+
+function LoadingScreen() {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[styles.loadingContainer, { backgroundColor: colors.background }]}
+    >
+      <Text style={{ color: colors.text }}>{es.common.loading}</Text>
+    </View>
+  );
+}
+
+function AppContent({ isDbReady }: { isDbReady: boolean }) {
+  const { isDark } = useTheme();
+
+  if (!isDbReady) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <GestureHandlerRootView style={styles.flex}>
+      <SafeAreaProvider>
+        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+        <NavigationContainer
+          theme={isDark ? darkNavigationTheme : lightNavigationTheme}
+        >
+          <RootTabNavigator />
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
 
 export function App() {
   const [isDbReady, setIsDbReady] = useState(false);
@@ -15,22 +52,12 @@ export function App() {
     initDatabase().then(() => setIsDbReady(true));
   }, []);
 
-  if (!isDbReady) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>{es.common.loading}</Text>
-      </View>
-    );
-  }
-
   return (
-    <GestureHandlerRootView style={styles.flex}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <RootTabNavigator />
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <SettingsProvider>
+      <ThemeProvider>
+        <AppContent isDbReady={isDbReady} />
+      </ThemeProvider>
+    </SettingsProvider>
   );
 }
 
@@ -42,7 +69,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.background,
   },
 });
 

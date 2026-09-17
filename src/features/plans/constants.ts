@@ -14,5 +14,3 @@ export const WEEKDAY_LABELS = [
 // Orden de visualización tipo semana laboral (lunes primero) para listas de
 // días — el valor guardado en `weekday` no cambia, solo el orden en pantalla.
 export const WEEKDAY_DISPLAY_ORDER = [1, 2, 3, 4, 5, 6, 0] as const;
-
-export const DEFAULT_REST_SECONDS = 30;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import DraggableFlatList, {
   ScaleDecorator,
@@ -17,9 +17,11 @@ import { ExerciseThumbnail } from '../../../shared/components/ExerciseThumbnail'
 import { WeekdayPicker } from '../components/WeekdayPicker';
 import { DayExerciseForm } from '../components/DayExerciseForm';
 import { WEEKDAY_LABELS } from '../constants';
-import { colors } from '../../../shared/theme/colors';
+import { useTheme } from '../../../shared/theme/ThemeContext';
+import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
+import { useSettings } from '../../settings/context/SettingsContext';
 import type { DayExerciseFormValues, PlanDayExerciseDetail } from '../types';
 
 type Props = NativeStackScreenProps<PlansStackParamList, 'DayEditor'>;
@@ -27,16 +29,11 @@ type Props = NativeStackScreenProps<PlansStackParamList, 'DayEditor'>;
 const t = es.plans.dayEditor;
 const editorT = es.plans.editor;
 
-const EMPTY_FORM: DayExerciseFormValues = {
-  targetSets: 3,
-  targetReps: 10,
-  targetWeight: null,
-  restSeconds: 30,
-  notes: null,
-};
-
 export function DayEditorScreen({ route, navigation }: Props) {
   const { planId, dayId } = route.params;
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const { settings } = useSettings();
   const { detail, isLoading, reload } = useDayDetail(dayId);
 
   const [isEditDayVisible, setEditDayVisible] = useState(false);
@@ -45,8 +42,13 @@ export function DayEditorScreen({ route, navigation }: Props) {
 
   const [editingExercise, setEditingExercise] =
     useState<PlanDayExerciseDetail | null>(null);
-  const [exerciseForm, setExerciseForm] =
-    useState<DayExerciseFormValues>(EMPTY_FORM);
+  const [exerciseForm, setExerciseForm] = useState<DayExerciseFormValues>({
+    targetSets: 3,
+    targetReps: 10,
+    targetWeight: null,
+    restSeconds: settings.defaultRestSeconds,
+    notes: null,
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -227,6 +229,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
                       {item.planDayExercise.targetWeight !== null
                         ? ` · ${t.weightFormat(
                             item.planDayExercise.targetWeight,
+                            settings.weightUnit,
                           )}`
                         : ''}
                       {' · '}
@@ -318,96 +321,98 @@ export function DayEditorScreen({ route, navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  dayActions: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-    padding: spacing.md,
-    paddingBottom: 0,
-  },
-  dayActionButton: {
-    minWidth: 90,
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  emptyContainer: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  emptyText: {
-    color: colors.muted,
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  cardActive: {
-    backgroundColor: '#ECECEC',
-    shadowColor: '#000000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 4,
-  },
-  cardMain: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  dragHandle: {
-    fontSize: 20,
-    color: colors.muted,
-    paddingHorizontal: spacing.xs,
-  },
-  cardInfo: {
-    marginLeft: spacing.sm,
-    flex: 1,
-  },
-  exerciseName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  exerciseMeta: {
-    fontSize: 13,
-    color: colors.muted,
-    marginTop: 2,
-  },
-  exerciseNotes: {
-    fontSize: 12,
-    color: colors.muted,
-    fontStyle: 'italic',
-    marginTop: 2,
-  },
-  cardActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  cardActionButton: {
-    minWidth: 74,
-  },
-  footer: {
-    padding: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-  },
-  fieldLabel: {
-    fontSize: 13,
-    color: colors.muted,
-    marginBottom: spacing.xs,
-  },
-  spacer: {
-    height: spacing.md,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    dayActions: {
+      flexDirection: 'row',
+      gap: spacing.xs,
+      padding: spacing.md,
+      paddingBottom: 0,
+    },
+    dayActionButton: {
+      minWidth: 90,
+    },
+    listContent: {
+      padding: spacing.md,
+    },
+    emptyContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    emptyText: {
+      color: colors.muted,
+      textAlign: 'center',
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: spacing.md,
+      marginBottom: spacing.sm,
+    },
+    cardActive: {
+      backgroundColor: colors.surfaceActive,
+      shadowColor: '#000000',
+      shadowOpacity: 0.15,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 4,
+    },
+    cardMain: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: spacing.sm,
+    },
+    dragHandle: {
+      fontSize: 20,
+      color: colors.muted,
+      paddingHorizontal: spacing.xs,
+    },
+    cardInfo: {
+      marginLeft: spacing.sm,
+      flex: 1,
+    },
+    exerciseName: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    exerciseMeta: {
+      fontSize: 13,
+      color: colors.muted,
+      marginTop: 2,
+    },
+    exerciseNotes: {
+      fontSize: 12,
+      color: colors.muted,
+      fontStyle: 'italic',
+      marginTop: 2,
+    },
+    cardActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.xs,
+    },
+    cardActionButton: {
+      minWidth: 74,
+    },
+    footer: {
+      padding: spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    fieldLabel: {
+      fontSize: 13,
+      color: colors.muted,
+      marginBottom: spacing.xs,
+    },
+    spacer: {
+      height: spacing.md,
+    },
+  });
+}

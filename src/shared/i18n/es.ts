@@ -17,7 +17,6 @@ export const es = {
     },
     settings: {
       title: 'Ajustes',
-      placeholder: 'Próximamente: descanso por defecto, unidad de peso y tema.',
     },
   },
   common: {
@@ -73,7 +72,7 @@ export const es = {
       addExerciseButton: 'Agregar ejercicio',
       setsRepsFormat: (sets: number, reps: number) => `${sets}x${reps}`,
       restFormat: (seconds: number) => `Descanso ${seconds}s`,
-      weightFormat: (weight: number) => `${weight} kg`,
+      weightFormat: (weight: number, unit: string) => `${weight} ${unit}`,
       editExerciseTitle: 'Editar ejercicio',
       setsLabel: 'Series',
       repsLabel: 'Repeticiones',
@@ -172,7 +171,6 @@ export const es = {
     exerciseProgress: {
       title: 'Progreso del ejercicio',
       empty: 'Todavía no hay registros de este ejercicio.',
-      weightUnit: 'kg',
     },
   },
   bodyWeight: {
@@ -181,12 +179,58 @@ export const es = {
     currentLabel: 'Peso actual',
     addButton: 'Agregar registro',
     addTitle: 'Nuevo registro de peso',
-    weightLabel: 'Peso (kg)',
+    weightLabel: (unit: string) => `Peso (${unit})`,
     filterWeek: 'Semana',
     filterMonth: 'Mes',
     filterAll: 'Todo',
     deleteConfirmTitle: 'Eliminar registro',
     deleteConfirmMessage:
       '¿Eliminar este registro de peso? Esta acción no se puede deshacer.',
+  },
+  settings: {
+    sections: {
+      training: 'Entrenamiento',
+      weight: 'Peso',
+      appearance: 'Apariencia',
+      timer: 'Temporizador',
+      data: 'Datos',
+    },
+    defaultRestSecondsLabel: 'Descanso por defecto (segundos)',
+    weightUnitLabel: 'Unidad de peso',
+    weightUnitOptions: {
+      kg: 'Kilogramos (kg)',
+      lb: 'Libras (lb)',
+    },
+    themeLabel: 'Tema',
+    themeOptions: {
+      light: 'Claro',
+      dark: 'Oscuro',
+      system: 'Sistema',
+    },
+    timerSoundLabel: 'Sonido al terminar el descanso',
+    timerVibrationLabel: 'Vibración al terminar el descanso',
+    exportButton: 'Exportar backup',
+    exportHint:
+      'Genera un archivo con tus planes, sesiones, historial y peso corporal para guardarlo o compartirlo.',
+    exportSuccessTitle: 'Backup exportado',
+    exportSuccessMessage:
+      'Se generó el archivo. Elegí dónde guardarlo o compartirlo.',
+    exportErrorTitle: 'No se pudo exportar',
+    exportErrorMessage: 'Ocurrió un error generando el backup. Probá de nuevo.',
+    importButton: 'Importar backup',
+    importHint:
+      'Fusiona los datos de un archivo de backup con los que ya tenés en la app, sin perder lo que ya cargaste.',
+    importConfirmTitle: 'Importar backup',
+    importConfirmMessage:
+      'Esto va a fusionar los datos del archivo con los que ya tenés en la app. Los registros existentes no se pierden.',
+    importConfirmButton: 'Sí, importar',
+    importSuccessTitle: 'Backup importado',
+    importSuccessMessage: 'Los datos del archivo se fusionaron con los tuyos.',
+    importSkippedMessage: (n: number) =>
+      `${n} ${
+        n === 1 ? 'registro' : 'registros'
+      } no se pudieron reenlazar a un ejercicio del catálogo y se omitieron.`,
+    importErrorTitle: 'No se pudo importar',
+    importErrorMessage: 'El archivo elegido no es un backup válido.',
   },
 };

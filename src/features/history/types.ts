@@ -37,6 +37,7 @@ export interface SessionHistoryDetail {
 export interface ProgressPoint {
   date: string;
   weightDone: number | null;
+  weightUnit: string;
   repsDone: number | null;
 }
 

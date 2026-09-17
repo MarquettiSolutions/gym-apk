@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -6,7 +6,8 @@ import type { HistoryStackParamList } from '../../../navigation/types';
 import { useHistory } from '../hooks/useHistory';
 import { useLocalUserId } from '../../../shared/hooks/useLocalUserId';
 import { Button } from '../../../shared/components/Button';
-import { colors } from '../../../shared/theme/colors';
+import { useTheme } from '../../../shared/theme/ThemeContext';
+import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
 import { formatDateTime } from '../../../shared/utils/dates';
@@ -27,6 +28,8 @@ function statusLabel(status: string): string {
 }
 
 export function HistoryScreen({ navigation }: Props) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const userId = useLocalUserId();
   const { sessions, streak, isLoading, reload } = useHistory(userId);
 
@@ -102,75 +105,77 @@ export function HistoryScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  emptyContainer: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  emptyText: {
-    color: colors.muted,
-    textAlign: 'center',
-  },
-  streakBanner: {
-    backgroundColor: '#E8F5E9',
-    borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-  },
-  streakText: {
-    color: colors.primary,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  dayLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  statusBadge: {
-    backgroundColor: '#E0E0E0',
-    borderRadius: 10,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  dateText: {
-    fontSize: 13,
-    color: colors.muted,
-    marginTop: 2,
-  },
-  setsText: {
-    fontSize: 13,
-    color: colors.muted,
-    marginTop: 2,
-  },
-  footer: {
-    padding: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    listContent: {
+      padding: spacing.md,
+    },
+    emptyContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    emptyText: {
+      color: colors.muted,
+      textAlign: 'center',
+    },
+    streakBanner: {
+      backgroundColor: colors.accentSoft,
+      borderRadius: 12,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+    },
+    streakText: {
+      color: colors.primary,
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: spacing.md,
+      marginBottom: spacing.sm,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    dayLabel: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    statusBadge: {
+      backgroundColor: colors.surfaceActive,
+      borderRadius: 10,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: 2,
+    },
+    statusText: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    dateText: {
+      fontSize: 13,
+      color: colors.muted,
+      marginTop: 2,
+    },
+    setsText: {
+      fontSize: 13,
+      color: colors.muted,
+      marginTop: 2,
+    },
+    footer: {
+      padding: spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+  });
+}

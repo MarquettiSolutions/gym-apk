@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -8,9 +8,11 @@ import { useTodayWorkout } from '../hooks/useTodayWorkout';
 import { workoutSessionService } from '../services';
 import { Button } from '../../../shared/components/Button';
 import { ExerciseThumbnail } from '../../../shared/components/ExerciseThumbnail';
-import { colors } from '../../../shared/theme/colors';
+import { useTheme } from '../../../shared/theme/ThemeContext';
+import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
+import { useSettings } from '../../settings/context/SettingsContext';
 
 type Props = NativeStackScreenProps<
   WorkoutSessionStackParamList,
@@ -21,6 +23,9 @@ const t = es.workoutSession.today;
 const dayEditorT = es.plans.dayEditor;
 
 export function TodayWorkoutScreen({ navigation }: Props) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const { settings } = useSettings();
   const userId = useLocalUserId();
   const { workout, isLoading, reload } = useTodayWorkout(userId);
   const [isStarting, setIsStarting] = useState(false);
@@ -99,6 +104,7 @@ export function TodayWorkoutScreen({ navigation }: Props) {
                 {item.planDayExercise.targetWeight !== null
                   ? ` · ${dayEditorT.weightFormat(
                       item.planDayExercise.targetWeight,
+                      settings.weightUnit,
                     )}`
                   : ''}
               </Text>
@@ -117,51 +123,53 @@ export function TodayWorkoutScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.lg,
-    backgroundColor: colors.background,
-  },
-  message: {
-    fontSize: 14,
-    color: colors.muted,
-    textAlign: 'center',
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  rowInfo: {
-    marginLeft: spacing.sm,
-    flex: 1,
-  },
-  rowName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  rowMeta: {
-    fontSize: 13,
-    color: colors.muted,
-    marginTop: 2,
-  },
-  footer: {
-    padding: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.lg,
+      backgroundColor: colors.background,
+    },
+    message: {
+      fontSize: 14,
+      color: colors.muted,
+      textAlign: 'center',
+    },
+    listContent: {
+      padding: spacing.md,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: spacing.md,
+      marginBottom: spacing.sm,
+    },
+    rowInfo: {
+      marginLeft: spacing.sm,
+      flex: 1,
+    },
+    rowName: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    rowMeta: {
+      fontSize: 13,
+      color: colors.muted,
+      marginTop: 2,
+    },
+    footer: {
+      padding: spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+  });
+}
