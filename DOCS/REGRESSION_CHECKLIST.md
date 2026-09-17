@@ -88,3 +88,36 @@
       confirmar que el archivo se genera.
 - [ ] Importar un backup (el mismo u otro) y confirmar que fusiona sin
       duplicar planes/sesiones/registros ya existentes.
+
+## Fase 6 — Superseries, ejercicios personalizados y notificaciones diarias
+- [ ] En el editor de un día del plan, tocar "Superserie", seleccionar 2+
+      ejercicios (no necesariamente contiguos) y confirmar: quedan agrupados
+      y contiguos en una tarjeta con borde/badge "Superserie", con botones
+      "Subir"/"Bajar"/"Desagrupar" a nivel de grupo.
+- [ ] "Desagrupar" una superserie existente vuelve los ejercicios a tarjetas
+      individuales sin alterar su orden relativo.
+- [ ] Reordenar (drag & drop o subir/bajar) mueve un grupo de superserie como
+      bloque completo, nunca partiéndolo.
+- [ ] Duplicar un día/plan que tiene una superserie preserva el agrupamiento
+      (con un id de grupo nuevo, no el mismo que el original).
+- [ ] En una sesión con una superserie: registrar una serie de un ejercicio
+      del grupo mientras el otro miembro todavía no completó esa misma serie
+      **no** dispara el temporizador de descanso (pasa directo, sin
+      navegar a la pantalla de Descanso); al completar esa serie en el
+      último ejercicio pendiente del grupo (cerrando la "ronda"), sí se
+      dispara el descanso normal.
+- [ ] Las tarjetas de ejercicios agrupados en una superserie muestran el
+      badge "Superserie" durante la sesión.
+- [ ] Desde "Ejercicios", crear un ejercicio personalizado (nombre + foto +
+      video elegidos desde la galería vía el selector nativo de Android) y
+      confirmar que se guarda, aparece en el listado con su miniatura, y
+      también aparece en el picker de ejercicios al armar un día de plan.
+- [ ] Crear un ejercicio personalizado sin elegir foto/video (solo nombre)
+      no rompe nada; el campo "Crear" queda deshabilitado si el nombre está
+      vacío.
+- [ ] En Ajustes → Notificaciones, activar "Recordatorio diario de
+      entrenamiento": aparece el pedido de permiso de notificaciones (Android
+      13+) y, al aceptarlo, se muestra el selector de hora (formato 24h).
+- [ ] Cambiar la hora del recordatorio persiste el valor mostrado y
+      reprograma el recordatorio (sin duplicarlo).
+- [ ] Desactivar el switch cancela el recordatorio programado.
