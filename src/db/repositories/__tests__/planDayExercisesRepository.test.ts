@@ -128,4 +128,55 @@ describe('PlanDayExercisesRepository', () => {
     const list = await repo.listByDay(day.id);
     expect(list.map(e => e.exerciseId)).toEqual(['ex-3', 'ex-1', 'ex-2']);
   });
+
+  it('setSupersetGroup asigna el groupId a los ids indicados sin tocar el resto', async () => {
+    const { repo, day } = await setup();
+    const a = await repo.create({
+      planDayId: day.id,
+      exerciseId: 'ex-1',
+      targetSets: 3,
+      targetReps: 10,
+    });
+    const b = await repo.create({
+      planDayId: day.id,
+      exerciseId: 'ex-2',
+      targetSets: 3,
+      targetReps: 10,
+    });
+    const c = await repo.create({
+      planDayId: day.id,
+      exerciseId: 'ex-3',
+      targetSets: 3,
+      targetReps: 10,
+    });
+
+    await repo.setSupersetGroup([a.id, b.id], 'group-1');
+
+    const list = await repo.listByDay(day.id);
+    expect(list.find(e => e.id === a.id)?.supersetGroupId).toBe('group-1');
+    expect(list.find(e => e.id === b.id)?.supersetGroupId).toBe('group-1');
+    expect(list.find(e => e.id === c.id)?.supersetGroupId).toBeNull();
+  });
+
+  it('setSupersetGroup con groupId null desagrupa los ids indicados', async () => {
+    const { repo, day } = await setup();
+    const a = await repo.create({
+      planDayId: day.id,
+      exerciseId: 'ex-1',
+      targetSets: 3,
+      targetReps: 10,
+    });
+    const b = await repo.create({
+      planDayId: day.id,
+      exerciseId: 'ex-2',
+      targetSets: 3,
+      targetReps: 10,
+    });
+    await repo.setSupersetGroup([a.id, b.id], 'group-1');
+
+    await repo.setSupersetGroup([a.id, b.id], null);
+
+    const list = await repo.listByDay(day.id);
+    expect(list.every(e => e.supersetGroupId === null)).toBe(true);
+  });
 });

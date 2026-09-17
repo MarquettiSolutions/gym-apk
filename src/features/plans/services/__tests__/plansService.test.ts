@@ -10,6 +10,7 @@ async function setup() {
   await repositories.exercises.insertMany([
     { id: 'ex-1', name: 'Push Up' },
     { id: 'ex-2', name: 'Squat' },
+    { id: 'ex-3', name: 'Lunge' },
   ]);
   return { service, user };
 }
@@ -86,6 +87,128 @@ describe('plansService', () => {
     const copyDetail = await service.getPlanDetail(copy.id);
     expect(copyDetail.days).toHaveLength(1);
     expect(copyDetail.days[0]?.exercises).toHaveLength(1);
+  });
+
+  it('createSupersetGroup agrupa 2+ ejercicios y los deja contiguos en el orden', async () => {
+    const { service, user } = await setup();
+    const plan = await service.createPlan(user.id, 'Fuerza');
+    const day = await service.addDay(plan.id, 1, 'Empuje');
+    const e1 = await service.addExerciseToDay(day.id, 'ex-1', {
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: 30,
+      notes: null,
+    });
+    await service.addExerciseToDay(day.id, 'ex-2', {
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: 30,
+      notes: null,
+    });
+    const e3 = await service.addExerciseToDay(day.id, 'ex-3', {
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: 30,
+      notes: null,
+    });
+
+    await service.createSupersetGroup(day.id, [e1.id, e3.id]);
+
+    const detail = await service.getDayDetail(day.id);
+    const groupIds = detail.exercises.map(
+      e => e.planDayExercise.supersetGroupId,
+    );
+    expect(groupIds[0]).not.toBeNull();
+    expect(groupIds[0]).toBe(groupIds[1]);
+    expect(groupIds[2]).toBeNull();
+    expect(detail.exercises.map(e => e.exercise.id)).toEqual([
+      'ex-1',
+      'ex-3',
+      'ex-2',
+    ]);
+  });
+
+  it('createSupersetGroup rechaza menos de 2 ejercicios', async () => {
+    const { service, user } = await setup();
+    const plan = await service.createPlan(user.id, 'Fuerza');
+    const day = await service.addDay(plan.id, 1, 'Empuje');
+    const e1 = await service.addExerciseToDay(day.id, 'ex-1', {
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: 30,
+      notes: null,
+    });
+
+    await expect(
+      service.createSupersetGroup(day.id, [e1.id]),
+    ).rejects.toThrow();
+  });
+
+  it('dissolveSupersetGroup limpia el groupId de los miembros', async () => {
+    const { service, user } = await setup();
+    const plan = await service.createPlan(user.id, 'Fuerza');
+    const day = await service.addDay(plan.id, 1, 'Empuje');
+    const e1 = await service.addExerciseToDay(day.id, 'ex-1', {
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: 30,
+      notes: null,
+    });
+    const e2 = await service.addExerciseToDay(day.id, 'ex-2', {
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: 30,
+      notes: null,
+    });
+    await service.createSupersetGroup(day.id, [e1.id, e2.id]);
+    const groupId = (await service.getDayDetail(day.id)).exercises[0]
+      ?.planDayExercise.supersetGroupId as string;
+
+    await service.dissolveSupersetGroup(day.id, groupId);
+
+    const detail = await service.getDayDetail(day.id);
+    expect(
+      detail.exercises.every(e => e.planDayExercise.supersetGroupId === null),
+    ).toBe(true);
+  });
+
+  it('duplicateDay preserva el agrupamiento de superserie con un groupId nuevo', async () => {
+    const { service, user } = await setup();
+    const plan = await service.createPlan(user.id, 'Fuerza');
+    const day = await service.addDay(plan.id, 1, 'Empuje');
+    const e1 = await service.addExerciseToDay(day.id, 'ex-1', {
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: 30,
+      notes: null,
+    });
+    const e2 = await service.addExerciseToDay(day.id, 'ex-2', {
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: 30,
+      notes: null,
+    });
+    await service.createSupersetGroup(day.id, [e1.id, e2.id]);
+    const originalGroupId = (await service.getDayDetail(day.id)).exercises[0]
+      ?.planDayExercise.supersetGroupId;
+
+    const newDay = await service.duplicateDay(day.id);
+
+    const newDetail = await service.getDayDetail(newDay.id);
+    const newGroupIds = newDetail.exercises.map(
+      e => e.planDayExercise.supersetGroupId,
+    );
+    expect(newGroupIds[0]).not.toBeNull();
+    expect(newGroupIds[0]).toBe(newGroupIds[1]);
+    expect(newGroupIds[0]).not.toBe(originalGroupId);
   });
 
   it('deletePlan borra el plan y ya no aparece en listPlans', async () => {
