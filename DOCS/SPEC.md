@@ -417,6 +417,64 @@ rama, nunca commiteando directo a `main`:
 - Si una fase requiere trabajo adicional después de abierto el PR (fixes, ajustes pedidos en review),
   se sigue commiteando en la misma rama; no se abre una rama nueva para eso.
 
+### 9.2 Verificación funcional en el emulador Android antes de dar una fase por terminada
+
+`npm run lint`, `npm run typecheck` y `npm test` (unitarios/integración con SQLite en memoria) dejan
+la lógica cubierta, pero **no** prueban que la UI realmente responda al toque en un dispositivo real.
+Antes de dar una fase por terminada (idealmente antes de abrir el PR, o como commit adicional sobre
+el PR ya abierto si se encuentran bugs después), hay que probarla de punta a punta en un emulador
+Android corriendo, controlado por `adb`, mostrando en pantalla cada paso (screenshots) en vez de
+asumir que "compiló" significa "funciona". Pasos:
+
+1. **Confirmar que hay un emulador corriendo**: `adb devices -l`. Si no hay ninguno, hay que
+   levantarlo desde Android Studio (esto sí requiere al usuario, no se puede automatizar desde acá).
+2. **Confirmar que Metro está corriendo** y expuesto al emulador:
+   `ps aux | grep "react-native start"` y `adb -s <device> reverse --list` (debe listar
+   `tcp:8081 tcp:8081`). Si no está corriendo, levantarlo con
+   `nohup npx react-native start --port 8081 > /tmp/metro.log 2>&1 &` (en background, con el log a
+   un archivo para poder mostrarlo) y `adb -s <device> reverse tcp:8081 tcp:8081`.
+3. **Instalar/actualizar el APK** si hubo cambios nativos, o si es la primera vez en la sesión:
+   `cd android && ./gradlew installDebug -Dorg.gradle.workers.max=1 -PreactNativeArchitectures=x86_64`
+   (ver `DOCS/ANDROID_BUILD_TROUBLESHOOTING.md` si falla). Si los cambios de la fase son solo
+   JS/TS, no hace falta reinstalar: Fast Refresh alcanza, pero conviene igual forzar un reload
+   limpio (paso 4) para no arrastrar estado viejo de la sesión de Metro.
+4. **Relanzar la app en limpio**: `adb -s <device> shell am force-stop
+   com.marquettisolutions.gymapk && adb -s <device> shell am start -n
+   com.marquettisolutions.gymapk/.MainActivity`.
+5. **Sacar screenshot** después de cada paso con
+   `adb -s <device> exec-out screencap -p > archivo.png` y leerlo (herramienta `Read`) para ver
+   qué pasó — no asumir el resultado de una acción sin mirarlo.
+6. **Ojo con el toast de LogBox** ("Open debugger to view warnings" u otro warning de React
+   Native): mientras está visible, **intercepta todos los toques de la pantalla**, aunque el toque
+   caiga geométricamente sobre otro botón — el resto de la UI se ve intacta pero no reacciona a
+   nada. Si los toques no hacen nada, lo primero a revisar es si hay uno de estos toasts activo, y
+   descartarlo tocando su botón "X" (con coordenadas de `uiautomator dump`, no a ojo) antes de
+   seguir probando o de sospechar de un bug en la app.
+7. **Nunca calcular coordenadas de toque a ojo** sobre la imagen del screenshot (los `bounds` de
+   texto/iconos no se corresponden linealmente con el tamaño de vista previa del screenshot y el
+   error de estimación es alto). Usar siempre:
+   ```bash
+   adb -s <device> shell uiautomator dump /sdcard/ui.xml
+   adb -s <device> pull /sdcard/ui.xml ui.xml
+   grep -o 'text="<texto del botón>"[^>]*bounds="\[[0-9,]*\]\[[0-9,]*\]"' ui.xml
+   ```
+   y tocar el centro del rectángulo `bounds="[x1,y1][x2,y2]"` que devuelve (coordenadas ya en
+   píxeles físicos del dispositivo, las mismas que espera `adb shell input tap x y`).
+8. **Revisar logcat** después de la sesión de pruebas por errores silenciosos que no se ven en
+   pantalla:
+   `adb -s <device> logcat -d -t 3000 | grep -iE "reactnativejs.*error|exception|fatal|crash"`
+   (filtrando ruido conocido del emulador como `NullBinder`/`FeatureFlagsImpl`/`AconfigStorage`,
+   que no tienen relación con la app).
+9. **Recorrer manualmente los flujos nuevos de la fase** (navegar a cada pantalla nueva, completar
+   los formularios, probar alta/baja/edición, confirmar diálogos nativos de `Alert.alert`, etc.),
+   no solo abrir la app y mirar la pantalla inicial.
+10. **Si algo falla o se comporta distinto de lo esperado, corregirlo ahí mismo** (en la misma
+    rama de la fase) antes de dar la fase por cerrada, y volver a probar el flujo afectado para
+    confirmar el fix — no alcanza con "ya vi el error, seguramente se arregló".
+
+Registrar en la conversación (o en un commit de fix) qué se probó y qué se encontró, igual que
+se documentan los problemas de build en `DOCS/ANDROID_BUILD_TROUBLESHOOTING.md`.
+
 ## 10. Criterios de aceptación (v1 mínima viable)
 - Se puede crear un plan semanal con al menos un día y ejercicios, y queda guardado en SQLite.
 - El plan se repite automáticamente cada semana sin acción del usuario.
