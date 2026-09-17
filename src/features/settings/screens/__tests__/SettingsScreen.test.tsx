@@ -14,6 +14,9 @@ jest.mock('../../context/SettingsContext', () => ({
       theme: 'system',
       timerSoundEnabled: true,
       timerVibrationEnabled: true,
+      dailyReminderEnabled: false,
+      dailyReminderHour: 8,
+      dailyReminderMinute: 0,
     },
     isLoaded: true,
     updateSetting: mockUpdateSetting,
@@ -90,5 +93,21 @@ describe('SettingsScreen', () => {
     );
 
     expect(mockUpdateSetting).toHaveBeenCalledWith('timerSoundEnabled', false);
+  });
+
+  it('muestra la sección de notificaciones y activa el recordatorio diario', async () => {
+    await render(<SettingsScreen />);
+
+    expect(screen.getByText(t.sections.notifications)).toBeTruthy();
+    await fireEvent(
+      screen.getByLabelText(t.dailyReminderLabel),
+      'valueChange',
+      true,
+    );
+
+    expect(mockUpdateSetting).toHaveBeenCalledWith(
+      'dailyReminderEnabled',
+      true,
+    );
   });
 });

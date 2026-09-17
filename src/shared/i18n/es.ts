@@ -84,6 +84,17 @@ export const es = {
       moveUp: 'Subir',
       moveDown: 'Bajar',
       dragHandleLabel: 'Mantené presionado para arrastrar y reordenar',
+      groupButton: 'Superserie',
+      cancelGroupButton: 'Cancelar',
+      confirmGroupButton: (count: number) => `Confirmar superserie (${count})`,
+      groupSelectionHint:
+        'Tocá 2 o más ejercicios para agruparlos en una superserie.',
+      ungroupButton: 'Desagrupar',
+      ungroupConfirmTitle: 'Desagrupar superserie',
+      ungroupConfirmMessage:
+        '¿Deshacer esta superserie? Los ejercicios vuelven a ejecutarse por separado.',
+      supersetBadgeLabel: 'Superserie',
+      createSupersetErrorTitle: 'No se pudo crear la superserie',
     },
     exercisePicker: {
       title: 'Elegir ejercicio',
@@ -173,6 +184,13 @@ export const es = {
       empty: 'Todavía no hay registros de este ejercicio.',
     },
   },
+  notifications: {
+    dailyReminder: {
+      channelName: 'Recordatorio diario',
+      title: 'Hora de entrenar',
+      body: 'No te olvides de revisar tu plan de hoy.',
+    },
+  },
   bodyWeight: {
     title: 'Peso corporal',
     empty: 'Todavía no registraste tu peso.',
@@ -187,12 +205,29 @@ export const es = {
     deleteConfirmMessage:
       '¿Eliminar este registro de peso? Esta acción no se puede deshacer.',
   },
+  exercises: {
+    title: 'Ejercicios',
+    searchPlaceholder: 'Buscar ejercicio...',
+    empty: 'No se encontraron ejercicios.',
+    createButton: 'Crear ejercicio personalizado',
+    createTitle: 'Nuevo ejercicio',
+    nameLabel: 'Nombre',
+    muscleGroupLabel: 'Grupo muscular (opcional)',
+    equipmentLabel: 'Equipo (opcional)',
+    choosePhotoButton: 'Elegir foto',
+    changePhotoButton: 'Cambiar foto',
+    chooseVideoButton: 'Elegir video',
+    changeVideoButton: 'Cambiar video',
+    videoSelectedLabel: 'Video seleccionado',
+    createErrorTitle: 'No se pudo crear el ejercicio',
+  },
   settings: {
     sections: {
       training: 'Entrenamiento',
       weight: 'Peso',
       appearance: 'Apariencia',
       timer: 'Temporizador',
+      notifications: 'Notificaciones',
       data: 'Datos',
     },
     defaultRestSecondsLabel: 'Descanso por defecto (segundos)',
@@ -209,6 +244,10 @@ export const es = {
     },
     timerSoundLabel: 'Sonido al terminar el descanso',
     timerVibrationLabel: 'Vibración al terminar el descanso',
+    dailyReminderLabel: 'Recordatorio diario de entrenamiento',
+    dailyReminderTimeLabel: 'Hora del recordatorio',
+    dailyReminderTimeFormat: (hour: number, minute: number) =>
+      `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
     exportButton: 'Exportar backup',
     exportHint:
       'Genera un archivo con tus planes, sesiones, historial y peso corporal para guardarlo o compartirlo.',

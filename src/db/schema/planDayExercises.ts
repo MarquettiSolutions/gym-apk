@@ -18,6 +18,7 @@ export const planDayExercises = sqliteTable('plan_day_exercises', {
   targetWeight: real('target_weight'),
   restSeconds: integer('rest_seconds').notNull().default(30),
   notes: text('notes'),
+  supersetGroupId: text('superset_group_id'),
   createdAt: text('created_at').notNull().$defaultFn(nowIso),
   updatedAt: text('updated_at').notNull().$defaultFn(nowIso),
 });

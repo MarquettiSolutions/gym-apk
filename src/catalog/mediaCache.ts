@@ -1,9 +1,9 @@
 import RNBlobUtil from 'react-native-blob-util';
 
-const THUMBNAILS_DIR = `${RNBlobUtil.fs.dirs.DocumentDir}/exercise-thumbnails`;
-const VIDEOS_DIR = `${RNBlobUtil.fs.dirs.DocumentDir}/exercise-videos`;
+export const THUMBNAILS_DIR = `${RNBlobUtil.fs.dirs.DocumentDir}/exercise-thumbnails`;
+export const VIDEOS_DIR = `${RNBlobUtil.fs.dirs.DocumentDir}/exercise-videos`;
 
-async function ensureDir(dir: string): Promise<void> {
+export async function ensureDir(dir: string): Promise<void> {
   const alreadyExists = await RNBlobUtil.fs.exists(dir);
   if (!alreadyExists) {
     await RNBlobUtil.fs.mkdir(dir);

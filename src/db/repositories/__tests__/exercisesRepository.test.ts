@@ -45,6 +45,22 @@ describe('ExercisesRepository', () => {
     expect(found?.name).toBe('Push Up');
   });
 
+  it('insertOne crea un ejercicio individual y devuelve la fila creada', async () => {
+    const db = createTestDb();
+    const repo = createExercisesRepository(db);
+
+    const created = await repo.insertOne({
+      name: 'Flexiones diamante',
+      isCustom: true,
+    });
+
+    expect(created.name).toBe('Flexiones diamante');
+    expect(created.isCustom).toBe(true);
+    expect(await repo.getById(created.id)).toMatchObject({
+      name: 'Flexiones diamante',
+    });
+  });
+
   it('updateVideoLocalPath guarda path y fecha de cacheo', async () => {
     const db = createTestDb();
     const repo = createExercisesRepository(db);

@@ -9,6 +9,7 @@ import React, {
 import type { ReactNode } from 'react';
 import { initDatabase } from '../../../db/client';
 import { settingsService } from '../services';
+import { ensureDailyReminderScheduled } from '../../notifications/services/dailyReminderService';
 import { DEFAULT_SETTINGS } from '../types';
 import type { AppSettings } from '../types';
 
@@ -55,6 +56,23 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
   useEffect(() => {
     reload();
   }, [reload]);
+
+  // Re-arma el recordatorio diario cada vez que cambia la preferencia (o al
+  // abrir la app) — cubre el caso de OEMs agresivos que puedan haber matado
+  // el WorkManager en background, además de la reprogramación reactiva al
+  // tocar el switch/hora en Ajustes o tras importar un backup.
+  const { dailyReminderEnabled, dailyReminderHour, dailyReminderMinute } =
+    settings;
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+    ensureDailyReminderScheduled({
+      dailyReminderEnabled,
+      dailyReminderHour,
+      dailyReminderMinute,
+    }).catch(() => undefined);
+  }, [isLoaded, dailyReminderEnabled, dailyReminderHour, dailyReminderMinute]);
 
   const updateSetting = useCallback(
     async <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {

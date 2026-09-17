@@ -183,7 +183,11 @@ plan_days
 plan_day_exercises
   id (uuid, PK), plan_day_id (FK -> plan_days), exercise_id (FK -> exercises), order_index,
   target_sets, target_reps, target_weight (nullable), rest_seconds (default 30), notes,
-  created_at, updated_at
+  superset_group_id (text, nullable), created_at, updated_at
+  -- superset_group_id (Fase 6): etiqueta compartida (no FK) entre 2+ filas del mismo
+  -- plan_day para armar una superserie/circuito. No hay tabla de grupos aparte porque
+  -- el grupo no tiene atributos propios. La contigüidad en order_index se garantiza
+  -- por construcción de la UI (se reordena en bloques), no por constraint de DB.
 
 workout_sessions
   id (uuid, PK), user_id (FK -> users), plan_day_id (FK -> plan_days, nullable si se borró el plan),
@@ -205,8 +209,12 @@ body_weight_logs
   -- de peso en el tiempo sin perder el historial.
 
 settings
-  key (PK), value   -- default_rest_seconds, weight_unit, theme, etc. (única tabla que sí se
-  -- actualiza in-place, porque representa preferencias actuales, no hechos históricos)
+  key (PK), value   -- default_rest_seconds, weight_unit, theme, timer_sound_enabled,
+  -- timer_vibration_enabled, daily_reminder_enabled, daily_reminder_hour,
+  -- daily_reminder_minute (Fase 6: hora/minuto como enteros separados, no string "HH:mm",
+  -- para reusar el parseNumber ya existente sin escribir un parser de horario nuevo).
+  -- Única tabla que sí se actualiza in-place, porque representa preferencias actuales,
+  -- no hechos históricos.
 ```
 
 Notas:
@@ -292,6 +300,15 @@ Reglas de negocio:
 - Permitir agregar ejercicios personalizados (nombre + foto/video propio desde la galería del
   teléfono) para cubrir huecos del catálogo; estos son 100% locales desde el inicio, sin
   depender de ninguna API.
+  **Implementado en Fase 6**: pantalla "Ejercicios" (`src/features/exercises/`) con botón
+  "Crear ejercicio personalizado"; usa `react-native-image-picker` (Android Photo Picker,
+  sin permisos runtime en API 33+) y copia el archivo elegido al almacenamiento de la app
+  con `RNBlobUtil.fs.cp` (`src/catalog/customMedia.ts`), preservando la extensión original
+  del archivo (a diferencia de `mediaCache.ts`, que fuerza `.jpg`/`.mp4` porque su fuente es
+  siempre remota y conocida). Solo se puede **crear**, no editar/borrar (borrar dejaría
+  referencias colgantes en `plan_day_exercises`/`workout_session_sets`, sin `ON DELETE
+  CASCADE` en ese FK — queda para una fase futura). El backup (5.6) exporta la fila de
+  `exercises` pero **no** el archivo de foto/video asociado.
 
 ### 5.3 Ejecución de la sesión de entrenamiento (feature clave)
 - Pantalla "Entrenamiento de hoy" basada en el día de la semana actual y el plan activo.
@@ -316,6 +333,17 @@ Reglas de negocio:
 - Al completar todas las series de todos los ejercicios, la sesión se marca como terminada y
   se guarda en el historial con fecha, duración y detalle de series.
 - Permitir marcar un ejercicio completo como "omitido" (por si el usuario no llega a hacerlo ese día).
+- **Superseries/circuitos (implementado en Fase 6)**: al armar el plan (`DayEditorScreen`), un
+  modo de selección permite agrupar 2+ ejercicios de un día en una superserie (quedan
+  contiguos, se mueven como bloque al reordenar/duplicar). En la sesión, mientras algún otro
+  ejercicio del grupo todavía no completó (ni saltó) su serie número N, registrar una serie
+  **no** dispara el temporizador de descanso — se sigue directo al siguiente ejercicio del
+  circuito. El descanso normal recién se dispara al completar la serie que cierra esa "ronda"
+  en todos los miembros del grupo (lógica pura en
+  `src/features/workout-session/utils/supersetRest.ts`, función `shouldSkipRestAfterSet`).
+  Maneja ejercicios con distinto número de series y registro fuera de orden. Fuera de alcance:
+  descanso configurable a nivel de grupo (se usa el `rest_seconds` del ejercicio que cierra la
+  ronda), fusionar dos grupos existentes, forzar orden round-robin estricto en la UI.
 
 ### 5.4 Historial y progreso
 - Calendario o lista de sesiones pasadas, con estado (completa/parcial).
@@ -342,12 +370,27 @@ Reglas de negocio:
 - Unidad de peso (kg/lb).
 - Tema claro/oscuro (o seguir el sistema).
 - Sonido/vibración del temporizador on/off.
+- **Recordatorio diario de entrenamiento (implementado en Fase 6)**: switch + selector de
+  hora (`@react-native-community/datetimepicker`, formato 24h). Respaldado por un trigger
+  `notifee` con id fijo `'daily-reminder'` (solo existe un recordatorio a la vez, así que
+  reprogramar reemplaza el anterior sin cancelar primero) y `repeatFrequency: DAILY`, sin
+  `alarmManager` (mismo criterio que el timer de descanso: evita requerir el permiso
+  `SCHEDULE_EXACT_ALARM`, a costa de que el horario real pueda demorar algunos minutos en
+  dispositivos con optimización agresiva de batería). `@notifee/react-native` ya declara
+  `RECEIVE_BOOT_COMPLETED` + sus propios receivers internamente, así que el trigger
+  sobrevive un reinicio del dispositivo sin código nativo propio. `SettingsProvider`
+  reprograma el recordatorio en un efecto reactivo cada vez que cambia la preferencia (o al
+  abrir la app, como red de seguridad contra OEMs que maten el WorkManager en background).
 - Exportar/importar datos (backup manual a JSON/archivo, ya que todo es local y se perdería
   si se desinstala la app). El export incluye todas las tablas de datos del usuario (planes,
   sesiones, historial, peso corporal, ejercicios personalizados y su metadata) pero **no**
   los archivos de video cacheados de `exercises` del catálogo externo (esos se vuelven a
-  descargar bajo demanda tras importar); las fotos/videos de ejercicios personalizados sí se
-  incluyen o se referencian en el export, al ser contenido propio del usuario sin fuente externa.
+  descargar bajo demanda tras importar); las fotos/videos de ejercicios personalizados **se
+  referencian** en el export (el path local queda en `thumbnailLocalPath`/`videoLocalPath`
+  dentro de la fila exportada), pero el archivo binario en sí **no** se empaqueta — restaurar
+  ese backup en otro dispositivo recupera el ejercicio personalizado pero no su foto/video
+  (`ExerciseThumbnail` degrada a placeholder sin crashear). Empaquetar el binario implicaría
+  pasar el formato de backup de JSON a zip; queda fuera de alcance de la Fase 6.
 
 ## 6. Requisitos no funcionales
 - **Offline-first para todo lo propio del usuario**: planes, sesiones, historial y tracking de
@@ -378,9 +421,10 @@ Reglas de negocio:
 ## 8. Funcionalidades sugeridas para sumar al alcance (no pedidas explícitamente)
 Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
 
-- **Superseries / circuitos** (agrupar 2+ ejercicios sin descanso entre ellos).
+- ~~**Superseries / circuitos**~~ — implementado en Fase 6, ver 5.3.
 - **RPE o nivel de esfuerzo percibido** por serie (opcional, simple 1-10).
-- **Notificación/recordatorio diario** de que hoy toca entrenar según el plan.
+- ~~**Notificación/recordatorio diario**~~ — implementado en Fase 6, ver 5.6 (recordatorio a
+  hora fija; no filtra si hoy hay entrenamiento planificado, queda como mejora futura).
 - **Modo "descanso entre ejercicios" vs "descanso entre series"** configurables por separado.
 - **Duplicar una sesión pasada** como plantilla rápida para un entrenamiento libre (fuera del plan fijo).
 - **Backup/restauración** de la base de datos local (export/import a archivo, dado que no hay nube).
@@ -401,7 +445,7 @@ Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
 5. **Fase 4** — ✅ Concluida (mergeada a `main`). Historial, progreso y tracking de peso corporal.
 6. **Fase 5** — ✅ Concluida (mergeada a `main`, PR #7). Ajustes, backup/export, pulido de UI/UX,
    accesibilidad.
-7. **Fase 6 (opcional)** — Pendiente. Notificaciones diarias, superseries, ejercicios
+7. **Fase 6 (opcional)** — PR abierto (#9). Notificaciones diarias, superseries, ejercicios
    personalizados con media propia.
 
 Un agente que empiece una fase nueva debe asumir que todo lo marcado **✅ Concluida** ya está en
@@ -534,6 +578,15 @@ la sección 5 de este documento y `DOCS/REGRESSION_CHECKLIST.md`.
   "Mis planes".
 - **Ejercicios por tiempo/duración (plancha, cardio) fuera de alcance v1** — se anotan a mano en
   `notes`, sin timer ni tracking estructurado; ver 4.4.
+- **Superserie modelada como campo (`superset_group_id`), no tabla aparte** (Fase 6) — el grupo
+  no tiene atributos propios, es solo una etiqueta compartida entre filas del mismo día; ver 4.4.
+- **Ejercicios personalizados: solo crear, no editar/borrar** (Fase 6) — borrar dejaría
+  referencias colgantes en `plan_day_exercises`/`workout_session_sets` (sin `ON DELETE CASCADE`
+  en esos FK); resolverlo bien queda para una fase futura; ver 5.2.
+- **Recordatorio diario sin `alarmManager`/`SCHEDULE_EXACT_ALARM`** (Fase 6) — mismo criterio ya
+  usado para el timer de descanso: se acepta que el horario real pueda demorar algunos minutos
+  en dispositivos con optimización agresiva de batería, a cambio de no pedir un permiso extra;
+  ver 5.6.
 
 No quedan decisiones abiertas de producto para v1 — el documento está listo para pasarle a un
 agente de implementación.

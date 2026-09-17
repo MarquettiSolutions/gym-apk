@@ -24,6 +24,7 @@ export interface PlanDayExercisesRepository {
   ): Promise<void>;
   remove(id: string): Promise<void>;
   reorder(planDayId: string, orderedIds: string[]): Promise<void>;
+  setSupersetGroup(ids: string[], groupId: string | null): Promise<void>;
 }
 
 export function createPlanDayExercisesRepository(
@@ -72,6 +73,14 @@ export function createPlanDayExercisesRepository(
               eq(planDayExercises.planDayId, planDayId),
             ),
           );
+      }
+    },
+    async setSupersetGroup(ids, groupId) {
+      for (const id of ids) {
+        await db
+          .update(planDayExercises)
+          .set({ supersetGroupId: groupId, updatedAt: nowIso() })
+          .where(eq(planDayExercises.id, id));
       }
     },
   };

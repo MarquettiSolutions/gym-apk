@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { repositories } from '../../../db/client';
 import type { Exercise } from '../types';
 
@@ -6,18 +6,16 @@ export function useExerciseCatalog() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    let mounted = true;
-    repositories.exercises.listAll().then(list => {
-      if (mounted) {
-        setExercises(list);
-        setIsLoading(false);
-      }
-    });
-    return () => {
-      mounted = false;
-    };
+  const reload = useCallback(async () => {
+    setIsLoading(true);
+    const list = await repositories.exercises.listAll();
+    setExercises(list);
+    setIsLoading(false);
   }, []);
 
-  return { exercises, isLoading };
+  useEffect(() => {
+    reload();
+  }, [reload]);
+
+  return { exercises, isLoading, reload };
 }

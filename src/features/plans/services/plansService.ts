@@ -1,5 +1,6 @@
 import type { Repositories } from '../../../db/repositories';
 import { assertDefined } from '../../../shared/utils/assert';
+import { uuid } from '../../../shared/utils/id';
 import type {
   DayExerciseFormValues,
   PlanDayDetail,
@@ -42,7 +43,11 @@ export function createPlansService(repositories: Repositories) {
       weekday: detail.day.weekday,
       label: detail.day.label,
     });
+    const groupIdMap = new Map<string, string>();
     for (const { planDayExercise } of detail.exercises) {
+      const supersetGroupId = planDayExercise.supersetGroupId
+        ? getOrCreateGroupId(groupIdMap, planDayExercise.supersetGroupId)
+        : null;
       await repositories.planDayExercises.create({
         planDayId: newDay.id,
         exerciseId: planDayExercise.exerciseId,
@@ -52,6 +57,7 @@ export function createPlansService(repositories: Repositories) {
         targetWeight: planDayExercise.targetWeight,
         restSeconds: planDayExercise.restSeconds,
         notes: planDayExercise.notes,
+        supersetGroupId,
       });
     }
     return newDay;
@@ -69,7 +75,11 @@ export function createPlansService(repositories: Repositories) {
         weekday: dayDetail.day.weekday,
         label: dayDetail.day.label,
       });
+      const groupIdMap = new Map<string, string>();
       for (const { planDayExercise } of dayDetail.exercises) {
+        const supersetGroupId = planDayExercise.supersetGroupId
+          ? getOrCreateGroupId(groupIdMap, planDayExercise.supersetGroupId)
+          : null;
         await repositories.planDayExercises.create({
           planDayId: newDay.id,
           exerciseId: planDayExercise.exerciseId,
@@ -79,10 +89,75 @@ export function createPlansService(repositories: Repositories) {
           targetWeight: planDayExercise.targetWeight,
           restSeconds: planDayExercise.restSeconds,
           notes: planDayExercise.notes,
+          supersetGroupId,
         });
       }
     }
     return newPlan;
+  }
+
+  function getOrCreateGroupId(
+    map: Map<string, string>,
+    oldGroupId: string,
+  ): string {
+    const existing = map.get(oldGroupId);
+    if (existing) {
+      return existing;
+    }
+    const newGroupId = uuid();
+    map.set(oldGroupId, newGroupId);
+    return newGroupId;
+  }
+
+  async function createSupersetGroup(
+    dayId: string,
+    planDayExerciseIds: string[],
+  ) {
+    if (planDayExerciseIds.length < 2) {
+      throw new Error('Una superserie necesita al menos 2 ejercicios');
+    }
+    const detail = await getDayDetail(dayId);
+    const selectedIds = new Set(planDayExerciseIds);
+    const currentIds = detail.exercises.map(e => e.planDayExercise.id);
+    for (const { planDayExercise } of detail.exercises) {
+      if (
+        selectedIds.has(planDayExercise.id) &&
+        planDayExercise.supersetGroupId
+      ) {
+        throw new Error('Uno de los ejercicios ya pertenece a una superserie');
+      }
+    }
+    if (!planDayExerciseIds.every(id => currentIds.includes(id))) {
+      throw new Error('Uno de los ejercicios no pertenece a este día');
+    }
+
+    const selectedInOrder = currentIds.filter(id => selectedIds.has(id));
+    const newOrderedIds: string[] = [];
+    let insertedGroup = false;
+    for (const id of currentIds) {
+      if (selectedIds.has(id)) {
+        if (!insertedGroup) {
+          newOrderedIds.push(...selectedInOrder);
+          insertedGroup = true;
+        }
+      } else {
+        newOrderedIds.push(id);
+      }
+    }
+
+    await repositories.planDayExercises.reorder(dayId, newOrderedIds);
+    await repositories.planDayExercises.setSupersetGroup(
+      selectedInOrder,
+      uuid(),
+    );
+  }
+
+  async function dissolveSupersetGroup(dayId: string, groupId: string) {
+    const detail = await getDayDetail(dayId);
+    const memberIds = detail.exercises
+      .filter(e => e.planDayExercise.supersetGroupId === groupId)
+      .map(e => e.planDayExercise.id);
+    await repositories.planDayExercises.setSupersetGroup(memberIds, null);
   }
 
   return {
@@ -120,6 +195,8 @@ export function createPlansService(repositories: Repositories) {
     removeDayExercise: (id: string) => repositories.planDayExercises.remove(id),
     reorderDayExercises: (dayId: string, orderedIds: string[]) =>
       repositories.planDayExercises.reorder(dayId, orderedIds),
+    createSupersetGroup,
+    dissolveSupersetGroup,
   };
 }
 

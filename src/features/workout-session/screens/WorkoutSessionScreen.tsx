@@ -24,6 +24,7 @@ import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
 import { useSettings } from '../../settings/context/SettingsContext';
 import { convertWeight } from '../../../shared/utils/weight';
+import { shouldSkipRestAfterSet } from '../utils/supersetRest';
 import type { ExerciseProgress } from '../types';
 
 type Props = NativeStackScreenProps<
@@ -101,8 +102,24 @@ export function WorkoutSessionScreen({ route, navigation }: Props) {
       },
     );
     const restSeconds = exerciseProgress.planDayExercise.restSeconds;
+    const groupId = exerciseProgress.planDayExercise.supersetGroupId;
+    const groupMembers = groupId
+      ? (detail?.exercises ?? []).filter(
+          e => e.planDayExercise.supersetGroupId === groupId,
+        )
+      : [];
+    const skipRest =
+      groupId !== null &&
+      shouldSkipRestAfterSet(
+        groupMembers,
+        exerciseProgress.planDayExercise.id,
+        setNumber,
+      );
     setRegisteringSet(null);
     await reload();
+    if (skipRest) {
+      return;
+    }
     navigation.navigate('RestTimer', { seconds: restSeconds });
   }
 
@@ -164,6 +181,11 @@ export function WorkoutSessionScreen({ route, navigation }: Props) {
                 remoteUrl={exerciseProgress.exercise.thumbnailRemoteUrl}
               />
               <View style={styles.cardHeaderInfo}>
+                {exerciseProgress.planDayExercise.supersetGroupId ? (
+                  <Text style={styles.supersetBadge}>
+                    {es.plans.dayEditor.supersetBadgeLabel}
+                  </Text>
+                ) : null}
                 <Text style={styles.exerciseName}>
                   {exerciseProgress.exercise.name}
                 </Text>
@@ -278,6 +300,13 @@ function createStyles(colors: ThemeColors) {
       fontSize: 15,
       fontWeight: '600',
       color: colors.text,
+    },
+    supersetBadge: {
+      fontSize: 11,
+      fontWeight: '700',
+      color: colors.primary,
+      textTransform: 'uppercase',
+      marginBottom: 2,
     },
     setRow: {
       flexDirection: 'row',

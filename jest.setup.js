@@ -20,6 +20,10 @@ jest.mock('react-native-blob-util', () => ({
     actionViewIntent: jest.fn(async () => true),
   },
 }));
+jest.mock('@react-native-community/datetimepicker', () => 'DateTimePicker');
+jest.mock('react-native-image-picker', () => ({
+  launchImageLibrary: jest.fn(async () => ({ assets: [] })),
+}));
 jest.mock('@react-native-documents/picker', () => ({
   pick: jest.fn(),
   saveDocuments: jest.fn(),
