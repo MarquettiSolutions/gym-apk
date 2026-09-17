@@ -42,7 +42,6 @@ npm test
 
 ## Estado
 
-Fases 0 a 4 completas y mergeadas a `main` (setup, catálogo, planes, sesión
-de entrenamiento, historial/progreso/peso corporal). Fase 5 (ajustes, tema
-claro/oscuro y backup) implementada, con PR #7 abierto pendiente de review.
+Fases 0 a 5 completas y mergeadas a `main` (setup, catálogo, planes, sesión
+de entrenamiento, historial/progreso/peso corporal, ajustes/tema/backup).
 Ver la sección 9 de `DOCS/SPEC.md` para el detalle y las fases siguientes.

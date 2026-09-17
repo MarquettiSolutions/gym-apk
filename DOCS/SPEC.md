@@ -399,8 +399,7 @@ Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
 4. **Fase 3** — ✅ Concluida (mergeada a `main`). Ejecución de sesión: checklist de series +
    temporizador de descanso + registro de peso/reps por serie (append-only).
 5. **Fase 4** — ✅ Concluida (mergeada a `main`). Historial, progreso y tracking de peso corporal.
-6. **Fase 5** — 🔧 Implementada, PR abierto pendiente de merge
-   (`feature/fase-5-ajustes-tema-backup`, PR #7). Ajustes, backup/export, pulido de UI/UX,
+6. **Fase 5** — ✅ Concluida (mergeada a `main`, PR #7). Ajustes, backup/export, pulido de UI/UX,
    accesibilidad.
 7. **Fase 6 (opcional)** — Pendiente. Notificaciones diarias, superseries, ejercicios
    personalizados con media propia.
