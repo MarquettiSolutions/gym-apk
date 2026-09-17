@@ -42,8 +42,7 @@ npm test
 
 ## Estado
 
-Fases 0 a 5 completas y mergeadas a `main` (setup, catálogo, planes, sesión
-de entrenamiento, historial/progreso/peso corporal, ajustes/tema/backup).
-Fase 6 (superseries, ejercicios personalizados con media propia, recordatorio
-diario de entrenamiento) con PR abierto — ver la sección 9 de
-`DOCS/SPEC.md` para el detalle y el estado de cada fase.
+Fases 0 a 6 completas y mergeadas a `main` (setup, catálogo, planes, sesión
+de entrenamiento, historial/progreso/peso corporal, ajustes/tema/backup,
+superseries/ejercicios personalizados/recordatorio diario). Ver la sección 9
+de `DOCS/SPEC.md` para el detalle y las fases siguientes.

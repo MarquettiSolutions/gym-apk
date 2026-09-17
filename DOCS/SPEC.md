@@ -445,8 +445,8 @@ Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
 5. **Fase 4** — ✅ Concluida (mergeada a `main`). Historial, progreso y tracking de peso corporal.
 6. **Fase 5** — ✅ Concluida (mergeada a `main`, PR #7). Ajustes, backup/export, pulido de UI/UX,
    accesibilidad.
-7. **Fase 6 (opcional)** — PR abierto (#9). Notificaciones diarias, superseries, ejercicios
-   personalizados con media propia.
+7. **Fase 6 (opcional)** — ✅ Concluida (mergeada a `main`, PR #9). Notificaciones diarias,
+   superseries, ejercicios personalizados con media propia.
 
 Un agente que empiece una fase nueva debe asumir que todo lo marcado **✅ Concluida** ya está en
 `main` y funcionando — no hace falta reimplementarlo ni volver a diseñarlo, solo construir sobre
