@@ -391,16 +391,25 @@ Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
 - **Multi-idioma** (es/en) preparado desde la arquitectura aunque v1 sea solo español.
 
 ## 9. Fases de desarrollo sugeridas
-1. **Fase 0** — Setup del proyecto (React Native CLI + TS + navegación + SQLite/Drizzle + linting + CI básico).
-2. **Fase 1** — Modelo de datos + repositorios + catálogo de ejercicios (import desde ExerciseDB
-   o proveedor equivalente: metadata + miniaturas) + capa de descarga/cache de video bajo demanda.
-3. **Fase 2** — Creación/edición de plan semanal (wizard + CRUD).
-4. **Fase 3** — Ejecución de sesión: checklist de series + temporizador de descanso + registro
-   de peso/reps por serie (append-only).
-5. **Fase 4** — Historial, progreso y tracking de peso corporal.
-6. **Fase 5** — Ajustes, backup/export, pulido de UI/UX, accesibilidad.
-7. **Fase 6 (opcional)** — Notificaciones diarias, superseries, ejercicios personalizados con
-   media propia.
+1. **Fase 0** — ✅ Concluida (mergeada a `main`). Setup del proyecto (React Native CLI + TS +
+   navegación + SQLite/Drizzle + linting + CI básico).
+2. **Fase 1** — ✅ Concluida (mergeada a `main`). Modelo de datos + repositorios + catálogo de
+   ejercicios (import desde free-exercise-db) + capa de descarga/cache de video bajo demanda.
+3. **Fase 2** — ✅ Concluida (mergeada a `main`). Creación/edición de plan semanal (wizard + CRUD).
+4. **Fase 3** — ✅ Concluida (mergeada a `main`). Ejecución de sesión: checklist de series +
+   temporizador de descanso + registro de peso/reps por serie (append-only).
+5. **Fase 4** — ✅ Concluida (mergeada a `main`). Historial, progreso y tracking de peso corporal.
+6. **Fase 5** — 🔧 Implementada, PR abierto pendiente de merge
+   (`feature/fase-5-ajustes-tema-backup`, PR #7). Ajustes, backup/export, pulido de UI/UX,
+   accesibilidad.
+7. **Fase 6 (opcional)** — Pendiente. Notificaciones diarias, superseries, ejercicios
+   personalizados con media propia.
+
+Un agente que empiece una fase nueva debe asumir que todo lo marcado **✅ Concluida** ya está en
+`main` y funcionando — no hace falta reimplementarlo ni volver a diseñarlo, solo construir sobre
+eso (y correr `DOCS/REGRESSION_CHECKLIST.md` para confirmar que sigue funcionando, ver 9.2). Al
+abrir el PR de una fase, actualizar acá su estado a "PR abierto (#N)"; recién marcarla
+**✅ Concluida** cuando ese PR se mergea a `main`.
 
 ### 9.1 Flujo de trabajo con git por fase
 
@@ -468,12 +477,30 @@ asumir que "compiló" significa "funciona". Pasos:
 9. **Recorrer manualmente los flujos nuevos de la fase** (navegar a cada pantalla nueva, completar
    los formularios, probar alta/baja/edición, confirmar diálogos nativos de `Alert.alert`, etc.),
    no solo abrir la app y mirar la pantalla inicial.
-10. **Si algo falla o se comporta distinto de lo esperado, corregirlo ahí mismo** (en la misma
+10. **Recorrer también `DOCS/REGRESSION_CHECKLIST.md` completo, no solo lo nuevo de esta fase** —
+    cada ítem ya listado ahí (de fases anteriores), para confirmar que este cambio no rompió nada
+    silenciosamente. Esto importa especialmente para cambios transversales (un `ThemeProvider`
+    global, un cambio de esquema de DB, de navegación, de una constante compartida): pueden
+    compilar, pasar lint/typecheck/tests unitarios, y aun así romper en runtime una pantalla de
+    una fase ya cerrada que ningún test cubre a nivel UI.
+11. **Agregar a `DOCS/REGRESSION_CHECKLIST.md` los flujos concretos que introdujo esta fase**, en
+    una sección nueva al final del documento (mismo formato que las anteriores), para que la
+    próxima fase también los repase.
+12. **Si algo falla o se comporta distinto de lo esperado, corregirlo ahí mismo** (en la misma
     rama de la fase) antes de dar la fase por cerrada, y volver a probar el flujo afectado para
     confirmar el fix — no alcanza con "ya vi el error, seguramente se arregló".
 
 Registrar en la conversación (o en un commit de fix) qué se probó y qué se encontró, igual que
 se documentan los problemas de build en `DOCS/ANDROID_BUILD_TROUBLESHOOTING.md`.
+
+### 9.3 Actualizar el README al cerrar una fase
+
+Antes de abrir el PR, actualizar la sección "Estado" de `README.md` para que quede la fase (o
+fases) recién cerradas — mismo criterio que la sección 9 de este documento. Sumar al README
+cualquier otro cambio solo si es realmente relevante para alguien que clona el repo por primera
+vez (ej. un requisito nuevo, un comando de setup que cambió, una dependencia nativa que ahora
+hace falta instalar aparte); no hace falta listar ahí el detalle de cada feature — para eso está
+la sección 5 de este documento y `DOCS/REGRESSION_CHECKLIST.md`.
 
 ## 10. Criterios de aceptación (v1 mínima viable)
 - Se puede crear un plan semanal con al menos un día y ejercicios, y queda guardado en SQLite.

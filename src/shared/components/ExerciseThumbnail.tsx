@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import type { ThemeColors } from '../theme/colors';
 
 interface ExerciseThumbnailProps {
   localPath?: string | null;
@@ -19,6 +21,8 @@ export function ExerciseThumbnail({
   remoteUrl,
   size = 48,
 }: ExerciseThumbnailProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const uri = localPath ? toImageUri(localPath) : remoteUrl ?? undefined;
   const dimensionStyle = { width: size, height: size, borderRadius: size / 4 };
 
@@ -28,11 +32,13 @@ export function ExerciseThumbnail({
   return <Image source={{ uri }} style={[styles.image, dimensionStyle]} />;
 }
 
-const styles = StyleSheet.create({
-  placeholder: {
-    backgroundColor: '#E0E0E0',
-  },
-  image: {
-    backgroundColor: '#F0F0F0',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    placeholder: {
+      backgroundColor: colors.surfaceActive,
+    },
+    image: {
+      backgroundColor: colors.surfaceActive,
+    },
+  });
+}

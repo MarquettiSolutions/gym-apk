@@ -9,6 +9,8 @@ import { remainingSeconds as computeRemainingSeconds } from '../utils/restTimer'
 interface UseRestTimerOptions {
   initialSeconds: number;
   onFinish: () => void;
+  soundEnabled: boolean;
+  vibrationEnabled: boolean;
 }
 
 // Temporizador de descanso basado en un deadline real (`Date.now() + ms`),
@@ -20,6 +22,8 @@ interface UseRestTimerOptions {
 export function useRestTimer({
   initialSeconds,
   onFinish,
+  soundEnabled,
+  vibrationEnabled,
 }: UseRestTimerOptions) {
   const [deadline, setDeadline] = useState(
     () => Date.now() + initialSeconds * 1000,
@@ -30,21 +34,25 @@ export function useRestTimer({
   const notificationIdRef = useRef<string | null>(null);
   const finishedRef = useRef(false);
 
-  const rescheduleNotification = useCallback(async (newDeadline: number) => {
-    if (notificationIdRef.current) {
-      const previousId = notificationIdRef.current;
-      notificationIdRef.current = null;
-      await cancelRestEndNotification(previousId).catch(() => undefined);
-    }
-    try {
-      notificationIdRef.current = await scheduleRestEndNotification(
-        newDeadline,
-      );
-    } catch {
-      // Sin permiso u OEM que bloquea notificaciones en background: el
-      // temporizador sigue funcionando en pantalla, solo se pierde el aviso.
-    }
-  }, []);
+  const rescheduleNotification = useCallback(
+    async (newDeadline: number) => {
+      if (notificationIdRef.current) {
+        const previousId = notificationIdRef.current;
+        notificationIdRef.current = null;
+        await cancelRestEndNotification(previousId).catch(() => undefined);
+      }
+      try {
+        notificationIdRef.current = await scheduleRestEndNotification(
+          newDeadline,
+          { sound: soundEnabled, vibration: vibrationEnabled },
+        );
+      } catch {
+        // Sin permiso u OEM que bloquea notificaciones en background: el
+        // temporizador sigue funcionando en pantalla, solo se pierde el aviso.
+      }
+    },
+    [soundEnabled, vibrationEnabled],
+  );
 
   useEffect(() => {
     requestNotificationPermission().catch(() => undefined);

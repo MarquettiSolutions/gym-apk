@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -18,7 +18,8 @@ import { TextField } from '../../../shared/components/TextField';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { WeekdayPicker } from '../components/WeekdayPicker';
 import { WEEKDAY_DISPLAY_ORDER, WEEKDAY_LABELS } from '../constants';
-import { colors } from '../../../shared/theme/colors';
+import { useTheme } from '../../../shared/theme/ThemeContext';
+import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
 import type { PlanDayDetail } from '../types';
@@ -41,6 +42,8 @@ function sortByWeekdayDisplayOrder(days: PlanDayDetail[]): PlanDayDetail[] {
 
 export function PlanEditorScreen({ route, navigation }: Props) {
   const { planId } = route.params;
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const userId = useLocalUserId();
   const { detail, isLoading, reload } = usePlanDetail(planId);
 
@@ -291,92 +294,94 @@ export function PlanEditorScreen({ route, navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  planActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-    padding: spacing.md,
-    paddingBottom: 0,
-  },
-  planActionButton: {
-    minWidth: 90,
-  },
-  activeBanner: {
-    marginHorizontal: spacing.md,
-    marginTop: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    paddingVertical: spacing.xs,
-    alignItems: 'center',
-  },
-  activeBannerText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: 12,
-  },
-  sectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.text,
-    marginTop: spacing.md,
-    marginHorizontal: spacing.md,
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  emptyContainer: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  emptyText: {
-    color: colors.muted,
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  cardTouchable: {
-    marginBottom: spacing.sm,
-  },
-  dayTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  daySubtitle: {
-    fontSize: 13,
-    color: colors.muted,
-    marginTop: 2,
-  },
-  cardActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  cardActionButton: {
-    minWidth: 90,
-  },
-  footer: {
-    padding: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-  },
-  fieldLabel: {
-    fontSize: 13,
-    color: colors.muted,
-    marginBottom: spacing.xs,
-  },
-  spacer: {
-    height: spacing.md,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    planActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.xs,
+      padding: spacing.md,
+      paddingBottom: 0,
+    },
+    planActionButton: {
+      minWidth: 90,
+    },
+    activeBanner: {
+      marginHorizontal: spacing.md,
+      marginTop: spacing.sm,
+      backgroundColor: colors.primary,
+      borderRadius: 8,
+      paddingVertical: spacing.xs,
+      alignItems: 'center',
+    },
+    activeBannerText: {
+      color: colors.onPrimary,
+      fontWeight: '700',
+      fontSize: 12,
+    },
+    sectionTitle: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.text,
+      marginTop: spacing.md,
+      marginHorizontal: spacing.md,
+    },
+    listContent: {
+      padding: spacing.md,
+    },
+    emptyContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    emptyText: {
+      color: colors.muted,
+      textAlign: 'center',
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: spacing.md,
+      marginBottom: spacing.sm,
+    },
+    cardTouchable: {
+      marginBottom: spacing.sm,
+    },
+    dayTitle: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    daySubtitle: {
+      fontSize: 13,
+      color: colors.muted,
+      marginTop: 2,
+    },
+    cardActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.xs,
+    },
+    cardActionButton: {
+      minWidth: 90,
+    },
+    footer: {
+      padding: spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    fieldLabel: {
+      fontSize: 13,
+      color: colors.muted,
+      marginBottom: spacing.xs,
+    },
+    spacer: {
+      height: spacing.md,
+    },
+  });
+}

@@ -1,14 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutSessionStackParamList } from '../../../navigation/types';
 import { useRestTimer } from '../hooks/useRestTimer';
 import { Button } from '../../../shared/components/Button';
-import { colors } from '../../../shared/theme/colors';
+import { useTheme } from '../../../shared/theme/ThemeContext';
+import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
 import { REST_TIMER_STEP_SECONDS } from '../constants';
 import { formatMinutesSeconds } from '../utils/restTimer';
+import { useSettings } from '../../settings/context/SettingsContext';
 
 type Props = NativeStackScreenProps<WorkoutSessionStackParamList, 'RestTimer'>;
 
@@ -16,6 +18,9 @@ const t = es.workoutSession.restTimer;
 
 export function RestTimerScreen({ route, navigation }: Props) {
   const { seconds } = route.params;
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const { settings } = useSettings();
 
   // Al terminar el descanso (o si el usuario lo salta) volvemos directo a la
   // pantalla de la sesión; no hay nada más que mostrar en esta pantalla.
@@ -26,6 +31,8 @@ export function RestTimerScreen({ route, navigation }: Props) {
   const timer = useRestTimer({
     initialSeconds: seconds,
     onFinish: handleFinish,
+    soundEnabled: settings.timerSoundEnabled,
+    vibrationEnabled: settings.timerVibrationEnabled,
   });
 
   return (
@@ -67,33 +74,35 @@ export function RestTimerScreen({ route, navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-    padding: spacing.lg,
-  },
-  countdown: {
-    fontSize: 64,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: spacing.xl,
-  },
-  stepRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  stepButton: {
-    minWidth: 90,
-  },
-  mainRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  mainButton: {
-    minWidth: 140,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+      padding: spacing.lg,
+    },
+    countdown: {
+      fontSize: 64,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: spacing.xl,
+    },
+    stepRow: {
+      flexDirection: 'row',
+      gap: spacing.md,
+      marginBottom: spacing.lg,
+    },
+    stepButton: {
+      minWidth: 90,
+    },
+    mainRow: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    mainButton: {
+      minWidth: 140,
+    },
+  });
+}

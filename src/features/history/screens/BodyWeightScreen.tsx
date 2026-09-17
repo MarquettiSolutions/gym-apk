@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useBodyWeight } from '../hooks/useBodyWeight';
@@ -8,11 +8,13 @@ import { Button } from '../../../shared/components/Button';
 import { TextField } from '../../../shared/components/TextField';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { ProgressChart } from '../../../shared/components/ProgressChart';
-import { colors } from '../../../shared/theme/colors';
+import { useTheme } from '../../../shared/theme/ThemeContext';
+import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
 import { formatDateTime, formatShortDate } from '../../../shared/utils/dates';
-import { DEFAULT_WEIGHT_UNIT } from '../../workout-session/constants';
+import { convertWeight, formatWeight } from '../../../shared/utils/weight';
+import { useSettings } from '../../settings/context/SettingsContext';
 import type { BodyWeightLog, BodyWeightRangeFilter } from '../types';
 
 const t = es.bodyWeight;
@@ -32,6 +34,9 @@ function parseWeight(text: string): number | null {
 }
 
 export function BodyWeightScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const { settings } = useSettings();
   const userId = useLocalUserId();
   const { logs, filteredLogs, filter, setFilter, isLoading, reload } =
     useBodyWeight(userId);
@@ -54,7 +59,7 @@ export function BodyWeightScreen() {
     if (!userId || weight === null) {
       return;
     }
-    await bodyWeightService.addLog(userId, weight, DEFAULT_WEIGHT_UNIT);
+    await bodyWeightService.addLog(userId, weight, settings.weightUnit);
     closeAddSheet();
     await reload();
   }
@@ -76,7 +81,11 @@ export function BodyWeightScreen() {
   const currentLog = logs[0];
   const chartPoints = [...filteredLogs].reverse().map(log => ({
     label: formatShortDate(log.loggedAt),
-    value: log.weight,
+    value: convertWeight(
+      log.weight,
+      log.weightUnit as 'kg' | 'lb',
+      settings.weightUnit,
+    ),
   }));
   const showEmptyState = !isLoading && logs.length === 0;
 
@@ -95,7 +104,11 @@ export function BodyWeightScreen() {
                 <View style={styles.currentCard}>
                   <Text style={styles.currentLabel}>{t.currentLabel}</Text>
                   <Text style={styles.currentValue}>
-                    {currentLog.weight} {currentLog.weightUnit}
+                    {formatWeight(
+                      currentLog.weight,
+                      currentLog.weightUnit as 'kg' | 'lb',
+                      settings.weightUnit,
+                    )}
                   </Text>
                 </View>
               )}
@@ -116,7 +129,9 @@ export function BodyWeightScreen() {
                 <View style={styles.chartCard}>
                   <ProgressChart
                     points={chartPoints}
-                    formatValue={value => `${value} ${DEFAULT_WEIGHT_UNIT}`}
+                    formatValue={value =>
+                      `${Math.round(value * 10) / 10} ${settings.weightUnit}`
+                    }
                   />
                 </View>
               )}
@@ -135,7 +150,11 @@ export function BodyWeightScreen() {
             <Text style={styles.rowDate}>{formatDateTime(item.loggedAt)}</Text>
             <View style={styles.rowRight}>
               <Text style={styles.rowValue}>
-                {item.weight} {item.weightUnit}
+                {formatWeight(
+                  item.weight,
+                  item.weightUnit as 'kg' | 'lb',
+                  settings.weightUnit,
+                )}
               </Text>
               <Button
                 label={es.common.delete}
@@ -157,7 +176,7 @@ export function BodyWeightScreen() {
         submitDisabled={parseWeight(weightText) === null}
       >
         <TextField
-          label={t.weightLabel}
+          label={t.weightLabel(settings.weightUnit)}
           keyboardType="numeric"
           value={weightText}
           onChangeText={setWeightText}
@@ -168,79 +187,81 @@ export function BodyWeightScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  emptyContainer: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  emptyText: {
-    color: colors.muted,
-    textAlign: 'center',
-  },
-  currentCard: {
-    backgroundColor: '#E8F5E9',
-    borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-    alignItems: 'center',
-  },
-  currentLabel: {
-    fontSize: 12,
-    color: colors.muted,
-  },
-  currentValue: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  filterRow: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-    marginBottom: spacing.md,
-  },
-  filterButton: {
-    flex: 1,
-  },
-  chartCard: {
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
-  },
-  rowDate: {
-    fontSize: 13,
-    color: colors.muted,
-  },
-  rowRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  rowValue: {
-    fontSize: 14,
-    color: colors.text,
-    fontWeight: '600',
-  },
-  footer: {
-    padding: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    listContent: {
+      padding: spacing.md,
+    },
+    emptyContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    emptyText: {
+      color: colors.muted,
+      textAlign: 'center',
+    },
+    currentCard: {
+      backgroundColor: colors.accentSoft,
+      borderRadius: 12,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      alignItems: 'center',
+    },
+    currentLabel: {
+      fontSize: 12,
+      color: colors.muted,
+    },
+    currentValue: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: colors.primary,
+    },
+    filterRow: {
+      flexDirection: 'row',
+      gap: spacing.xs,
+      marginBottom: spacing.md,
+    },
+    filterButton: {
+      flex: 1,
+    },
+    chartCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    rowDate: {
+      fontSize: 13,
+      color: colors.muted,
+    },
+    rowRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    rowValue: {
+      fontSize: 14,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    footer: {
+      padding: spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+  });
+}

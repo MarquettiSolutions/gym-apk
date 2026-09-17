@@ -15,33 +15,35 @@ import { plansService } from '../services';
 import { ExerciseThumbnail } from '../../../shared/components/ExerciseThumbnail';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { DayExerciseForm } from '../components/DayExerciseForm';
-import { colors } from '../../../shared/theme/colors';
+import { useTheme } from '../../../shared/theme/ThemeContext';
+import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
-import { DEFAULT_REST_SECONDS } from '../constants';
+import { useSettings } from '../../settings/context/SettingsContext';
 import type { DayExerciseFormValues, Exercise } from '../types';
 
 type Props = NativeStackScreenProps<PlansStackParamList, 'ExercisePicker'>;
 
 const t = es.plans.exercisePicker;
 
-const DEFAULT_FORM: DayExerciseFormValues = {
-  targetSets: 3,
-  targetReps: 10,
-  targetWeight: null,
-  restSeconds: DEFAULT_REST_SECONDS,
-  notes: null,
-};
-
 export function ExercisePickerScreen({ route, navigation }: Props) {
   const { dayId } = route.params;
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const { settings } = useSettings();
   const { exercises, isLoading } = useExerciseCatalog();
   const [search, setSearch] = useState('');
   const [muscleGroup, setMuscleGroup] = useState<string | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
     null,
   );
-  const [form, setForm] = useState<DayExerciseFormValues>(DEFAULT_FORM);
+  const [form, setForm] = useState<DayExerciseFormValues>(() => ({
+    targetSets: 3,
+    targetReps: 10,
+    targetWeight: null,
+    restSeconds: settings.defaultRestSeconds,
+    notes: null,
+  }));
 
   const muscleGroups = useMemo(() => {
     const groups = new Set<string>();
@@ -67,7 +69,13 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
 
   function openConfigureSheet(exercise: Exercise) {
     setSelectedExercise(exercise);
-    setForm(DEFAULT_FORM);
+    setForm({
+      targetSets: 3,
+      targetReps: 10,
+      targetWeight: null,
+      restSeconds: settings.defaultRestSeconds,
+      notes: null,
+    });
   }
 
   async function handleConfirm() {
@@ -181,81 +189,83 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  search: {
-    margin: spacing.md,
-    marginBottom: spacing.sm,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 8,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-    fontSize: 15,
-    color: colors.text,
-  },
-  chipsRow: {
-    flexGrow: 0,
-  },
-  chipsContent: {
-    paddingHorizontal: spacing.md,
-    gap: spacing.xs,
-  },
-  chip: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    marginRight: spacing.xs,
-  },
-  chipSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  chipLabel: {
-    fontSize: 13,
-    color: colors.text,
-  },
-  chipLabelSelected: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  emptyContainer: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.lg,
-  },
-  emptyText: {
-    color: colors.muted,
-    textAlign: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
-  },
-  rowInfo: {
-    marginLeft: spacing.sm,
-    flex: 1,
-  },
-  rowName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  rowMeta: {
-    fontSize: 12,
-    color: colors.muted,
-    marginTop: 2,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    search: {
+      margin: spacing.md,
+      marginBottom: spacing.sm,
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+      borderRadius: 8,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.sm,
+      fontSize: 15,
+      color: colors.text,
+    },
+    chipsRow: {
+      flexGrow: 0,
+    },
+    chipsContent: {
+      paddingHorizontal: spacing.md,
+      gap: spacing.xs,
+    },
+    chip: {
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+      marginRight: spacing.xs,
+    },
+    chipSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    chipLabel: {
+      fontSize: 13,
+      color: colors.text,
+    },
+    chipLabelSelected: {
+      color: colors.onPrimary,
+      fontWeight: '600',
+    },
+    listContent: {
+      padding: spacing.md,
+    },
+    emptyContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.lg,
+    },
+    emptyText: {
+      color: colors.muted,
+      textAlign: 'center',
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    rowInfo: {
+      marginLeft: spacing.sm,
+      flex: 1,
+    },
+    rowName: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    rowMeta: {
+      fontSize: 12,
+      color: colors.muted,
+      marginTop: 2,
+    },
+  });
+}

@@ -12,6 +12,19 @@ jest.mock('react-native-blob-util', () => ({
     dirs: { DocumentDir: '/mock/document-dir', CacheDir: '/mock/cache-dir' },
     exists: jest.fn(async () => true),
     mkdir: jest.fn(async () => undefined),
+    writeFile: jest.fn(async () => undefined),
+    readFile: jest.fn(async () => '{}'),
   },
   config: jest.fn(() => ({ fetch: jest.fn(async () => undefined) })),
+  android: {
+    actionViewIntent: jest.fn(async () => true),
+  },
+}));
+jest.mock('@react-native-documents/picker', () => ({
+  pick: jest.fn(),
+  saveDocuments: jest.fn(),
+  types: { json: 'application/json' },
+  errorCodes: { OPERATION_CANCELED: 'OPERATION_CANCELED' },
+  isErrorWithCode: error =>
+    typeof error === 'object' && error !== null && 'code' in error,
 }));

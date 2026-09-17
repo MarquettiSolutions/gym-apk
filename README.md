@@ -28,6 +28,10 @@ npm run android       # build + instalar en emulador/dispositivo
 Si la build falla o se cuelga (compilación nativa, NDK, etc.), ver
 [`DOCS/ANDROID_BUILD_TROUBLESHOOTING.md`](./DOCS/ANDROID_BUILD_TROUBLESHOOTING.md).
 
+Antes de cerrar una fase nueva, recorrer
+[`DOCS/REGRESSION_CHECKLIST.md`](./DOCS/REGRESSION_CHECKLIST.md) en el emulador (spec 9.2) para
+confirmar que no se rompió nada de fases anteriores.
+
 ## Calidad
 
 ```bash
@@ -38,5 +42,7 @@ npm test
 
 ## Estado
 
-Fase 0 (setup del proyecto) completa. Ver la sección 9 de `DOCS/SPEC.md` para
-las fases siguientes.
+Fases 0 a 4 completas y mergeadas a `main` (setup, catálogo, planes, sesión
+de entrenamiento, historial/progreso/peso corporal). Fase 5 (ajustes, tema
+claro/oscuro y backup) implementada, con PR #7 abierto pendiente de review.
+Ver la sección 9 de `DOCS/SPEC.md` para el detalle y las fases siguientes.

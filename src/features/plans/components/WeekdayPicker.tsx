@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../../shared/theme/colors';
+import { useTheme } from '../../../shared/theme/ThemeContext';
+import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { WEEKDAY_DISPLAY_ORDER, WEEKDAY_LABELS } from '../constants';
 
@@ -10,6 +11,8 @@ interface WeekdayPickerProps {
 }
 
 export function WeekdayPicker({ value, onChange }: WeekdayPickerProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.row}>
       {WEEKDAY_DISPLAY_ORDER.map(weekday => {
@@ -36,29 +39,31 @@ export function WeekdayPicker({ value, onChange }: WeekdayPickerProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  chip: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-  },
-  chipSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  chipLabel: {
-    fontSize: 13,
-    color: colors.text,
-  },
-  chipLabelSelected: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.xs,
+    },
+    chip: {
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+    },
+    chipSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    chipLabel: {
+      fontSize: 13,
+      color: colors.text,
+    },
+    chipLabelSelected: {
+      color: colors.onPrimary,
+      fontWeight: '600',
+    },
+  });
+}

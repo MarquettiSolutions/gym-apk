@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import type { ThemeColors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';
@@ -20,6 +21,8 @@ export function Button({
   disabled = false,
   loading = false,
 }: ButtonProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const isDisabled = disabled || loading;
   return (
     <Pressable
@@ -30,14 +33,14 @@ export function Button({
       disabled={isDisabled}
       style={({ pressed }) => [
         styles.base,
-        variantStyles[variant],
+        styles[variant],
         isDisabled && styles.disabled,
         pressed && !isDisabled && styles.pressed,
       ]}
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'secondary' ? colors.primary : '#FFFFFF'}
+          color={variant === 'secondary' ? colors.primary : colors.onPrimary}
         />
       ) : (
         <Text
@@ -53,40 +56,39 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pressed: {
-    opacity: 0.75,
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  label: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  labelSecondary: {
-    color: colors.primary,
-  },
-});
-
-const variantStyles = StyleSheet.create({
-  primary: {
-    backgroundColor: colors.primary,
-  },
-  secondary: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  danger: {
-    backgroundColor: '#C62828',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    pressed: {
+      opacity: 0.75,
+    },
+    disabled: {
+      opacity: 0.5,
+    },
+    label: {
+      color: colors.onPrimary,
+      fontWeight: '600',
+      fontSize: 14,
+    },
+    labelSecondary: {
+      color: colors.primary,
+    },
+    primary: {
+      backgroundColor: colors.primary,
+    },
+    secondary: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.primary,
+    },
+    danger: {
+      backgroundColor: colors.danger,
+    },
+  });
+}
