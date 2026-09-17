@@ -4,7 +4,7 @@ import type { RootTabParamList } from './types';
 import { WorkoutSessionStackNavigator } from './WorkoutSessionStackNavigator';
 import { PlansStackNavigator } from './PlansStackNavigator';
 import { ExercisesScreen } from '../features/exercises/screens/ExercisesScreen';
-import { HistoryScreen } from '../features/history/screens/HistoryScreen';
+import { HistoryStackNavigator } from './HistoryStackNavigator';
 import { SettingsScreen } from '../features/settings/screens/SettingsScreen';
 import { es } from '../shared/i18n/es';
 
@@ -30,8 +30,8 @@ export function RootTabNavigator() {
       />
       <Tab.Screen
         name="History"
-        component={HistoryScreen}
-        options={{ title: es.tabs.history }}
+        component={HistoryStackNavigator}
+        options={{ title: es.tabs.history, headerShown: false }}
       />
       <Tab.Screen
         name="Settings"

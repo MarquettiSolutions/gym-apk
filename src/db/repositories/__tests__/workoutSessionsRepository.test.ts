@@ -147,4 +147,54 @@ describe('WorkoutSessionsRepository', () => {
 
     expect(last?.weightDone).toBe(50);
   });
+
+  it('listByUser devuelve las sesiones de más reciente a más antigua', async () => {
+    const { repo, user, day } = await setup();
+    const older = await repo.create({ userId: user.id, planDayId: day.id });
+    await new Promise(resolve => setTimeout(resolve, 5));
+    const newer = await repo.create({ userId: user.id, planDayId: day.id });
+
+    const sessions = await repo.listByUser(user.id);
+
+    expect(sessions.map(s => s.id)).toEqual([newer.id, older.id]);
+  });
+
+  it('listSetsByExercise devuelve las series no salteadas de todas las sesiones, de más antigua a más reciente', async () => {
+    const { repo, user, day } = await setup();
+    const olderSession = await repo.create({
+      userId: user.id,
+      planDayId: day.id,
+    });
+    await repo.addSet({
+      sessionId: olderSession.id,
+      exerciseId: 'ex-1',
+      setNumber: 1,
+      repsDone: 8,
+      weightDone: 40,
+      completedAt: '2026-01-01T00:00:00.000Z',
+    });
+    const newerSession = await repo.create({
+      userId: user.id,
+      planDayId: day.id,
+    });
+    await repo.addSet({
+      sessionId: newerSession.id,
+      exerciseId: 'ex-1',
+      setNumber: 1,
+      repsDone: 10,
+      weightDone: 50,
+      completedAt: '2026-02-01T00:00:00.000Z',
+    });
+    await repo.addSet({
+      sessionId: newerSession.id,
+      exerciseId: 'ex-1',
+      setNumber: 2,
+      skipped: true,
+      completedAt: null,
+    });
+
+    const sets = await repo.listSetsByExercise(user.id, 'ex-1');
+
+    expect(sets.map(s => s.weightDone)).toEqual([40, 50]);
+  });
 });

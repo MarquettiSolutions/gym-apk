@@ -1,6 +1,6 @@
 import { asc, eq } from 'drizzle-orm';
 import type { AppDatabase } from '../types';
-import { planDays, planDayExercises } from '../schema';
+import { planDays, planDayExercises, workoutSessions } from '../schema';
 import { assertDefined } from '../../shared/utils/assert';
 import { nowIso } from '../../shared/utils/dates';
 
@@ -44,7 +44,13 @@ export function createPlanDaysRepository(db: AppDatabase): PlanDaysRepository {
     },
     async remove(id) {
       // Sin ON DELETE CASCADE en el esquema (spec 4.3): borra primero los
-      // ejercicios de ese día.
+      // ejercicios de ese día. Las sesiones históricas de ese día quedan
+      // con `plan_day_id = null` en vez de borrarse (spec 4.4: el
+      // historial sobrevive al borrado del plan de origen).
+      await db
+        .update(workoutSessions)
+        .set({ planDayId: null })
+        .where(eq(workoutSessions.planDayId, id));
       await db
         .delete(planDayExercises)
         .where(eq(planDayExercises.planDayId, id));
