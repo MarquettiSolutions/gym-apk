@@ -402,6 +402,21 @@ Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
 7. **Fase 6 (opcional)** — Notificaciones diarias, superseries, ejercicios personalizados con
    media propia.
 
+### 9.1 Flujo de trabajo con git por fase
+
+Para mantener el repositorio ordenado y el historial legible, cada fase se desarrolla en su propia
+rama, nunca commiteando directo a `main`:
+
+- **Rama por fase**, creada desde `origin/main` actualizado, con el nombre
+  `feature/fase-N-<slug-corto-en-español>` (ej. `feature/fase-3-sesion-entrenamiento`, siguiendo el
+  mismo patrón ya usado en `feature/fase-0-setup-proyecto`, `feature/fase-1-modelo-datos-catalogo` y
+  `feature/fase-2-plan-semanal-crud`).
+- Los commits de esa fase van todos en esa rama.
+- Al terminar la fase, se abre un **Pull Request** de esa rama hacia `main` (no merge/push directo a
+  `main`), para que quede registro y contexto de cada fase como una unidad revisable en GitHub.
+- Si una fase requiere trabajo adicional después de abierto el PR (fixes, ajustes pedidos en review),
+  se sigue commiteando en la misma rama; no se abre una rama nueva para eso.
+
 ## 10. Criterios de aceptación (v1 mínima viable)
 - Se puede crear un plan semanal con al menos un día y ejercicios, y queda guardado en SQLite.
 - El plan se repite automáticamente cada semana sin acción del usuario.
@@ -443,3 +458,24 @@ agente de implementación.
 - wger (proyecto open source de fitness con API propia): https://github.com/wger-project/wger
 - free-exercise-db (dataset de ejercicios en dominio público): https://github.com/yuhonas/free-exercise-db
 - ExerciseDB API (catálogo con GIFs/videos, revisar términos de uso): https://github.com/exercisedb/exercisedb-api
+
+## 13. TODO para la próxima versión
+
+- **Pantalla de detalle del ejercicio con imagen/video demostrativo**
+  (spec 5.2 y 5.3: "Al tocar un ejercicio se abre el detalle con imagen/video
+  de cómo ejecutarlo correctamente"). No se implementó en la Fase 3 porque
+  todavía no hay un proveedor de video elegido: la fuente actual del catálogo
+  (`free-exercise-db`, usada en la Fase 1) no trae `video_remote_url` — ese
+  campo queda `null` para todos los ejercicios importados. La infraestructura
+  de cache bajo demanda (`src/catalog/videoCache.ts`,
+  `src/catalog/mediaCache.ts`, columnas `video_remote_url`/
+  `video_local_path`/`video_cached_at` en `exercises`) ya está lista desde la
+  Fase 1; falta:
+  1. Elegir y confirmar el proveedor concreto (ExerciseDB u otro con
+     licencia/cuota clara para uso comercial, ver tabla de la sección 5.2).
+  2. Poblar `video_remote_url` al importar/actualizar el catálogo desde ese
+     proveedor.
+  3. Construir la pantalla de detalle (imagen grande + reproductor
+     `react-native-video` + instrucciones + grupo muscular), enganchada
+     desde el checklist de la sesión (`WorkoutSessionScreen`) y desde el
+     catálogo (`ExercisesScreen`/`ExercisePickerScreen`).
