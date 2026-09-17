@@ -98,4 +98,51 @@ export const es = {
       configureTitle: 'Configurar ejercicio',
     },
   },
+  workoutSession: {
+    today: {
+      noActivePlanMessage:
+        'Todavía no tienes un plan activo. Elige uno en "Mis planes" para ver tu entrenamiento de hoy.',
+      restDayMessage: 'Hoy no tienes entrenamiento planificado. ¡A descansar!',
+      startButton: 'Comenzar entrenamiento',
+      continueButton: 'Continuar entrenamiento',
+    },
+    session: {
+      finishButton: 'Finalizar entrenamiento',
+      finishConfirmTitle: 'Finalizar entrenamiento',
+      finishConfirmMessage:
+        'Todavía hay series sin registrar. ¿Quieres finalizar igual?',
+      finishConfirmButton: 'Sí, finalizar',
+      skipExerciseButton: 'Omitir ejercicio',
+      skipExerciseConfirmTitle: 'Omitir ejercicio',
+      skipExerciseConfirmMessage:
+        '¿Omitir las series pendientes de este ejercicio?',
+      setLabel: (n: number) => `Serie ${n}`,
+      setDoneFormat: (
+        reps: number | null,
+        weight: number | null,
+        unit: string,
+      ) =>
+        weight !== null
+          ? `${reps ?? 0} reps x ${weight} ${unit}`
+          : `${reps ?? 0} reps`,
+      setSkippedLabel: 'Omitida',
+      setPendingButton: 'Registrar',
+      registerSetTitle: 'Registrar serie',
+      repsLabel: 'Repeticiones realizadas',
+      weightLabel: 'Peso usado (opcional)',
+      markDoneButton: 'Marcar hecha',
+      emptySession: 'Este día no tiene ejercicios cargados.',
+    },
+    restTimer: {
+      title: 'Descanso',
+      pauseButton: 'Pausar',
+      resumeButton: 'Reanudar',
+      skipButton: 'Saltar descanso',
+      addSecondsButton: (n: number) => `+${n}s`,
+      subtractSecondsButton: (n: number) => `-${n}s`,
+      notificationTitle: '¡Descanso terminado!',
+      notificationBody: 'Es hora de la siguiente serie.',
+      channelName: 'Temporizador de descanso',
+    },
+  },
 };
