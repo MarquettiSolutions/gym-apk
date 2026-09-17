@@ -479,3 +479,12 @@ agente de implementación.
      `react-native-video` + instrucciones + grupo muscular), enganchada
      desde el checklist de la sesión (`WorkoutSessionScreen`) y desde el
      catálogo (`ExercisesScreen`/`ExercisePickerScreen`).
+
+- **Registro de peso corporal con fecha/hora manual** (spec 5.5: "indicando
+  el peso y, opcionalmente, la fecha/hora (por defecto 'ahora')"). La Fase 4
+  implementó el alta rápida (siempre con `loggedAt = ahora`,
+  `bodyWeightService.addLog` en `src/features/history/services/`), pero
+  todavía no hay selector de fecha/hora en `BodyWeightScreen` para cargar un
+  registro atrasado — no se sumó ninguna librería de date/time picker al
+  proyecto. `addLog` ya acepta un `loggedAt` opcional, así que solo falta el
+  control de UI.
