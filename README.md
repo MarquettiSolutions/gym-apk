@@ -38,5 +38,6 @@ npm test
 
 ## Estado
 
-Fase 0 (setup del proyecto) completa. Ver la sección 9 de `DOCS/SPEC.md` para
-las fases siguientes.
+Fases 0 a 5 completas (setup, catálogo, planes, sesión de entrenamiento,
+historial/progreso/peso corporal, y ajustes/tema/backup). Ver la sección 9 de
+`DOCS/SPEC.md` para las fases siguientes.
