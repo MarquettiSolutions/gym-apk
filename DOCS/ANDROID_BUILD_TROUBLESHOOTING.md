@@ -100,7 +100,31 @@ op-sqlite v18+ nativamente (revisar el changelog / los release candidates
 `1.0.0-rc.*`), este parche debería eliminarse y volver a generarse si hiciera
 falta, o borrarse directamente si el bug ya no existe en la nueva versión.
 
-## 5. Flujo de trabajo normal para iterar
+## 5. Crash de la JVM del daemon de Gradle / del compilador de Kotlin (`SIGSEGV`, distinto de clang++)
+
+**Síntoma:** `./gradlew assembleDebug` (o `installDebug`) falla con algo como:
+
+```
+Gradle build daemon disappeared unexpectedly (it may have been killed or may have crashed)
+...
+JVM crash log found: file:///.../android/hs_err_pid<PID>.log
+```
+
+o, si el crash ocurre compilando un módulo con Kotlin (ej. `react-native-gesture-handler`):
+
+```
+e: Daemon compilation failed: Connection to the Kotlin daemon has been unexpectedly lost.
+...
+Using fallback strategy: Compile without Kotlin daemon
+#  SIGSEGV (0xb) at pc=... 
+```
+
+**Causa:** la misma inestabilidad de este entorno de desarrollo descrita en el punto 2 (procesos nativos que crashean intermitentemente bajo compilación), pero afectando a la JVM en sí, no solo a `clang++`. Se descartó que fuera un problema del JIT: reintentando con `-Xint` (JIT completamente desactivado vía
+`-Dorg.gradle.jvmargs="-Xint -Xmx2048m -XX:MaxMetaspaceSize=512m"`) el crash persistió igual, esta vez dentro de `libjvm.so` en modo interpretado puro. Es decir, no es un bug de código Java/Kotlin ni del JIT — es algo más profundo del runtime nativo de la JVM en este entorno puntual (probablemente vinculado a virtualización/hardware del sandbox, no al proyecto). Se reprodujo incluso en tareas internas de Gradle (cache interno de Guava/Gradle) antes de llegar a compilar ningún código del proyecto, así que **no tiene relación con el código de la app ni con dependencias agregadas** — se confirmó así al agregar `react-native-reanimated`/`react-native-gesture-handler`/`react-native-draggable-flatlist` en la Fase 2.
+
+**Solución:** igual que en el punto 2, es intermitente. `./gradlew --stop` para matar daemons corruptos y reintentar `./gradlew assembleDebug` de nuevo suele terminar funcionando (probar 2-3 veces antes de asumir que es otra cosa). Los archivos `hs_err_pid*.log` que puedan quedar sueltos en `android/` son basura de debug de la JVM, no forman parte del proyecto — se pueden borrar sin problema.
+
+## 6. Flujo de trabajo normal para iterar
 
 - **Cambios de JS/TS** (pantallas, lógica, estilos): con Metro corriendo, se
   recargan solos (Fast Refresh) al guardar el archivo. No hace falta reinstalar
