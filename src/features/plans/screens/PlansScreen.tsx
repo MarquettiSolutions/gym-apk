@@ -1,12 +1,225 @@
-import React from 'react';
-import { PlaceholderScreen } from '../../../shared/components/PlaceholderScreen';
+import React, { useCallback, useState } from 'react';
+import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { PlansStackParamList } from '../../../navigation/types';
+import { usePlans } from '../hooks/usePlans';
+import { useLocalUserId } from '../../../shared/hooks/useLocalUserId';
+import { plansService } from '../services';
+import { Button } from '../../../shared/components/Button';
+import { TextField } from '../../../shared/components/TextField';
+import { FormSheet } from '../../../shared/components/FormSheet';
+import { colors } from '../../../shared/theme/colors';
+import { spacing } from '../../../shared/theme/spacing';
 import { es } from '../../../shared/i18n/es';
+import type { Plan } from '../types';
 
-export function PlansScreen() {
+type Props = NativeStackScreenProps<PlansStackParamList, 'PlansList'>;
+
+const t = es.plans.list;
+
+export function PlansScreen({ navigation }: Props) {
+  const userId = useLocalUserId();
+  const { plans, isLoading, reload } = usePlans(userId);
+  const [isCreateVisible, setCreateVisible] = useState(false);
+  const [newPlanName, setNewPlanName] = useState('');
+
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [reload]),
+  );
+
+  function closeCreateSheet() {
+    setCreateVisible(false);
+    setNewPlanName('');
+  }
+
+  async function handleCreate() {
+    const trimmedName = newPlanName.trim();
+    if (!userId || trimmedName === '') {
+      return;
+    }
+    const plan = await plansService.createPlan(userId, trimmedName);
+    closeCreateSheet();
+    navigation.navigate('PlanEditor', { planId: plan.id });
+  }
+
+  async function handleActivate(plan: Plan) {
+    if (!userId) {
+      return;
+    }
+    await plansService.setActivePlan(userId, plan.id);
+    await reload();
+  }
+
+  async function handleDuplicate(plan: Plan) {
+    if (!userId) {
+      return;
+    }
+    await plansService.duplicatePlan(userId, plan.id);
+    await reload();
+  }
+
+  function handleDelete(plan: Plan) {
+    Alert.alert(t.deleteConfirmTitle, t.deleteConfirmMessage(plan.name), [
+      { text: es.common.cancel, style: 'cancel' },
+      {
+        text: es.common.confirmDeleteButton,
+        style: 'destructive',
+        onPress: async () => {
+          await plansService.deletePlan(plan.id);
+          await reload();
+        },
+      },
+    ]);
+  }
+
+  const showEmptyState = !isLoading && plans.length === 0;
+
   return (
-    <PlaceholderScreen
-      title={es.screens.plans.title}
-      message={es.screens.plans.placeholder}
-    />
+    <View style={styles.container}>
+      <FlatList
+        data={plans}
+        keyExtractor={item => item.id}
+        contentContainerStyle={
+          showEmptyState ? styles.emptyContainer : styles.listContent
+        }
+        ListEmptyComponent={
+          isLoading ? (
+            <Text style={styles.emptyText}>{es.common.loading}</Text>
+          ) : (
+            <Text style={styles.emptyText}>{t.empty}</Text>
+          )
+        }
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.planName}>{item.name}</Text>
+              {item.isActive && (
+                <View style={styles.activeBadge}>
+                  <Text style={styles.activeBadgeText}>
+                    {es.common.activeBadge}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <View style={styles.cardActions}>
+              <View style={styles.cardActionButton}>
+                <Button
+                  label={es.common.edit}
+                  variant="secondary"
+                  onPress={() =>
+                    navigation.navigate('PlanEditor', { planId: item.id })
+                  }
+                />
+              </View>
+              {!item.isActive && (
+                <View style={styles.cardActionButton}>
+                  <Button
+                    label={es.common.activate}
+                    variant="secondary"
+                    onPress={() => handleActivate(item)}
+                  />
+                </View>
+              )}
+              <View style={styles.cardActionButton}>
+                <Button
+                  label={es.common.duplicate}
+                  variant="secondary"
+                  onPress={() => handleDuplicate(item)}
+                />
+              </View>
+              <View style={styles.cardActionButton}>
+                <Button
+                  label={es.common.delete}
+                  variant="danger"
+                  onPress={() => handleDelete(item)}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+      />
+      <View style={styles.footer}>
+        <Button label={t.createButton} onPress={() => setCreateVisible(true)} />
+      </View>
+      <FormSheet
+        visible={isCreateVisible}
+        title={t.newPlanTitle}
+        onCancel={closeCreateSheet}
+        onSubmit={handleCreate}
+        submitDisabled={newPlanName.trim() === ''}
+      >
+        <TextField
+          label={t.nameLabel}
+          placeholder={t.namePlaceholder}
+          value={newPlanName}
+          onChangeText={setNewPlanName}
+          autoFocus
+        />
+      </FormSheet>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  listContent: {
+    padding: spacing.md,
+  },
+  emptyContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing.lg,
+  },
+  emptyText: {
+    color: colors.muted,
+    textAlign: 'center',
+  },
+  card: {
+    backgroundColor: '#F7F7F7',
+    borderRadius: 12,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  planName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    flex: 1,
+  },
+  activeBadge: {
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+  },
+  activeBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  cardActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
+  cardActionButton: {
+    minWidth: 90,
+  },
+  footer: {
+    padding: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: '#EEEEEE',
+  },
+});
