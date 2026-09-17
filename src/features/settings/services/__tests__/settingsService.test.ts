@@ -26,6 +26,9 @@ describe('settingsService', () => {
     await service.saveSetting('theme', 'dark');
     await service.saveSetting('timerSoundEnabled', false);
     await service.saveSetting('timerVibrationEnabled', false);
+    await service.saveSetting('dailyReminderEnabled', true);
+    await service.saveSetting('dailyReminderHour', 7);
+    await service.saveSetting('dailyReminderMinute', 30);
 
     const settings = await service.loadSettings();
 
@@ -35,6 +38,9 @@ describe('settingsService', () => {
       theme: 'dark',
       timerSoundEnabled: false,
       timerVibrationEnabled: false,
+      dailyReminderEnabled: true,
+      dailyReminderHour: 7,
+      dailyReminderMinute: 30,
     });
   });
 

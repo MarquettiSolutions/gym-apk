@@ -184,6 +184,13 @@ export const es = {
       empty: 'Todavía no hay registros de este ejercicio.',
     },
   },
+  notifications: {
+    dailyReminder: {
+      channelName: 'Recordatorio diario',
+      title: 'Hora de entrenar',
+      body: 'No te olvides de revisar tu plan de hoy.',
+    },
+  },
   bodyWeight: {
     title: 'Peso corporal',
     empty: 'Todavía no registraste tu peso.',
@@ -237,6 +244,10 @@ export const es = {
     },
     timerSoundLabel: 'Sonido al terminar el descanso',
     timerVibrationLabel: 'Vibración al terminar el descanso',
+    dailyReminderLabel: 'Recordatorio diario de entrenamiento',
+    dailyReminderTimeLabel: 'Hora del recordatorio',
+    dailyReminderTimeFormat: (hour: number, minute: number) =>
+      `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
     exportButton: 'Exportar backup',
     exportHint:
       'Genera un archivo con tus planes, sesiones, historial y peso corporal para guardarlo o compartirlo.',

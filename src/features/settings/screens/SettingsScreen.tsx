@@ -8,6 +8,8 @@ import {
   Text,
   View,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useSettings } from '../context/SettingsContext';
 import { backupService } from '../services';
 import { Button } from '../../../shared/components/Button';
@@ -46,6 +48,7 @@ export function SettingsScreen() {
   );
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [isPickingTime, setIsPickingTime] = useState(false);
 
   function commitRestSeconds() {
     const parsed = parseInt(restSecondsText, 10);
@@ -54,6 +57,15 @@ export function SettingsScreen() {
     } else {
       setRestSecondsText(String(settings.defaultRestSeconds));
     }
+  }
+
+  function handleTimeChange(event: DateTimePickerEvent, date?: Date) {
+    setIsPickingTime(false);
+    if (event.type !== 'set' || !date) {
+      return;
+    }
+    updateSetting('dailyReminderHour', date.getHours());
+    updateSetting('dailyReminderMinute', date.getMinutes());
   }
 
   async function handleExport() {
@@ -162,6 +174,51 @@ export function SettingsScreen() {
             trackColor={{ true: colors.primary }}
           />
         </View>
+      </Section>
+
+      <Section title={t.sections.notifications}>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>{t.dailyReminderLabel}</Text>
+          <Switch
+            accessibilityRole="switch"
+            accessibilityLabel={t.dailyReminderLabel}
+            accessibilityState={{ checked: settings.dailyReminderEnabled }}
+            value={settings.dailyReminderEnabled}
+            onValueChange={value =>
+              updateSetting('dailyReminderEnabled', value)
+            }
+            trackColor={{ true: colors.primary }}
+          />
+        </View>
+        {settings.dailyReminderEnabled ? (
+          <View style={styles.switchRow}>
+            <Text style={styles.switchLabel}>{t.dailyReminderTimeLabel}</Text>
+            <Button
+              label={t.dailyReminderTimeFormat(
+                settings.dailyReminderHour,
+                settings.dailyReminderMinute,
+              )}
+              variant="secondary"
+              onPress={() => setIsPickingTime(true)}
+            />
+          </View>
+        ) : null}
+        {isPickingTime ? (
+          <DateTimePicker
+            value={
+              new Date(
+                2000,
+                0,
+                1,
+                settings.dailyReminderHour,
+                settings.dailyReminderMinute,
+              )
+            }
+            mode="time"
+            is24Hour
+            onChange={handleTimeChange}
+          />
+        ) : null}
       </Section>
 
       <Section title={t.sections.data}>

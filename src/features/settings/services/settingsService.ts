@@ -11,6 +11,9 @@ const SETTINGS_KEYS: Record<keyof AppSettings, string> = {
   theme: 'theme',
   timerSoundEnabled: 'timer_sound_enabled',
   timerVibrationEnabled: 'timer_vibration_enabled',
+  dailyReminderEnabled: 'daily_reminder_enabled',
+  dailyReminderHour: 'daily_reminder_hour',
+  dailyReminderMinute: 'daily_reminder_minute',
 };
 
 function parseNumber(value: string | undefined, fallback: number): number {
@@ -43,12 +46,18 @@ export function createSettingsService(repositories: Repositories) {
       themeRaw,
       timerSoundEnabledRaw,
       timerVibrationEnabledRaw,
+      dailyReminderEnabledRaw,
+      dailyReminderHourRaw,
+      dailyReminderMinuteRaw,
     ] = await Promise.all([
       repositories.settings.get(SETTINGS_KEYS.defaultRestSeconds),
       repositories.settings.get(SETTINGS_KEYS.weightUnit),
       repositories.settings.get(SETTINGS_KEYS.theme),
       repositories.settings.get(SETTINGS_KEYS.timerSoundEnabled),
       repositories.settings.get(SETTINGS_KEYS.timerVibrationEnabled),
+      repositories.settings.get(SETTINGS_KEYS.dailyReminderEnabled),
+      repositories.settings.get(SETTINGS_KEYS.dailyReminderHour),
+      repositories.settings.get(SETTINGS_KEYS.dailyReminderMinute),
     ]);
 
     return {
@@ -65,6 +74,18 @@ export function createSettingsService(repositories: Repositories) {
       timerVibrationEnabled: parseBoolean(
         timerVibrationEnabledRaw,
         DEFAULT_SETTINGS.timerVibrationEnabled,
+      ),
+      dailyReminderEnabled: parseBoolean(
+        dailyReminderEnabledRaw,
+        DEFAULT_SETTINGS.dailyReminderEnabled,
+      ),
+      dailyReminderHour: parseNumber(
+        dailyReminderHourRaw,
+        DEFAULT_SETTINGS.dailyReminderHour,
+      ),
+      dailyReminderMinute: parseNumber(
+        dailyReminderMinuteRaw,
+        DEFAULT_SETTINGS.dailyReminderMinute,
       ),
     };
   }

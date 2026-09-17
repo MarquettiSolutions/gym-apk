@@ -7,6 +7,9 @@ export interface AppSettings {
   theme: ThemePreference;
   timerSoundEnabled: boolean;
   timerVibrationEnabled: boolean;
+  dailyReminderEnabled: boolean;
+  dailyReminderHour: number;
+  dailyReminderMinute: number;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -15,4 +18,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   theme: 'system',
   timerSoundEnabled: true,
   timerVibrationEnabled: true,
+  dailyReminderEnabled: false,
+  dailyReminderHour: 8,
+  dailyReminderMinute: 0,
 };
