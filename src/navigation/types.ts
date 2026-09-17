@@ -5,6 +5,12 @@ export type PlansStackParamList = {
   ExercisePicker: { planId: string; dayId: string };
 };
 
+export type WorkoutSessionStackParamList = {
+  TodayWorkout: undefined;
+  WorkoutSession: { sessionId: string };
+  RestTimer: { seconds: number };
+};
+
 export type RootTabParamList = {
   TodayWorkout: undefined;
   Plans: undefined;

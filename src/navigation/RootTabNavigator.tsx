@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import type { RootTabParamList } from './types';
-import { TodayWorkoutScreen } from '../features/workout-session/screens/TodayWorkoutScreen';
+import { WorkoutSessionStackNavigator } from './WorkoutSessionStackNavigator';
 import { PlansStackNavigator } from './PlansStackNavigator';
 import { ExercisesScreen } from '../features/exercises/screens/ExercisesScreen';
 import { HistoryScreen } from '../features/history/screens/HistoryScreen';
@@ -15,8 +15,8 @@ export function RootTabNavigator() {
     <Tab.Navigator screenOptions={{ headerShown: true }}>
       <Tab.Screen
         name="TodayWorkout"
-        component={TodayWorkoutScreen}
-        options={{ title: es.tabs.today }}
+        component={WorkoutSessionStackNavigator}
+        options={{ title: es.tabs.today, headerShown: false }}
       />
       <Tab.Screen
         name="Plans"
