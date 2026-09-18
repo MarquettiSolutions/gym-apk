@@ -545,6 +545,32 @@ vez (ej. un requisito nuevo, un comando de setup que cambió, una dependencia na
 hace falta instalar aparte); no hace falta listar ahí el detalle de cada feature — para eso está
 la sección 5 de este documento y `DOCS/REGRESSION_CHECKLIST.md`.
 
+### 9.4 Versionado
+
+El proyecto sigue [Versionado Semántico](https://semver.org/lang/es/) y registra cada
+versión publicada en [`CHANGELOG.md`](../CHANGELOG.md). Hay **dos lugares que deben
+quedar sincronizados** — es fácil olvidarse de uno de los dos porque no fallan el build
+si quedan desalineados:
+
+- `package.json` → campo `"version"`.
+- `android/app/build.gradle` → `versionName` (string visible al usuario, debe matchear
+  `package.json`) y `versionCode` (entero que **siempre** se incrementa en cada versión
+  publicada al usuario final, nunca se reutiliza ni se resetea — Android lo usa para
+  decidir si una APK es una actualización válida sobre la instalada).
+
+**Al cerrar una versión nueva** (no necesariamente en cada fase individual — las Fases
+0-6 se acumularon todas bajo la primera versión, `0.0.1`, recién al cerrar v1):
+1. Bump de `version` en `package.json` y de `versionName`/`versionCode` en
+   `android/app/build.gradle` (los dos, sincronizados).
+2. Agregar la entrada correspondiente en `CHANGELOG.md` (formato Keep a Changelog:
+   qué se agregó/cambió/corrigió desde la versión anterior).
+3. Reinstalar el APK y confirmar la versión con
+   `adb shell dumpsys package com.marquettisolutions.gymapk | grep version` antes de
+   dar la tarea por terminada — no asumir que el bump "compiló" significa que quedó
+   bien aplicado.
+4. Recién después de mergear ese PR, crear el tag de git (`vX.Y.Z`) sobre el commit
+   mergeado, con el resumen de la versión en el mensaje del tag.
+
 ## 10. Criterios de aceptación (v1 mínima viable)
 - Se puede crear un plan semanal con al menos un día y ejercicios, y queda guardado en SQLite.
 - El plan se repite automáticamente cada semana sin acción del usuario.
