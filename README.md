@@ -107,6 +107,63 @@ Antes de cerrar una fase nueva, recorrer
 [`DOCS/REGRESSION_CHECKLIST.md`](./DOCS/REGRESSION_CHECKLIST.md) en el emulador (spec 9.2) para
 confirmar que no se rompió nada de fases anteriores.
 
+## Compilar para distintas arquitecturas
+
+Android soporta 4 arquitecturas de CPU (ABIs). Cualquier build (debug o release)
+compila las 4 por defecto, pero durante desarrollo conviene acotarlo a una sola
+con `-PreactNativeArchitectures=<abi>` — mucho más rápido y evita el problema de
+compilación paralela documentado en
+[`DOCS/ANDROID_BUILD_TROUBLESHOOTING.md`](./DOCS/ANDROID_BUILD_TROUBLESHOOTING.md).
+
+| ABI           | Cuándo usarla                                              |
+|---------------|-------------------------------------------------------------|
+| `x86_64`      | Emulador de Android Studio (el más común hoy)                |
+| `x86`         | Emuladores viejos de 32 bits (raro)                          |
+| `arm64-v8a`   | Celulares reales de los últimos ~8 años (la gran mayoría)    |
+| `armeabi-v7a` | Celulares reales viejos de 32 bits                           |
+
+Ver la arquitectura de un dispositivo ya conectado:
+```bash
+adb -s <device> shell getprop ro.product.cpu.abi
+```
+
+### Debug (para desarrollo — necesita Metro corriendo)
+
+```bash
+cd android
+./gradlew installDebug -Dorg.gradle.workers.max=1 -PreactNativeArchitectures=x86_64
+# o -PreactNativeArchitectures=arm64-v8a para instalar en un celular real
+```
+
+`npm run android` hace lo mismo pero sin acotar arquitectura ni pasar el flag de
+workers — más lento y más propenso al problema de compilación descrito en el
+troubleshooting; usalo solo si no te encontraste con ese problema.
+
+### Release (APK standalone, instalable en cualquier celular, sin Metro)
+
+```bash
+cd android
+./gradlew assembleRelease -Dorg.gradle.workers.max=1
+```
+
+Genera un APK **universal** (con las 4 arquitecturas embebidas, ~85 MB) en
+`android/app/build/outputs/apk/release/app-release.apk`. El JS queda empaquetado
+dentro del APK — no depende de Metro ni de que la compu esté prendida — y se
+firma con el keystore de debug, algo intencional: este proyecto se distribuye
+solo por sideload manual, no por Google Play (ver `DOCS/SPEC.md` sección 11).
+
+Para un release más liviano de una sola arquitectura (por ejemplo, para mandarlo
+directo a tu propio celular), agregá el mismo flag que en debug:
+
+```bash
+./gradlew assembleRelease -Dorg.gradle.workers.max=1 -PreactNativeArchitectures=arm64-v8a
+```
+
+Instalar el resultado en un dispositivo ya conectado por `adb`:
+```bash
+adb install android/app/build/outputs/apk/release/app-release.apk
+```
+
 ## Calidad
 
 ```bash
