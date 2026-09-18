@@ -4,6 +4,7 @@ App Android 100% offline para gestionar planes de entrenamiento de gimnasio.
 React Native CLI (bare) + TypeScript + SQLite (Drizzle ORM + op-sqlite).
 
 Ver la especificación funcional y técnica completa en [`DOCS/SPEC.md`](./DOCS/SPEC.md).
+Historial de versiones en [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## Requisitos
 
@@ -116,7 +117,9 @@ npm test
 
 ## Estado
 
-Fases 0 a 6 completas y mergeadas a `main` (setup, catálogo, planes, sesión
-de entrenamiento, historial/progreso/peso corporal, ajustes/tema/backup,
-superseries/ejercicios personalizados/recordatorio diario). Ver la sección 9
-de `DOCS/SPEC.md` para el detalle y las fases siguientes.
+**v1 cerrada (0.0.1)** — Fases 0 a 6 completas y mergeadas a `main` (setup,
+catálogo, planes, sesión de entrenamiento, historial/progreso/peso corporal,
+ajustes/tema/backup, superseries/ejercicios personalizados/recordatorio
+diario). Ver [`CHANGELOG.md`](./CHANGELOG.md) para el detalle de qué incluye
+cada versión y la sección 9 de `DOCS/SPEC.md` para el detalle de fases y lo
+pendiente para v2.
