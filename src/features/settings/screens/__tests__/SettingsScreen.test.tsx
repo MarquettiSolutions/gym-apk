@@ -110,4 +110,11 @@ describe('SettingsScreen', () => {
       true,
     );
   });
+
+  it('muestra la sección "Acerca de" con la versión de la app', async () => {
+    await render(<SettingsScreen />);
+
+    expect(screen.getByText(t.sections.about)).toBeTruthy();
+    expect(screen.getByText(t.versionLabel('unknown', 'unknown'))).toBeTruthy();
+  });
 });

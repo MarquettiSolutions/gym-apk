@@ -229,6 +229,7 @@ export const es = {
       timer: 'Temporizador',
       notifications: 'Notificaciones',
       data: 'Datos',
+      about: 'Acerca de',
     },
     defaultRestSecondsLabel: 'Descanso por defecto (segundos)',
     weightUnitLabel: 'Unidad de peso',
@@ -271,5 +272,7 @@ export const es = {
       } no se pudieron reenlazar a un ejercicio del catálogo y se omitieron.`,
     importErrorTitle: 'No se pudo importar',
     importErrorMessage: 'El archivo elegido no es un backup válido.',
+    versionLabel: (version: string, buildNumber: string) =>
+      `Versión ${version} (build ${buildNumber})`,
   },
 };

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DeviceInfo from 'react-native-device-info';
 import { useSettings } from '../context/SettingsContext';
 import { backupService } from '../services';
 import { Button } from '../../../shared/components/Button';
@@ -22,6 +23,8 @@ import { es } from '../../../shared/i18n/es';
 import type { ThemePreference, WeightUnit } from '../types';
 
 const t = es.settings;
+const appVersion = DeviceInfo.getVersion();
+const appBuildNumber = DeviceInfo.getBuildNumber();
 
 interface SectionProps {
   title: string;
@@ -240,6 +243,12 @@ export function SettingsScreen() {
             onPress={handleImport}
           />
         </View>
+      </Section>
+
+      <Section title={t.sections.about}>
+        <Text style={styles.hint}>
+          {t.versionLabel(appVersion, appBuildNumber)}
+        </Text>
       </Section>
     </ScrollView>
   );
