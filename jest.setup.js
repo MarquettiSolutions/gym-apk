@@ -24,6 +24,9 @@ jest.mock('@react-native-community/datetimepicker', () => 'DateTimePicker');
 jest.mock('react-native-image-picker', () => ({
   launchImageLibrary: jest.fn(async () => ({ assets: [] })),
 }));
+jest.mock('react-native-device-info', () =>
+  require('react-native-device-info/jest/react-native-device-info-mock'),
+);
 jest.mock('@react-native-documents/picker', () => ({
   pick: jest.fn(),
   saveDocuments: jest.fn(),
