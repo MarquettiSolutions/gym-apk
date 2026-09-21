@@ -7,6 +7,10 @@ import { usePlans } from '../hooks/usePlans';
 import { useLocalUserId } from '../../../shared/hooks/useLocalUserId';
 import { plansService } from '../services';
 import { Button } from '../../../shared/components/Button';
+import {
+  SwipeableCard,
+  type SwipeAction,
+} from '../../../shared/components/SwipeableCard';
 import { TextField } from '../../../shared/components/TextField';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { useTheme } from '../../../shared/theme/ThemeContext';
@@ -78,6 +82,31 @@ export function PlansScreen({ navigation }: Props) {
     ]);
   }
 
+  function buildActions(plan: Plan): SwipeAction[] {
+    return [
+      ...(plan.isActive
+        ? []
+        : [
+            {
+              key: 'activate',
+              label: es.common.activate,
+              onPress: () => handleActivate(plan),
+            },
+          ]),
+      {
+        key: 'duplicate',
+        label: es.common.duplicate,
+        onPress: () => handleDuplicate(plan),
+      },
+      {
+        key: 'delete',
+        label: es.common.delete,
+        variant: 'danger',
+        onPress: () => handleDelete(plan),
+      },
+    ];
+  }
+
   const showEmptyState = !isLoading && plans.length === 0;
 
   return (
@@ -96,7 +125,19 @@ export function PlansScreen({ navigation }: Props) {
           )
         }
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <SwipeableCard
+            style={styles.cardWrapper}
+            contentStyle={styles.card}
+            accessibilityLabel={
+              item.isActive
+                ? `${item.name}, ${es.common.activeBadge}`
+                : item.name
+            }
+            onPress={() =>
+              navigation.navigate('PlanEditor', { planId: item.id })
+            }
+            actions={buildActions(item)}
+          >
             <View style={styles.cardHeader}>
               <Text style={styles.planName}>{item.name}</Text>
               {item.isActive && (
@@ -107,41 +148,7 @@ export function PlansScreen({ navigation }: Props) {
                 </View>
               )}
             </View>
-            <View style={styles.cardActions}>
-              <View style={styles.cardActionButton}>
-                <Button
-                  label={es.common.edit}
-                  variant="secondary"
-                  onPress={() =>
-                    navigation.navigate('PlanEditor', { planId: item.id })
-                  }
-                />
-              </View>
-              {!item.isActive && (
-                <View style={styles.cardActionButton}>
-                  <Button
-                    label={es.common.activate}
-                    variant="secondary"
-                    onPress={() => handleActivate(item)}
-                  />
-                </View>
-              )}
-              <View style={styles.cardActionButton}>
-                <Button
-                  label={es.common.duplicate}
-                  variant="secondary"
-                  onPress={() => handleDuplicate(item)}
-                />
-              </View>
-              <View style={styles.cardActionButton}>
-                <Button
-                  label={es.common.delete}
-                  variant="danger"
-                  onPress={() => handleDelete(item)}
-                />
-              </View>
-            </View>
-          </View>
+          </SwipeableCard>
         )}
       />
       <View style={styles.footer}>
@@ -185,16 +192,17 @@ function createStyles(colors: ThemeColors) {
       color: colors.muted,
       textAlign: 'center',
     },
+    cardWrapper: {
+      marginBottom: spacing.sm,
+    },
     card: {
       backgroundColor: colors.surface,
       borderRadius: 12,
       padding: spacing.md,
-      marginBottom: spacing.sm,
     },
     cardHeader: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: spacing.sm,
     },
     planName: {
       fontSize: 16,
@@ -212,14 +220,6 @@ function createStyles(colors: ThemeColors) {
       color: colors.onPrimary,
       fontSize: 11,
       fontWeight: '700',
-    },
-    cardActions: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: spacing.xs,
-    },
-    cardActionButton: {
-      minWidth: 90,
     },
     footer: {
       padding: spacing.md,

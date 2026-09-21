@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import DraggableFlatList, {
   ScaleDecorator,
   type DragEndParams,
@@ -11,6 +11,10 @@ import type { PlansStackParamList } from '../../../navigation/types';
 import { useDayDetail } from '../hooks/useDayDetail';
 import { plansService } from '../services';
 import { Button } from '../../../shared/components/Button';
+import {
+  SwipeableCard,
+  type SwipeAction,
+} from '../../../shared/components/SwipeableCard';
 import { TextField } from '../../../shared/components/TextField';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { ExerciseThumbnail } from '../../../shared/components/ExerciseThumbnail';
@@ -255,25 +259,50 @@ export function DayEditorScreen({ route, navigation }: Props) {
     );
   }
 
-  function renderExerciseActions(item: PlanDayExerciseDetail) {
-    return (
-      <View style={styles.cardActions}>
-        <View style={styles.cardActionButton}>
-          <Button
-            label={es.common.edit}
-            variant="secondary"
-            onPress={() => openEditExerciseSheet(item)}
-          />
-        </View>
-        <View style={styles.cardActionButton}>
-          <Button
-            label={es.common.delete}
-            variant="danger"
-            onPress={() => handleRemoveExercise(item.planDayExercise.id)}
-          />
-        </View>
-      </View>
-    );
+  function exerciseActions(item: PlanDayExerciseDetail): SwipeAction[] {
+    return [
+      {
+        key: 'edit',
+        label: es.common.edit,
+        onPress: () => openEditExerciseSheet(item),
+      },
+      {
+        key: 'delete',
+        label: es.common.delete,
+        variant: 'danger',
+        onPress: () => handleRemoveExercise(item.planDayExercise.id),
+      },
+    ];
+  }
+
+  function exerciseSummary(item: PlanDayExerciseDetail) {
+    return `${item.exercise.name}, ${t.setsRepsFormat(
+      item.planDayExercise.targetSets,
+      item.planDayExercise.targetReps,
+    )}`;
+  }
+
+  function moveActions(index: number): SwipeAction[] {
+    return [
+      ...(index > 0
+        ? [
+            {
+              key: 'moveUp',
+              label: t.moveUp,
+              onPress: () => handleMove(index, -1),
+            },
+          ]
+        : []),
+      ...(index < blocks.length - 1
+        ? [
+            {
+              key: 'moveDown',
+              label: t.moveDown,
+              onPress: () => handleMove(index, 1),
+            },
+          ]
+        : []),
+    ];
   }
 
   return (
@@ -330,6 +359,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
         }: RenderItemParams<ExerciseBlock>) => {
           const index = getIndex() ?? 0;
           const isGroup = block.groupId !== null;
+          const swipeEnabled = !isSelectingGroup && !isActive;
 
           if (!isGroup) {
             const exerciseItem = block.items[0] as PlanDayExerciseDetail;
@@ -338,52 +368,34 @@ export function DayEditorScreen({ route, navigation }: Props) {
             );
             return (
               <ScaleDecorator>
-                <View
-                  style={[
+                <SwipeableCard
+                  style={styles.cardWrapper}
+                  contentStyle={[
                     styles.card,
                     isActive && styles.cardActive,
                     isSelected && styles.cardSelected,
                   ]}
+                  accessibilityLabel={exerciseSummary(exerciseItem)}
+                  accessibilityHint={t.dragHandleLabel}
+                  enabled={swipeEnabled}
+                  onPress={
+                    isSelectingGroup
+                      ? () => toggleSelected(exerciseItem.planDayExercise.id)
+                      : undefined
+                  }
+                  onLongPress={isSelectingGroup ? undefined : drag}
+                  actions={[
+                    ...moveActions(index),
+                    ...exerciseActions(exerciseItem),
+                  ]}
                 >
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={t.dragHandleLabel}
-                    onPress={
-                      isSelectingGroup
-                        ? () => toggleSelected(exerciseItem.planDayExercise.id)
-                        : undefined
-                    }
-                    onLongPress={isSelectingGroup ? undefined : drag}
-                    disabled={isActive}
-                    style={styles.cardMain}
-                  >
+                  <View style={styles.cardMain}>
                     {renderExerciseDetails(exerciseItem)}
                     {!isSelectingGroup ? (
                       <Text style={styles.dragHandle}>⠿</Text>
                     ) : null}
-                  </Pressable>
-                  {!isSelectingGroup ? (
-                    <View style={styles.cardActions}>
-                      <View style={styles.cardActionButton}>
-                        <Button
-                          label={t.moveUp}
-                          variant="secondary"
-                          disabled={index === 0}
-                          onPress={() => handleMove(index, -1)}
-                        />
-                      </View>
-                      <View style={styles.cardActionButton}>
-                        <Button
-                          label={t.moveDown}
-                          variant="secondary"
-                          disabled={index === blocks.length - 1}
-                          onPress={() => handleMove(index, 1)}
-                        />
-                      </View>
-                      {renderExerciseActions(exerciseItem)}
-                    </View>
-                  ) : null}
-                </View>
+                  </View>
+                </SwipeableCard>
               </ScaleDecorator>
             );
           }
@@ -391,12 +403,26 @@ export function DayEditorScreen({ route, navigation }: Props) {
           return (
             <ScaleDecorator>
               <View style={[styles.groupCard, isActive && styles.cardActive]}>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={t.dragHandleLabel}
+                <SwipeableCard
+                  style={styles.groupHeaderWrapper}
+                  contentStyle={[
+                    styles.groupHeader,
+                    isActive && styles.groupHeaderActive,
+                  ]}
+                  accessibilityLabel={t.supersetBadgeLabel}
+                  accessibilityHint={t.dragHandleLabel}
+                  enabled={swipeEnabled}
                   onLongPress={isSelectingGroup ? undefined : drag}
-                  disabled={isActive}
-                  style={styles.groupHeader}
+                  actions={[
+                    ...moveActions(index),
+                    {
+                      key: 'ungroup',
+                      label: t.ungroupButton,
+                      variant: 'danger',
+                      onPress: () =>
+                        handleDissolveGroup(block.groupId as string),
+                    },
+                  ]}
                 >
                   <Text style={styles.groupHeaderLabel}>
                     {t.supersetBadgeLabel}
@@ -404,49 +430,21 @@ export function DayEditorScreen({ route, navigation }: Props) {
                   {!isSelectingGroup ? (
                     <Text style={styles.dragHandle}>⠿</Text>
                   ) : null}
-                </Pressable>
+                </SwipeableCard>
                 {block.items.map(exerciseItem => (
-                  <View
+                  <SwipeableCard
                     key={exerciseItem.planDayExercise.id}
-                    style={styles.groupMemberCard}
+                    style={styles.groupMemberWrapper}
+                    contentStyle={styles.groupMemberCard}
+                    accessibilityLabel={exerciseSummary(exerciseItem)}
+                    enabled={swipeEnabled}
+                    actions={exerciseActions(exerciseItem)}
                   >
                     <View style={styles.cardMain}>
                       {renderExerciseDetails(exerciseItem)}
                     </View>
-                    {!isSelectingGroup
-                      ? renderExerciseActions(exerciseItem)
-                      : null}
-                  </View>
+                  </SwipeableCard>
                 ))}
-                {!isSelectingGroup ? (
-                  <View style={styles.cardActions}>
-                    <View style={styles.cardActionButton}>
-                      <Button
-                        label={t.moveUp}
-                        variant="secondary"
-                        disabled={index === 0}
-                        onPress={() => handleMove(index, -1)}
-                      />
-                    </View>
-                    <View style={styles.cardActionButton}>
-                      <Button
-                        label={t.moveDown}
-                        variant="secondary"
-                        disabled={index === blocks.length - 1}
-                        onPress={() => handleMove(index, 1)}
-                      />
-                    </View>
-                    <View style={styles.cardActionButton}>
-                      <Button
-                        label={t.ungroupButton}
-                        variant="danger"
-                        onPress={() =>
-                          handleDissolveGroup(block.groupId as string)
-                        }
-                      />
-                    </View>
-                  </View>
-                ) : null}
               </View>
             </ScaleDecorator>
           );
@@ -544,11 +542,13 @@ function createStyles(colors: ThemeColors) {
       color: colors.muted,
       textAlign: 'center',
     },
+    cardWrapper: {
+      marginBottom: spacing.sm,
+    },
     card: {
       backgroundColor: colors.surface,
       borderRadius: 12,
       padding: spacing.md,
-      marginBottom: spacing.sm,
     },
     cardActive: {
       backgroundColor: colors.surfaceActive,
@@ -565,7 +565,6 @@ function createStyles(colors: ThemeColors) {
     cardMain: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: spacing.sm,
     },
     dragHandle: {
       fontSize: 20,
@@ -592,14 +591,6 @@ function createStyles(colors: ThemeColors) {
       fontStyle: 'italic',
       marginTop: 2,
     },
-    cardActions: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: spacing.xs,
-    },
-    cardActionButton: {
-      minWidth: 74,
-    },
     groupCard: {
       backgroundColor: colors.surface,
       borderRadius: 12,
@@ -608,10 +599,22 @@ function createStyles(colors: ThemeColors) {
       borderWidth: 1,
       borderColor: colors.primary,
     },
+    groupHeaderWrapper: {
+      marginBottom: spacing.sm,
+    },
+    // Alto mínimo cómodo para que los botones que se revelan al deslizar
+    // (Subir/Bajar/Desagrupar) sean fáciles de tocar.
     groupHeader: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      minHeight: 44,
+      backgroundColor: colors.surface,
+    },
+    groupHeaderActive: {
+      backgroundColor: colors.surfaceActive,
+    },
+    groupMemberWrapper: {
       marginBottom: spacing.sm,
     },
     groupHeaderLabel: {
@@ -624,7 +627,6 @@ function createStyles(colors: ThemeColors) {
       backgroundColor: colors.surfaceActive,
       borderRadius: 10,
       padding: spacing.sm,
-      marginBottom: spacing.sm,
     },
     footer: {
       padding: spacing.md,
