@@ -7,6 +7,13 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+### Cambiado
+
+- El menú de tabs principal ahora muestra iconos reales (Ionicons vía
+  `@react-native-vector-icons/ionicons`) en lugar del recuadro vacío que dejaba
+  React Navigation sin `tabBarIcon`. El ícono va relleno cuando la tab está activa
+  y con contorno cuando no, y toma su color del tema claro/oscuro (#14).
+
 ## [0.0.1] - 2026-09-18
 
 Primera versión funcional (v1) de Gym Apk: app 100% offline para gestionar planes de

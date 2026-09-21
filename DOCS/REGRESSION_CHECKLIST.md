@@ -121,3 +121,13 @@
 - [ ] Cambiar la hora del recordatorio persiste el valor mostrado y
       reprograma el recordatorio (sin duplicarlo).
 - [ ] Desactivar el switch cancela el recordatorio programado.
+
+## Mejoras de UX — Iconos del tab bar (issue #14)
+- [ ] Las 5 tabs (Plan de hoy, Mis planes, Ejercicios, Historial, Ajustes)
+      muestran un ícono real; ninguna deja un recuadro vacío en su lugar.
+- [ ] La tab activa muestra su ícono **relleno** y en color primario; las
+      inactivas lo muestran **con contorno** y en gris. Al cambiar de tab, el
+      relleno se mueve con la selección.
+- [ ] En tema claro y en tema oscuro (Ajustes → Tema, o modo noche del
+      emulador) los iconos siguen siendo legibles, tanto el activo como los
+      inactivos.
