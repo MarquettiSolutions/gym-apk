@@ -74,6 +74,18 @@
       el registro más reciente; los filtros semana/mes/todo funcionan.
 - [ ] Eliminar un registro de peso corporal puntual (con confirmación).
 
+**Fecha/hora manual al cargar peso corporal (issue #26)**
+- [ ] Al abrir "Agregar registro" en "Peso corporal", el campo "Fecha y hora"
+      muestra "ahora" por defecto (fecha/hora actual del dispositivo) y
+      guardar sin tocarlo crea el registro con esa fecha/hora.
+- [ ] Tocar el botón de "Fecha y hora" abre el selector nativo de fecha y,
+      al confirmarla, encadena automáticamente el selector de hora (Android
+      no soporta un picker combinado). Elegir una fecha/hora pasada y guardar
+      crea el registro con esa fecha/hora exacta (visible en la lista y,
+      si es más reciente que el resto, también como "Peso actual").
+- [ ] El registro nuevo con fecha atrasada aparece ordenado correctamente en
+      la lista y en el gráfico de evolución (no forzosamente al principio).
+
 ## Fase 5 — Ajustes, tema y backup
 - [ ] Cambiar el descanso por defecto en Ajustes y confirmar que un ejercicio
       nuevo agregado a un plan usa ese valor.
