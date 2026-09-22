@@ -19,7 +19,10 @@ export type HistoryStackParamList = {
 };
 
 export type RootTabParamList = {
-  TodayWorkout: undefined;
+  // Nombre distinto al de WorkoutSessionStackParamList['TodayWorkout'] (la
+  // pantalla dentro de ese stack): React Navigation no permite bien dos
+  // rutas anidadas con el mismo nombre, ver issue #18.
+  TodayTab: undefined;
   Plans: undefined;
   Exercises: undefined;
   History: undefined;
