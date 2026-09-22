@@ -1,6 +1,6 @@
 import { and, asc, eq } from 'drizzle-orm';
 import type { AppDatabase } from '../types';
-import { planDayExercises } from '../schema';
+import { planDayExercises, workoutSessionSets } from '../schema';
 import { assertDefined } from '../../shared/utils/assert';
 import { nowIso } from '../../shared/utils/dates';
 
@@ -60,6 +60,16 @@ export function createPlanDayExercisesRepository(
         .where(eq(planDayExercises.id, id));
     },
     async remove(id) {
+      // Sin ON DELETE CASCADE/SET NULL en el esquema (spec 4.3): si ese
+      // ejercicio del plan ya tiene series de sesión registradas (incluso
+      // omitidas), hay que soltar la referencia antes de borrar o la FK
+      // rechaza el delete. El historial de esas series sobrevive con
+      // planDayExerciseId null (mismo criterio que workoutSessions.planDayId
+      // en planDaysRepository — spec 4.4).
+      await db
+        .update(workoutSessionSets)
+        .set({ planDayExerciseId: null })
+        .where(eq(workoutSessionSets.planDayExerciseId, id));
       await db.delete(planDayExercises).where(eq(planDayExercises.id, id));
     },
     async reorder(planDayId, orderedIds) {

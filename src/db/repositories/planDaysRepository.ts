@@ -1,6 +1,11 @@
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, inArray } from 'drizzle-orm';
 import type { AppDatabase } from '../types';
-import { planDays, planDayExercises, workoutSessions } from '../schema';
+import {
+  planDays,
+  planDayExercises,
+  workoutSessions,
+  workoutSessionSets,
+} from '../schema';
 import { assertDefined } from '../../shared/utils/assert';
 import { nowIso } from '../../shared/utils/dates';
 
@@ -51,6 +56,24 @@ export function createPlanDaysRepository(db: AppDatabase): PlanDaysRepository {
         .update(workoutSessions)
         .set({ planDayId: null })
         .where(eq(workoutSessions.planDayId, id));
+      const exercisesOfDay = await db
+        .select({ id: planDayExercises.id })
+        .from(planDayExercises)
+        .where(eq(planDayExercises.planDayId, id));
+      // Mismo motivo que arriba: si alguno de esos ejercicios ya tiene series
+      // de sesión registradas (incluso omitidas), workout_session_sets sigue
+      // apuntándolo y la FK rechaza el delete si no se suelta antes.
+      if (exercisesOfDay.length > 0) {
+        await db
+          .update(workoutSessionSets)
+          .set({ planDayExerciseId: null })
+          .where(
+            inArray(
+              workoutSessionSets.planDayExerciseId,
+              exercisesOfDay.map(row => row.id),
+            ),
+          );
+      }
       await db
         .delete(planDayExercises)
         .where(eq(planDayExercises.planDayId, id));

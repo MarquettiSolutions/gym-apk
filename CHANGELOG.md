@@ -24,6 +24,25 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 - En "Mis planes", tocar una tarjeta abre el plan (antes lo hacía el botón
   "Editar", que pasó a ser innecesario), igual que ya ocurría con los días de un
   plan (#15).
+- Se renombró la ruta de la tab principal de "Plan de hoy" (`TodayWorkout` →
+  `TodayTab`), que coincidía con el nombre de una pantalla dentro de su propio
+  stack de navegación. React Navigation lo detectaba y avisaba en cada
+  arranque; no cambia nada visible (#18).
+- Se silenció el toast de LogBox de un aviso benigno de
+  `react-native-draggable-flatlist` (pasa un array de dependencias a hooks de
+  Reanimated pensado solo para su implementación web). La línea sigue en
+  `adb logcat`, pero ya no tapa la UI con el toast en cada apertura de un día
+  con ejercicios (#20).
+
+### Corregido
+
+- Eliminar un ejercicio de un día del plan, un día completo o un plan
+  completo fallaba silenciosamente (`FOREIGN KEY constraint failed`) si ese
+  ejercicio ya tenía al menos una serie de sesión registrada, aunque fuera
+  solo omitida — bug preexistente de las Fases 2/3, nunca antes ejercitado
+  porque no se había probado a mano eliminar sobre datos con historial. El
+  historial de esas sesiones sobrevive con la referencia al ejercicio en
+  null, mismo criterio ya usado para el plan/día de origen.
 
 ## [0.0.1] - 2026-09-18
 

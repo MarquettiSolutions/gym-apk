@@ -1,6 +1,12 @@
 import { and, eq, inArray, ne } from 'drizzle-orm';
 import type { AppDatabase } from '../types';
-import { plans, planDays, planDayExercises, workoutSessions } from '../schema';
+import {
+  plans,
+  planDays,
+  planDayExercises,
+  workoutSessions,
+  workoutSessionSets,
+} from '../schema';
 import { assertDefined } from '../../shared/utils/assert';
 import { nowIso } from '../../shared/utils/dates';
 
@@ -73,6 +79,25 @@ export function createPlansRepository(db: AppDatabase): PlansRepository {
           .update(workoutSessions)
           .set({ planDayId: null })
           .where(inArray(workoutSessions.planDayId, dayIds));
+      }
+      const dayExercises = await db
+        .select({ id: planDayExercises.id })
+        .from(planDayExercises)
+        .where(inArray(planDayExercises.planDayId, dayIds));
+      // Mismo motivo que arriba con las sesiones: si alguno de esos
+      // ejercicios ya tiene series registradas (incluso omitidas),
+      // workout_session_sets sigue apuntándolo y la FK rechaza el delete
+      // si no se suelta antes.
+      if (dayExercises.length > 0) {
+        await db
+          .update(workoutSessionSets)
+          .set({ planDayExerciseId: null })
+          .where(
+            inArray(
+              workoutSessionSets.planDayExerciseId,
+              dayExercises.map(row => row.id),
+            ),
+          );
       }
       for (const day of days) {
         await db

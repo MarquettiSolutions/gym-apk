@@ -447,6 +447,12 @@ Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
    accesibilidad.
 7. **Fase 6 (opcional)** — ✅ Concluida (mergeada a `main`, PR #9). Notificaciones diarias,
    superseries, ejercicios personalizados con media propia.
+8. **Fase 7** — ✅ Concluida (mergeada a `main`, PRs #17, #19, #21, #22, #23). Pulido de UX y
+   estabilidad post-v1: iconos reales en el tab bar (#14), acciones de listas ocultas detrás de
+   un gesto de swipe (#15), nombre de ruta duplicado entre la tab y una pantalla de su stack
+   (#18), silenciado del toast de LogBox por un aviso benigno de Reanimated (#20), y un bug de
+   integridad referencial al eliminar un ejercicio/día/plan con series de sesión ya registradas
+   (ver 11).
 
 Un agente que empiece una fase nueva debe asumir que todo lo marcado **✅ Concluida** ya está en
 `main` y funcionando — no hace falta reimplementarlo ni volver a diseñarlo, solo construir sobre
@@ -613,6 +619,14 @@ si quedan desalineados:
   usado para el timer de descanso: se acepta que el horario real pueda demorar algunos minutos
   en dispositivos con optimización agresiva de batería, a cambio de no pedir un permiso extra;
   ver 5.6.
+- **Sin `ON DELETE CASCADE`/`SET NULL` en el esquema (spec 4.3): cada `remove()` de repositorio
+  que borra una fila con hijos debe soltar a mano cualquier FK que otra tabla tenga hacia ella**
+  (Fase 7) — el patrón ya existía para `workoutSessions.planDayId` al borrar un día/plan, pero
+  faltaba aplicarlo a `workoutSessionSets.planDayExerciseId` al borrar un ejercicio del plan (o
+  un día/plan que los contiene): sin nulificarlo antes, el delete fallaba con
+  `FOREIGN KEY constraint failed` en cuanto ese ejercicio ya tenía al menos una serie de sesión
+  registrada (incluso solo omitida). Al agregar una tabla nueva que referencie `plan_days` o
+  `plan_day_exercises`, hay que revisar si sus `remove()` necesitan el mismo tratamiento.
 
 No quedan decisiones abiertas de producto para v1 — el documento está listo para pasarle a un
 agente de implementación.

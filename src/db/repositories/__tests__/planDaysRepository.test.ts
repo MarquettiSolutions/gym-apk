@@ -3,6 +3,7 @@ import { createPlanDayExercisesRepository } from '../planDayExercisesRepository'
 import { createPlansRepository } from '../plansRepository';
 import { createExercisesRepository } from '../exercisesRepository';
 import { createUsersRepository } from '../usersRepository';
+import { createWorkoutSessionsRepository } from '../workoutSessionsRepository';
 import { createTestDb } from '../testDb';
 
 async function setup() {
@@ -12,12 +13,13 @@ async function setup() {
   const plansRepo = createPlansRepository(db);
   const exercisesRepo = createExercisesRepository(db);
   const usersRepo = createUsersRepository(db);
+  const sessionsRepo = createWorkoutSessionsRepository(db);
 
   const user = await usersRepo.getOrCreateLocalUser();
   const plan = await plansRepo.create({ userId: user.id, name: 'Fuerza' });
   await exercisesRepo.insertMany([{ id: 'ex-1', name: 'Push Up' }]);
 
-  return { planDaysRepo, planDayExercisesRepo, plan };
+  return { planDaysRepo, planDayExercisesRepo, plan, user, sessionsRepo };
 }
 
 describe('PlanDaysRepository', () => {
@@ -60,5 +62,34 @@ describe('PlanDaysRepository', () => {
 
     expect(await planDaysRepo.getById(day.id)).toBeUndefined();
     expect(await planDayExercisesRepo.listByDay(day.id)).toEqual([]);
+  });
+
+  it('remove no rompe si alguno de sus ejercicios ya tiene series de sesión registradas (incluso omitidas)', async () => {
+    const { planDaysRepo, planDayExercisesRepo, plan, user, sessionsRepo } =
+      await setup();
+    const day = await planDaysRepo.create({ planId: plan.id, weekday: 1 });
+    const dayExercise = await planDayExercisesRepo.create({
+      planDayId: day.id,
+      exerciseId: 'ex-1',
+      targetSets: 3,
+      targetReps: 10,
+    });
+    const session = await sessionsRepo.create({
+      userId: user.id,
+      planDayId: day.id,
+    });
+    await sessionsRepo.addSet({
+      sessionId: session.id,
+      planDayExerciseId: dayExercise.id,
+      exerciseId: 'ex-1',
+      setNumber: 1,
+      skipped: true,
+    });
+
+    await expect(planDaysRepo.remove(day.id)).resolves.not.toThrow();
+
+    expect(await planDaysRepo.getById(day.id)).toBeUndefined();
+    const [set] = await sessionsRepo.listSetsBySession(session.id);
+    expect(set?.planDayExerciseId).toBeNull();
   });
 });
