@@ -33,7 +33,7 @@ export function RootTabNavigator() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: true }}>
       <Tab.Screen
-        name="TodayWorkout"
+        name="TodayTab"
         component={WorkoutSessionStackNavigator}
         options={{
           title: es.tabs.today,
