@@ -70,6 +70,9 @@ yarn-error.log
 .env
 .env.local
 
+# API keys locales (ver src/config/apiKeys.example.ts)
+src/config/apiKeys.ts
+
 # IDE
 .vscode/
 .idea/

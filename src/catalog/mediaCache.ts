@@ -10,16 +10,27 @@ export async function ensureDir(dir: string): Promise<void> {
   }
 }
 
-async function downloadToFile(url: string, path: string): Promise<void> {
-  await RNBlobUtil.config({ path }).fetch('GET', url);
+async function downloadToFile(
+  url: string,
+  path: string,
+  headers?: Record<string, string>,
+): Promise<void> {
+  await RNBlobUtil.config({ path }).fetch('GET', url, headers);
 }
 
 export function thumbnailLocalPath(exerciseId: string): string {
   return `${THUMBNAILS_DIR}/${exerciseId}.jpg`;
 }
 
-export function videoLocalPath(exerciseId: string): string {
-  return `${VIDEOS_DIR}/${exerciseId}.mp4`;
+// `extension` es parametrizable porque no todos los proveedores de video
+// sirven el mismo formato: ExerciseDB sirve GIF, no mp4 (ver
+// `videoCache.ts`) — el default `mp4` queda para cuando se sume un proveedor
+// de video real.
+export function videoLocalPath(
+  exerciseId: string,
+  extension: string = 'mp4',
+): string {
+  return `${VIDEOS_DIR}/${exerciseId}.${extension}`;
 }
 
 export async function cacheThumbnail(
@@ -32,12 +43,18 @@ export async function cacheThumbnail(
   return path;
 }
 
+export interface CacheVideoOptions {
+  extension?: string;
+  headers?: Record<string, string>;
+}
+
 export async function cacheVideo(
   exerciseId: string,
   remoteUrl: string,
+  options: CacheVideoOptions = {},
 ): Promise<string> {
   await ensureDir(VIDEOS_DIR);
-  const path = videoLocalPath(exerciseId);
-  await downloadToFile(remoteUrl, path);
+  const path = videoLocalPath(exerciseId, options.extension);
+  await downloadToFile(remoteUrl, path, options.headers);
   return path;
 }

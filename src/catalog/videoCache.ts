@@ -1,15 +1,42 @@
 import type { exercises } from '../db/schema';
 import type { ExercisesRepository } from '../db/repositories/exercisesRepository';
-import { cacheVideo } from './mediaCache';
+import { cacheVideo, type CacheVideoOptions } from './mediaCache';
 import { nowIso } from '../shared/utils/dates';
+import { EXERCISEDB_API_HOST } from './exerciseDbSource';
+import { EXERCISEDB_RAPIDAPI_KEY } from '../config/apiKeys';
 
 export interface VideoCacheDeps {
-  downloadVideo: (exerciseId: string, remoteUrl: string) => Promise<string>;
+  downloadVideo: (
+    exerciseId: string,
+    remoteUrl: string,
+    options?: CacheVideoOptions,
+  ) => Promise<string>;
 }
 
 const defaultDeps: VideoCacheDeps = {
   downloadVideo: cacheVideo,
 };
+
+// Arma extensión + headers de auth según el proveedor del video (spec 5.2,
+// decisión en DOCS/SPEC.md sección 11). ExerciseDB sirve GIF (no mp4) y exige
+// la API key de RapidAPI en cada request de descarga — la URL guardada en
+// `video_remote_url` nunca la incluye (ver `exerciseDbSource.ts`). Otros
+// casos (`videoSource` null, ej. video propio de un ejercicio personalizado)
+// usan el default de `cacheVideo` (mp4, sin headers).
+function downloadOptionsFor(
+  videoSource: string | null,
+): CacheVideoOptions | undefined {
+  if (videoSource === 'exercisedb') {
+    return {
+      extension: 'gif',
+      headers: {
+        'X-RapidAPI-Key': EXERCISEDB_RAPIDAPI_KEY,
+        'X-RapidAPI-Host': EXERCISEDB_API_HOST,
+      },
+    };
+  }
+  return undefined;
+}
 
 // Descarga el video del ejercicio bajo demanda, la primera vez que se abre su
 // detalle (spec 5.2) — nunca se precargan los videos de todo el catálogo.
@@ -29,10 +56,10 @@ export async function ensureExerciseVideoCached(
   if (!exercise.videoRemoteUrl) {
     return null;
   }
-  const localPath = await deps.downloadVideo(
-    exercise.id,
-    exercise.videoRemoteUrl,
-  );
+  const options = downloadOptionsFor(exercise.videoSource);
+  const localPath = options
+    ? await deps.downloadVideo(exercise.id, exercise.videoRemoteUrl, options)
+    : await deps.downloadVideo(exercise.id, exercise.videoRemoteUrl);
   await repo.updateVideoLocalPath(exercise.id, localPath, nowIso());
   return localPath;
 }

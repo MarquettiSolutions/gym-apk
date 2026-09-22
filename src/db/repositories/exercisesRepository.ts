@@ -16,6 +16,7 @@ export interface ExercisesRepository {
     path: string,
     cachedAt: string,
   ): Promise<void>;
+  updateVideoRemoteUrl(id: string, url: string, source: string): Promise<void>;
 }
 
 export function createExercisesRepository(
@@ -52,6 +53,12 @@ export function createExercisesRepository(
       await db
         .update(exercises)
         .set({ videoLocalPath: path, videoCachedAt: cachedAt })
+        .where(eq(exercises.id, id));
+    },
+    async updateVideoRemoteUrl(id, url, source) {
+      await db
+        .update(exercises)
+        .set({ videoRemoteUrl: url, videoSource: source })
         .where(eq(exercises.id, id));
     },
   };

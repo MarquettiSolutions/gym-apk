@@ -28,6 +28,21 @@ npm install
 npm run db:generate   # solo si se modificó src/db/schema/
 ```
 
+### API key de ExerciseDB (opcional, para el GIF del detalle de ejercicio)
+
+El detalle de ejercicio (imagen/GIF + instrucciones) usa el plan gratuito de
+[ExerciseDB en RapidAPI](https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb/pricing)
+(690 requests/mes, sin tarjeta). Sin esto la app funciona igual —
+offline-first, como siempre— solo que el detalle muestra la miniatura
+estática sin GIF.
+
+```bash
+cp src/config/apiKeys.example.ts src/config/apiKeys.ts
+# completar EXERCISEDB_RAPIDAPI_KEY con tu key gratuita (ver instrucciones en el archivo)
+```
+
+`src/config/apiKeys.ts` está gitignoreado — nunca se commitea.
+
 ## Desarrollo
 
 ```bash
@@ -184,6 +199,12 @@ el tab bar, acciones de listas (editar/eliminar/etc.) ocultas detrás de un
 gesto de swipe, y varias correcciones (nombre de ruta duplicado, ruido de
 Reanimated en consola, un bug de integridad referencial al eliminar un
 ejercicio/día/plan con series de sesión ya registradas).
+
+**Detalle de ejercicio con GIF** (issue #24) — pantalla de detalle con
+imagen/GIF grande, instrucciones, grupo muscular y equipo, enganchada desde
+el catálogo, el selector de ejercicios de un plan y la sesión en curso. El
+GIF viene del plan gratuito de ExerciseDB (RapidAPI) y se cachea localmente
+para siempre tras la primera descarga (ver "API key de ExerciseDB" arriba).
 
 Ver [`CHANGELOG.md`](./CHANGELOG.md) para el detalle de qué incluye cada
 versión y la sección 9 de `DOCS/SPEC.md` para el detalle de fases y lo

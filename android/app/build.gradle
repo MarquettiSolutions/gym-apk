@@ -111,6 +111,14 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
+    // Soporte de GIF animado para <Image> (Fresco) — necesario para el
+    // detalle de ejercicio (ver DOCS/SPEC.md sección 11): el proveedor de
+    // video (ExerciseDB) sirve GIF, no mp4. Versión pineada a la que ya usa
+    // react-native internamente (ver node_modules/react-native/gradle/
+    // libs.versions.toml, clave "fresco") para no arrastrar una versión de
+    // Fresco distinta a la que trae react-android.
+    implementation("com.facebook.fresco:animated-gif:3.7.0")
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

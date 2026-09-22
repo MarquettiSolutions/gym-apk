@@ -221,6 +221,14 @@ export const es = {
     videoSelectedLabel: 'Video seleccionado',
     createErrorTitle: 'No se pudo crear el ejercicio',
   },
+  exerciseDetail: {
+    instructionsTitle: 'Instrucciones',
+    muscleGroupLabel: 'Grupo muscular',
+    equipmentLabel: 'Equipo',
+    offlineBannerMessage: 'Conéctate para ver el video la primera vez.',
+    viewDetailLink: 'Ver detalle del ejercicio',
+    notFound: 'No se encontró el ejercicio.',
+  },
   settings: {
     sections: {
       training: 'Entrenamiento',

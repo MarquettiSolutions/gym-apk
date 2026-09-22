@@ -2,18 +2,12 @@ import React, { useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import type { ThemeColors } from '../theme/colors';
+import { toImageUri } from '../utils/mediaUri';
 
 interface ExerciseThumbnailProps {
   localPath?: string | null;
   remoteUrl?: string | null;
   size?: number;
-}
-
-function toImageUri(path: string): string {
-  if (path.startsWith('file://') || path.startsWith('http')) {
-    return path;
-  }
-  return `file://${path}`;
 }
 
 export function ExerciseThumbnail({
