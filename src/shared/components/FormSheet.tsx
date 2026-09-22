@@ -5,7 +5,7 @@ import { useTheme } from '../theme/ThemeContext';
 import type { ThemeColors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 import { Button } from './Button';
-import { es } from '../i18n/es';
+import { useTranslation } from '../i18n';
 
 interface FormSheetProps {
   visible: boolean;
@@ -27,6 +27,7 @@ export function FormSheet({
   children,
 }: FormSheetProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <Modal
@@ -44,14 +45,14 @@ export function FormSheet({
           <View style={styles.actions}>
             <View style={styles.actionButton}>
               <Button
-                label={es.common.cancel}
+                label={t.common.cancel}
                 variant="secondary"
                 onPress={onCancel}
               />
             </View>
             <View style={styles.actionButton}>
               <Button
-                label={submitLabel ?? es.common.save}
+                label={submitLabel ?? t.common.save}
                 onPress={onSubmit}
                 disabled={submitDisabled}
               />

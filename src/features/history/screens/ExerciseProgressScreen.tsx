@@ -8,18 +8,18 @@ import { ProgressChart } from '../../../shared/components/ProgressChart';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { formatShortDate, formatDateTime } from '../../../shared/utils/dates';
 import { convertWeight, formatWeight } from '../../../shared/utils/weight';
 import { useSettings } from '../../settings/context/SettingsContext';
 
 type Props = NativeStackScreenProps<HistoryStackParamList, 'ExerciseProgress'>;
 
-const t = es.history.exerciseProgress;
-
 export function ExerciseProgressScreen({ route, navigation }: Props) {
   const { exerciseId, exerciseName } = route.params;
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.history.exerciseProgress;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
   const userId = useLocalUserId();
@@ -32,7 +32,7 @@ export function ExerciseProgressScreen({ route, navigation }: Props) {
   if (isLoading || !progress) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>{es.common.loading}</Text>
+        <Text style={styles.message}>{translations.common.loading}</Text>
       </View>
     );
   }

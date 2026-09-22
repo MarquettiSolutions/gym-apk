@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextField } from '../../../shared/components/TextField';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 
 export interface SetRegistrationValues {
   repsDone: number | null;
@@ -11,8 +11,6 @@ interface SetRegistrationFormProps {
   values: SetRegistrationValues;
   onChange: (values: SetRegistrationValues) => void;
 }
-
-const t = es.workoutSession.session;
 
 function parseIntOrNull(text: string): number | null {
   if (text.trim() === '') {
@@ -34,6 +32,8 @@ export function SetRegistrationForm({
   values,
   onChange,
 }: SetRegistrationFormProps) {
+  const { t: translations } = useTranslation();
+  const t = translations.workoutSession.session;
   return (
     <>
       <TextField

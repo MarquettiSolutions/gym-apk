@@ -3,7 +3,7 @@ import notifee, {
   TriggerType,
   type TimestampTrigger,
 } from '@notifee/react-native';
-import { es } from '../../../shared/i18n/es';
+import { getActiveTranslations } from '../../../shared/i18n/activeLanguage';
 
 export interface RestNotificationOptions {
   sound: boolean;
@@ -32,7 +32,7 @@ async function ensureChannel(
   const id = channelId(options);
   return notifee.createChannel({
     id,
-    name: es.workoutSession.restTimer.channelName,
+    name: getActiveTranslations().workoutSession.restTimer.channelName,
     importance: AndroidImportance.HIGH,
     sound: options.sound ? 'default' : undefined,
     vibration: options.vibration,
@@ -48,10 +48,11 @@ export async function scheduleRestEndNotification(
     type: TriggerType.TIMESTAMP,
     timestamp: deadlineTimestamp,
   };
+  const t = getActiveTranslations();
   const notification = await notifee.createTriggerNotification(
     {
-      title: es.workoutSession.restTimer.notificationTitle,
-      body: es.workoutSession.restTimer.notificationBody,
+      title: t.workoutSession.restTimer.notificationTitle,
+      body: t.workoutSession.restTimer.notificationBody,
       android: { channelId: id, pressAction: { id: 'default' } },
     },
     trigger,

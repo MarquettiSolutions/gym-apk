@@ -21,7 +21,7 @@ import {
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { useSettings } from '../../settings/context/SettingsContext';
 import { convertWeight } from '../../../shared/utils/weight';
 import { shouldSkipRestAfterSet } from '../utils/supersetRest';
@@ -31,8 +31,6 @@ type Props = NativeStackScreenProps<
   WorkoutSessionStackParamList,
   'WorkoutSession'
 >;
-
-const t = es.workoutSession.session;
 
 interface RegisteringSet {
   exerciseProgress: ExerciseProgress;
@@ -64,6 +62,8 @@ function suggestedValues(
 export function WorkoutSessionScreen({ route, navigation }: Props) {
   const { sessionId } = route.params;
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.workoutSession.session;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
   const { detail, isLoading, reload } = useSessionDetail(sessionId);
@@ -125,9 +125,9 @@ export function WorkoutSessionScreen({ route, navigation }: Props) {
 
   function handleSkipExercise(exerciseProgress: ExerciseProgress) {
     Alert.alert(t.skipExerciseConfirmTitle, t.skipExerciseConfirmMessage, [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       {
-        text: es.common.confirmDeleteButton,
+        text: translations.common.confirmDeleteButton,
         style: 'destructive',
         onPress: async () => {
           await workoutSessionService.skipRemainingSets(
@@ -154,7 +154,7 @@ export function WorkoutSessionScreen({ route, navigation }: Props) {
       return;
     }
     Alert.alert(t.finishConfirmTitle, t.finishConfirmMessage, [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       { text: t.finishConfirmButton, onPress: doFinish },
     ]);
   }
@@ -162,7 +162,7 @@ export function WorkoutSessionScreen({ route, navigation }: Props) {
   if (isLoading || !detail) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>{es.common.loading}</Text>
+        <Text style={styles.message}>{translations.common.loading}</Text>
       </View>
     );
   }
@@ -192,7 +192,7 @@ export function WorkoutSessionScreen({ route, navigation }: Props) {
                 <View style={styles.cardHeaderInfo}>
                   {exerciseProgress.planDayExercise.supersetGroupId ? (
                     <Text style={styles.supersetBadge}>
-                      {es.plans.dayEditor.supersetBadgeLabel}
+                      {translations.plans.dayEditor.supersetBadgeLabel}
                     </Text>
                   ) : null}
                   <Text style={styles.exerciseName}>

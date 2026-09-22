@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootTabNavigator } from '../navigation/RootTabNavigator';
 import { initDatabase } from '../db/client';
-import { es } from '../shared/i18n/es';
+import { LanguageProvider, useTranslation } from '../shared/i18n';
 import { SettingsProvider } from '../features/settings/context/SettingsContext';
 import { ThemeProvider, useTheme } from '../shared/theme/ThemeContext';
 import {
@@ -15,11 +15,12 @@ import {
 
 function LoadingScreen() {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <View
       style={[styles.loadingContainer, { backgroundColor: colors.background }]}
     >
-      <Text style={{ color: colors.text }}>{es.common.loading}</Text>
+      <Text style={{ color: colors.text }}>{t.common.loading}</Text>
     </View>
   );
 }
@@ -54,9 +55,11 @@ export function App() {
 
   return (
     <SettingsProvider>
-      <ThemeProvider>
-        <AppContent isDbReady={isDbReady} />
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <AppContent isDbReady={isDbReady} />
+        </ThemeProvider>
+      </LanguageProvider>
     </SettingsProvider>
   );
 }

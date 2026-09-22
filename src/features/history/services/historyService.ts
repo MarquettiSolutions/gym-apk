@@ -1,6 +1,6 @@
 import type { Repositories } from '../../../db/repositories';
 import { assertDefined } from '../../../shared/utils/assert';
-import { WEEKDAY_LABELS } from '../../plans/constants';
+import { getActiveTranslations } from '../../../shared/i18n/activeLanguage';
 import type {
   ExerciseProgress,
   SessionDetailExercise,
@@ -34,7 +34,7 @@ export function createHistoryService(repositories: Repositories) {
     if (!day) {
       return null;
     }
-    return day.label ?? WEEKDAY_LABELS[day.weekday] ?? null;
+    return day.label ?? getActiveTranslations().weekdays[day.weekday] ?? null;
   }
 
   async function listSessions(userId: string): Promise<SessionSummary[]> {

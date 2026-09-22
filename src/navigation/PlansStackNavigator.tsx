@@ -6,37 +6,38 @@ import { PlanEditorScreen } from '../features/plans/screens/PlanEditorScreen';
 import { DayEditorScreen } from '../features/plans/screens/DayEditorScreen';
 import { ExercisePickerScreen } from '../features/plans/screens/ExercisePickerScreen';
 import { ExerciseDetailScreen } from '../features/exercises/screens/ExerciseDetailScreen';
-import { es } from '../shared/i18n/es';
+import { useTranslation } from '../shared/i18n';
 
 const Stack = createNativeStackNavigator<PlansStackParamList>();
 
 export function PlansStackNavigator() {
+  const { t } = useTranslation();
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="PlansList"
         component={PlansScreen}
-        options={{ title: es.plans.list.title }}
+        options={{ title: t.plans.list.title }}
       />
       <Stack.Screen
         name="PlanEditor"
         component={PlanEditorScreen}
-        options={{ title: es.tabs.plans }}
+        options={{ title: t.tabs.plans }}
       />
       <Stack.Screen
         name="DayEditor"
         component={DayEditorScreen}
-        options={{ title: es.plans.dayEditor.editDayTitle }}
+        options={{ title: t.plans.dayEditor.editDayTitle }}
       />
       <Stack.Screen
         name="ExercisePicker"
         component={ExercisePickerScreen}
-        options={{ title: es.plans.exercisePicker.title }}
+        options={{ title: t.plans.exercisePicker.title }}
       />
       <Stack.Screen
         name="ExerciseDetail"
         component={ExerciseDetailScreen}
-        options={{ title: es.tabs.exercises }}
+        options={{ title: t.tabs.exercises }}
       />
     </Stack.Navigator>
   );

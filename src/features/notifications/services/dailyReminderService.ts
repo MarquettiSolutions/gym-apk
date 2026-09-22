@@ -4,7 +4,7 @@ import notifee, {
   TriggerType,
   type TimestampTrigger,
 } from '@notifee/react-native';
-import { es } from '../../../shared/i18n/es';
+import { getActiveTranslations } from '../../../shared/i18n/activeLanguage';
 import type { AppSettings } from '../../settings/types';
 
 const CHANNEL_ID = 'daily-reminder';
@@ -26,7 +26,7 @@ export async function requestNotificationPermission(): Promise<void> {
 async function ensureChannel(): Promise<string> {
   return notifee.createChannel({
     id: CHANNEL_ID,
-    name: es.notifications.dailyReminder.channelName,
+    name: getActiveTranslations().notifications.dailyReminder.channelName,
     importance: AndroidImportance.DEFAULT,
   });
 }
@@ -58,11 +58,12 @@ export async function scheduleDailyReminder(
     timestamp: nextTimestamp(hour, minute),
     repeatFrequency: RepeatFrequency.DAILY,
   };
+  const t = getActiveTranslations();
   await notifee.createTriggerNotification(
     {
       id: NOTIFICATION_ID,
-      title: es.notifications.dailyReminder.title,
-      body: es.notifications.dailyReminder.body,
+      title: t.notifications.dailyReminder.title,
+      body: t.notifications.dailyReminder.body,
       android: { channelId, pressAction: { id: 'default' } },
     },
     trigger,

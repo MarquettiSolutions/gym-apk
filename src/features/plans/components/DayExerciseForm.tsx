@@ -1,14 +1,12 @@
 import React from 'react';
 import { TextField } from '../../../shared/components/TextField';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import type { DayExerciseFormValues } from '../types';
 
 interface DayExerciseFormProps {
   values: DayExerciseFormValues;
   onChange: (values: DayExerciseFormValues) => void;
 }
-
-const t = es.plans.dayEditor;
 
 function parseIntOrZero(text: string): number {
   const parsed = parseInt(text, 10);
@@ -21,6 +19,8 @@ function parseFloatOrZero(text: string): number {
 }
 
 export function DayExerciseForm({ values, onChange }: DayExerciseFormProps) {
+  const { t: translations } = useTranslation();
+  const t = translations.plans.dayEditor;
   return (
     <>
       <TextField

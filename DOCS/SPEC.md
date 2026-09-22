@@ -402,8 +402,10 @@ Reglas de negocio:
   (usar notificaciones locales programadas para el aviso de fin de descanso).
 - **Accesibilidad**: tamaños de fuente escalables, contraste adecuado, soporte para lectores
   de pantalla en las acciones principales (marcar serie, iniciar descanso).
-- **Idioma**: español como idioma principal de la UI (con estructura i18n para agregar otros
-  idiomas después).
+- **Idioma**: inglés (US), español (Latinoamérica) y portugués (Brasil), detectado
+  automáticamente del idioma del sistema operativo (con selector manual en Ajustes para anular la
+  detección) — ver issue #30. Los nombres del catálogo de ejercicios siguen en inglés hasta el
+  paso 2 de esa issue.
 - **Tamaño de la APK**: cuidar el peso de los assets multimedia empaquetados (imágenes optimizadas,
   considerar descarga bajo demanda para videos si el catálogo crece mucho).
 
@@ -432,7 +434,9 @@ Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
 - **Búsqueda y filtros** en el catálogo (grupo muscular, equipo necesario, sin equipo/en casa).
 - **Widget/atajo** en pantalla de inicio de Android para abrir directo el entrenamiento del día.
 - **Modo cronómetro con audio/vibración también al finalizar cada ejercicio**, no solo el descanso.
-- **Multi-idioma** (es/en) preparado desde la arquitectura aunque v1 sea solo español.
+- ~~**Multi-idioma**~~ — implementado (paso 1 de la issue #30, ver 6): inglés/español/portugués
+  con detección automática y selector manual. Nombres de ejercicios del catálogo pendientes
+  (paso 2 de la misma issue).
 
 ## 9. Fases de desarrollo sugeridas
 1. **Fase 0** — ✅ Concluida (mergeada a `main`). Setup del proyecto (React Native CLI + TS +

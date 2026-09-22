@@ -1,0 +1,306 @@
+// English (US).
+export const en = {
+  // Index 0 = Sunday ... 6 = Saturday, same as `Date.prototype.getDay()`
+  // (spec 4.4) — matches the `weekday` order stored in the DB.
+  weekdays: [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ],
+  tabs: {
+    today: "Today's plan",
+    plans: 'My plans',
+    exercises: 'Exercises',
+    history: 'History',
+    settings: 'Settings',
+  },
+  screens: {
+    today: {
+      title: "Today's plan",
+      placeholder: 'No workout has been set up for today yet.',
+    },
+    exercises: {
+      title: 'Exercises',
+      placeholder: "The exercise catalog hasn't been imported yet.",
+    },
+    settings: {
+      title: 'Settings',
+    },
+  },
+  common: {
+    loading: 'Loading...',
+    save: 'Save',
+    cancel: 'Cancel',
+    create: 'Create',
+    add: 'Add',
+    edit: 'Edit',
+    rename: 'Rename',
+    delete: 'Delete',
+    duplicate: 'Duplicate',
+    activate: 'Activate',
+    activeBadge: 'Active',
+    confirmDeleteButton: 'Yes, delete',
+    optional: 'optional',
+  },
+  plans: {
+    list: {
+      title: 'My plans',
+      empty: "You haven't created any workout plans yet.",
+      createButton: 'Create plan',
+      newPlanTitle: 'New plan',
+      nameLabel: 'Plan name',
+      namePlaceholder: 'E.g. Strength 3 days',
+      daysCount: (n: number) => `${n} ${n === 1 ? 'day' : 'days'}`,
+      deleteConfirmTitle: 'Delete plan',
+      deleteConfirmMessage: (name: string) =>
+        `Delete "${name}"? This action cannot be undone.`,
+    },
+    editor: {
+      renameTitle: 'Rename plan',
+      planNameLabel: 'Plan name',
+      daysTitle: 'Workout days',
+      emptyDays: 'Add at least one day to build this plan.',
+      addDayButton: 'Add day',
+      addDayTitle: 'New day',
+      weekdayLabel: 'Day of the week',
+      dayLabelLabel: 'Day name (optional)',
+      dayLabelPlaceholder: 'E.g. Day A - Push',
+      exercisesCount: (n: number) =>
+        `${n} ${n === 1 ? 'exercise' : 'exercises'}`,
+      deleteDayConfirmTitle: 'Delete day',
+      deleteDayConfirmMessage:
+        'Delete this day and all its exercises? This action cannot be undone.',
+      deletePlanConfirmTitle: 'Delete plan',
+      deletePlanConfirmMessage:
+        'Delete this whole plan? This action cannot be undone.',
+    },
+    dayEditor: {
+      editDayTitle: 'Edit day',
+      emptyExercises: 'Add exercises from the catalog for this day.',
+      addExerciseButton: 'Add exercise',
+      setsRepsFormat: (sets: number, reps: number) => `${sets}x${reps}`,
+      restFormat: (seconds: number) => `Rest ${seconds}s`,
+      weightFormat: (weight: number, unit: string) => `${weight} ${unit}`,
+      editExerciseTitle: 'Edit exercise',
+      setsLabel: 'Sets',
+      repsLabel: 'Reps',
+      weightLabel: 'Target weight (optional)',
+      restLabel: 'Rest (seconds)',
+      notesLabel: 'Notes (optional)',
+      deleteExerciseConfirmTitle: 'Remove exercise',
+      deleteExerciseConfirmMessage: 'Remove this exercise from the day?',
+      moveUp: 'Move up',
+      moveDown: 'Move down',
+      dragHandleLabel: 'Press and hold to drag and reorder',
+      groupButton: 'Superset',
+      cancelGroupButton: 'Cancel',
+      confirmGroupButton: (count: number) => `Confirm superset (${count})`,
+      groupSelectionHint:
+        'Tap 2 or more exercises to group them into a superset.',
+      ungroupButton: 'Ungroup',
+      ungroupConfirmTitle: 'Ungroup superset',
+      ungroupConfirmMessage:
+        'Undo this superset? The exercises go back to running separately.',
+      supersetBadgeLabel: 'Superset',
+      createSupersetErrorTitle: "Couldn't create the superset",
+    },
+    exercisePicker: {
+      title: 'Choose exercise',
+      searchPlaceholder: 'Search exercise...',
+      allMuscleGroups: 'All',
+      empty: 'No exercises found.',
+      configureTitle: 'Configure exercise',
+    },
+  },
+  workoutSession: {
+    today: {
+      noActivePlanMessage:
+        'You don\'t have an active plan yet. Pick one in "My plans" to see your workout for today.',
+      restDayMessage: 'No workout planned for today. Time to rest!',
+      startButton: 'Start workout',
+      continueButton: 'Continue workout',
+    },
+    session: {
+      finishButton: 'Finish workout',
+      finishConfirmTitle: 'Finish workout',
+      finishConfirmMessage: 'There are still sets not logged. Finish anyway?',
+      finishConfirmButton: 'Yes, finish',
+      skipExerciseButton: 'Skip exercise',
+      skipExerciseConfirmTitle: 'Skip exercise',
+      skipExerciseConfirmMessage: 'Skip the pending sets for this exercise?',
+      setLabel: (n: number) => `Set ${n}`,
+      setDoneFormat: (
+        reps: number | null,
+        weight: number | null,
+        unit: string,
+      ) =>
+        weight !== null
+          ? `${reps ?? 0} reps x ${weight} ${unit}`
+          : `${reps ?? 0} reps`,
+      setSkippedLabel: 'Skipped',
+      setPendingButton: 'Log set',
+      registerSetTitle: 'Log set',
+      repsLabel: 'Reps done',
+      weightLabel: 'Weight used (optional)',
+      markDoneButton: 'Mark done',
+      emptySession: 'This day has no exercises loaded.',
+    },
+    restTimer: {
+      title: 'Rest',
+      pauseButton: 'Pause',
+      resumeButton: 'Resume',
+      skipButton: 'Skip rest',
+      addSecondsButton: (n: number) => `+${n}s`,
+      subtractSecondsButton: (n: number) => `-${n}s`,
+      notificationTitle: 'Rest is over!',
+      notificationBody: 'Time for your next set.',
+      channelName: 'Rest timer',
+    },
+  },
+  history: {
+    list: {
+      title: 'History',
+      empty: 'No sessions logged yet.',
+      streakLabel: (n: number) =>
+        `${n} ${n === 1 ? 'day' : 'days'} training streak`,
+      noStreak: 'Start your training streak today.',
+      deletedPlanLabel: 'Deleted plan',
+      bodyWeightButton: 'Body weight',
+      statusCompleted: 'Completed',
+      statusSkipped: 'Skipped',
+      statusInProgress: 'In progress',
+      setsFormat: (done: number, total: number) => `${done}/${total} sets`,
+    },
+    detail: {
+      title: 'Session detail',
+      empty: 'This session has no sets logged.',
+      setLabel: (n: number) => `Set ${n}`,
+      setDoneFormat: (
+        reps: number | null,
+        weight: number | null,
+        unit: string,
+      ) =>
+        weight !== null
+          ? `${reps ?? 0} reps x ${weight} ${unit}`
+          : `${reps ?? 0} reps`,
+      setSkippedLabel: 'Skipped',
+    },
+    exerciseProgress: {
+      title: 'Exercise progress',
+      empty: 'No records for this exercise yet.',
+    },
+  },
+  notifications: {
+    dailyReminder: {
+      channelName: 'Daily reminder',
+      title: 'Time to train',
+      body: "Don't forget to check today's plan.",
+    },
+  },
+  bodyWeight: {
+    title: 'Body weight',
+    empty: "You haven't logged your weight yet.",
+    currentLabel: 'Current weight',
+    addButton: 'Add entry',
+    addTitle: 'New weight entry',
+    weightLabel: (unit: string) => `Weight (${unit})`,
+    dateTimeLabel: 'Date and time',
+    filterWeek: 'Week',
+    filterMonth: 'Month',
+    filterAll: 'All',
+    deleteConfirmTitle: 'Delete entry',
+    deleteConfirmMessage:
+      'Delete this weight entry? This action cannot be undone.',
+  },
+  exercises: {
+    title: 'Exercises',
+    searchPlaceholder: 'Search exercise...',
+    empty: 'No exercises found.',
+    createButton: 'Create custom exercise',
+    createTitle: 'New exercise',
+    nameLabel: 'Name',
+    muscleGroupLabel: 'Muscle group (optional)',
+    equipmentLabel: 'Equipment (optional)',
+    choosePhotoButton: 'Choose photo',
+    changePhotoButton: 'Change photo',
+    chooseVideoButton: 'Choose video',
+    changeVideoButton: 'Change video',
+    videoSelectedLabel: 'Video selected',
+    createErrorTitle: "Couldn't create the exercise",
+  },
+  exerciseDetail: {
+    instructionsTitle: 'Instructions',
+    muscleGroupLabel: 'Muscle group',
+    equipmentLabel: 'Equipment',
+    offlineBannerMessage:
+      'Connect to the internet to view the video the first time.',
+    viewDetailLink: 'View exercise detail',
+    notFound: 'Exercise not found.',
+  },
+  settings: {
+    sections: {
+      training: 'Training',
+      weight: 'Weight',
+      appearance: 'Appearance',
+      language: 'Language',
+      timer: 'Timer',
+      notifications: 'Notifications',
+      data: 'Data',
+      about: 'About',
+    },
+    defaultRestSecondsLabel: 'Default rest (seconds)',
+    weightUnitLabel: 'Weight unit',
+    weightUnitOptions: {
+      kg: 'Kilograms (kg)',
+      lb: 'Pounds (lb)',
+    },
+    themeLabel: 'Theme',
+    themeOptions: {
+      light: 'Light',
+      dark: 'Dark',
+      system: 'System',
+    },
+    languageLabel: 'Language',
+    languageOptions: {
+      en: 'English',
+      es: 'Spanish',
+      pt: 'Portuguese',
+      system: 'System',
+    },
+    timerSoundLabel: 'Sound when rest ends',
+    timerVibrationLabel: 'Vibration when rest ends',
+    dailyReminderLabel: 'Daily workout reminder',
+    dailyReminderTimeLabel: 'Reminder time',
+    dailyReminderTimeFormat: (hour: number, minute: number) =>
+      `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+    exportButton: 'Export backup',
+    exportHint:
+      'Generates a file with your plans, sessions, history, and body weight to save or share.',
+    exportSuccessTitle: 'Backup exported',
+    exportSuccessMessage:
+      'The file was generated. Choose where to save or share it.',
+    exportErrorTitle: "Couldn't export",
+    exportErrorMessage: 'An error occurred generating the backup. Try again.',
+    importButton: 'Import backup',
+    importHint:
+      "Merges the data from a backup file with what's already in the app, without losing what you've already logged.",
+    importConfirmTitle: 'Import backup',
+    importConfirmMessage:
+      "This will merge the file's data with what's already in the app. Existing records are not lost.",
+    importConfirmButton: 'Yes, import',
+    importSuccessTitle: 'Backup imported',
+    importSuccessMessage: "The file's data was merged with yours.",
+    importSkippedMessage: (n: number) =>
+      `${n} ${
+        n === 1 ? 'record' : 'records'
+      } couldn't be relinked to a catalog exercise and were skipped.`,
+    importErrorTitle: "Couldn't import",
+    importErrorMessage: 'The selected file is not a valid backup.',
+    versionLabel: (version: string, buildNumber: string) =>
+      `Version ${version} (build ${buildNumber})`,
+  },
+};

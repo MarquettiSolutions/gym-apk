@@ -11,7 +11,7 @@ import { ExerciseThumbnail } from '../../../shared/components/ExerciseThumbnail'
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { useSettings } from '../../settings/context/SettingsContext';
 
 type Props = NativeStackScreenProps<
@@ -19,11 +19,11 @@ type Props = NativeStackScreenProps<
   'TodayWorkout'
 >;
 
-const t = es.workoutSession.today;
-const dayEditorT = es.plans.dayEditor;
-
 export function TodayWorkoutScreen({ navigation }: Props) {
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.workoutSession.today;
+  const dayEditorT = translations.plans.dayEditor;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
   const userId = useLocalUserId();
@@ -41,9 +41,9 @@ export function TodayWorkoutScreen({ navigation }: Props) {
       title:
         workout?.status === 'ready' && workout.day.label
           ? workout.day.label
-          : es.screens.today.title,
+          : translations.screens.today.title,
     });
-  }, [workout, navigation]);
+  }, [workout, navigation, translations]);
 
   async function handleStart() {
     if (!userId || workout?.status !== 'ready') {
@@ -61,7 +61,7 @@ export function TodayWorkoutScreen({ navigation }: Props) {
   if (isLoading || !workout) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>{es.common.loading}</Text>
+        <Text style={styles.message}>{translations.common.loading}</Text>
       </View>
     );
   }

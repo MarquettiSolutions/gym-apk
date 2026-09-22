@@ -11,16 +11,14 @@ import { SwipeableCard } from '../../../shared/components/SwipeableCard';
 import { TextField } from '../../../shared/components/TextField';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { WeekdayPicker } from '../components/WeekdayPicker';
-import { WEEKDAY_DISPLAY_ORDER, WEEKDAY_LABELS } from '../constants';
+import { WEEKDAY_DISPLAY_ORDER } from '../constants';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import type { PlanDayDetail } from '../types';
 
 type Props = NativeStackScreenProps<PlansStackParamList, 'PlanEditor'>;
-
-const t = es.plans.editor;
 
 function sortByWeekdayDisplayOrder(days: PlanDayDetail[]): PlanDayDetail[] {
   return [...days].sort(
@@ -37,6 +35,8 @@ function sortByWeekdayDisplayOrder(days: PlanDayDetail[]): PlanDayDetail[] {
 export function PlanEditorScreen({ route, navigation }: Props) {
   const { planId } = route.params;
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.plans.editor;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const userId = useLocalUserId();
   const { detail, isLoading, reload } = usePlanDetail(planId);
@@ -93,9 +93,9 @@ export function PlanEditorScreen({ route, navigation }: Props) {
 
   function handleDeletePlan() {
     Alert.alert(t.deletePlanConfirmTitle, t.deletePlanConfirmMessage, [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       {
-        text: es.common.confirmDeleteButton,
+        text: translations.common.confirmDeleteButton,
         style: 'destructive',
         onPress: async () => {
           await plansService.deletePlan(planId);
@@ -128,9 +128,9 @@ export function PlanEditorScreen({ route, navigation }: Props) {
 
   function handleDeleteDay(dayId: string) {
     Alert.alert(t.deleteDayConfirmTitle, t.deleteDayConfirmMessage, [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       {
-        text: es.common.confirmDeleteButton,
+        text: translations.common.confirmDeleteButton,
         style: 'destructive',
         onPress: async () => {
           await plansService.deleteDay(dayId);
@@ -147,7 +147,7 @@ export function PlanEditorScreen({ route, navigation }: Props) {
       <View style={styles.planActions}>
         <View style={styles.planActionButton}>
           <Button
-            label={es.common.rename}
+            label={translations.common.rename}
             variant="secondary"
             onPress={openRenameSheet}
           />
@@ -155,7 +155,7 @@ export function PlanEditorScreen({ route, navigation }: Props) {
         {!detail?.plan.isActive && (
           <View style={styles.planActionButton}>
             <Button
-              label={es.common.activate}
+              label={translations.common.activate}
               variant="secondary"
               onPress={handleActivate}
             />
@@ -163,14 +163,14 @@ export function PlanEditorScreen({ route, navigation }: Props) {
         )}
         <View style={styles.planActionButton}>
           <Button
-            label={es.common.duplicate}
+            label={translations.common.duplicate}
             variant="secondary"
             onPress={handleDuplicatePlan}
           />
         </View>
         <View style={styles.planActionButton}>
           <Button
-            label={es.common.delete}
+            label={translations.common.delete}
             variant="danger"
             onPress={handleDeletePlan}
           />
@@ -178,7 +178,9 @@ export function PlanEditorScreen({ route, navigation }: Props) {
       </View>
       {detail?.plan.isActive && (
         <View style={styles.activeBanner}>
-          <Text style={styles.activeBannerText}>{es.common.activeBadge}</Text>
+          <Text style={styles.activeBannerText}>
+            {translations.common.activeBadge}
+          </Text>
         </View>
       )}
 
@@ -192,13 +194,13 @@ export function PlanEditorScreen({ route, navigation }: Props) {
         }
         ListEmptyComponent={
           isLoading ? (
-            <Text style={styles.emptyText}>{es.common.loading}</Text>
+            <Text style={styles.emptyText}>{translations.common.loading}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.emptyDays}</Text>
           )
         }
         renderItem={({ item }) => {
-          const dayTitle = `${WEEKDAY_LABELS[item.day.weekday] ?? ''}${
+          const dayTitle = `${translations.weekdays[item.day.weekday] ?? ''}${
             item.day.label ? ` · ${item.day.label}` : ''
           }`;
           return (
@@ -217,12 +219,12 @@ export function PlanEditorScreen({ route, navigation }: Props) {
               actions={[
                 {
                   key: 'duplicate',
-                  label: es.common.duplicate,
+                  label: translations.common.duplicate,
                   onPress: () => handleDuplicateDay(item.day.id),
                 },
                 {
                   key: 'delete',
-                  label: es.common.delete,
+                  label: translations.common.delete,
                   variant: 'danger',
                   onPress: () => handleDeleteDay(item.day.id),
                 },

@@ -9,15 +9,17 @@ import { Button } from '../../../shared/components/Button';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
+import type { Translations } from '../../../shared/i18n';
 import { formatDateTime } from '../../../shared/utils/dates';
 import type { SessionSummary } from '../types';
 
 type Props = NativeStackScreenProps<HistoryStackParamList, 'HistoryList'>;
 
-const t = es.history.list;
-
-function statusLabel(status: string): string {
+function statusLabel(
+  status: string,
+  t: Translations['history']['list'],
+): string {
   if (status === 'completed') {
     return t.statusCompleted;
   }
@@ -29,6 +31,8 @@ function statusLabel(status: string): string {
 
 export function HistoryScreen({ navigation }: Props) {
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.history.list;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const userId = useLocalUserId();
   const { sessions, streak, isLoading, reload } = useHistory(userId);
@@ -60,7 +64,7 @@ export function HistoryScreen({ navigation }: Props) {
         }
         ListEmptyComponent={
           isLoading ? (
-            <Text style={styles.emptyText}>{es.common.loading}</Text>
+            <Text style={styles.emptyText}>{translations.common.loading}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.empty}</Text>
           )
@@ -81,7 +85,7 @@ export function HistoryScreen({ navigation }: Props) {
               </Text>
               <View style={styles.statusBadge}>
                 <Text style={styles.statusText}>
-                  {statusLabel(item.session.status)}
+                  {statusLabel(item.session.status, t)}
                 </Text>
               </View>
             </View>

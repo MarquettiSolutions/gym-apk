@@ -12,6 +12,7 @@ jest.mock('../../context/SettingsContext', () => ({
       defaultRestSeconds: 30,
       weightUnit: 'kg',
       theme: 'system',
+      language: 'system',
       timerSoundEnabled: true,
       timerVibrationEnabled: true,
       dailyReminderEnabled: false,
@@ -39,6 +40,13 @@ jest.mock('../../../../shared/theme/ThemeContext', () => ({
   }),
 }));
 
+jest.mock('../../../../shared/i18n', () => ({
+  useTranslation: () => ({
+    language: 'es',
+    t: require('../../../../shared/i18n/es').es,
+  }),
+}));
+
 const t = es.settings;
 
 describe('SettingsScreen', () => {
@@ -53,6 +61,7 @@ describe('SettingsScreen', () => {
     expect(screen.getByText(t.sections.training)).toBeTruthy();
     expect(screen.getByText(t.sections.weight)).toBeTruthy();
     expect(screen.getByText(t.sections.appearance)).toBeTruthy();
+    expect(screen.getByText(t.sections.language)).toBeTruthy();
     expect(screen.getByText(t.sections.timer)).toBeTruthy();
     expect(screen.getByText(t.sections.data)).toBeTruthy();
   });
@@ -81,6 +90,14 @@ describe('SettingsScreen', () => {
     await fireEvent.press(screen.getByLabelText(t.themeOptions.dark));
 
     expect(mockUpdateSetting).toHaveBeenCalledWith('theme', 'dark');
+  });
+
+  it('elegir inglés como idioma llama a updateSetting', async () => {
+    await render(<SettingsScreen />);
+
+    await fireEvent.press(screen.getByLabelText(t.languageOptions.en));
+
+    expect(mockUpdateSetting).toHaveBeenCalledWith('language', 'en');
   });
 
   it('apagar el sonido del temporizador llama a updateSetting', async () => {

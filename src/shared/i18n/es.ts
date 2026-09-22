@@ -1,4 +1,17 @@
+// Español (Latinoamérica) — tuteo neutro ("tú"), sin vocabulario ibérico
+// (nada de "vosotros", "coger", etc.) ni voseo rioplatense.
 export const es = {
+  // Índice 0 = domingo ... 6 = sábado, igual que `Date.prototype.getDay()`
+  // (spec 4.4) — el mismo orden que usa `weekday` en la DB.
+  weekdays: [
+    'Domingo',
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+  ],
   tabs: {
     today: 'Plan de hoy',
     plans: 'Mis planes',
@@ -51,7 +64,7 @@ export const es = {
       renameTitle: 'Renombrar plan',
       planNameLabel: 'Nombre del plan',
       daysTitle: 'Días de entrenamiento',
-      emptyDays: 'Agregá al menos un día para armar este plan.',
+      emptyDays: 'Agrega al menos un día para armar este plan.',
       addDayButton: 'Agregar día',
       addDayTitle: 'Nuevo día',
       weekdayLabel: 'Día de la semana',
@@ -68,7 +81,7 @@ export const es = {
     },
     dayEditor: {
       editDayTitle: 'Editar día',
-      emptyExercises: 'Agregá ejercicios desde el catálogo para este día.',
+      emptyExercises: 'Agrega ejercicios desde el catálogo para este día.',
       addExerciseButton: 'Agregar ejercicio',
       setsRepsFormat: (sets: number, reps: number) => `${sets}x${reps}`,
       restFormat: (seconds: number) => `Descanso ${seconds}s`,
@@ -83,12 +96,12 @@ export const es = {
       deleteExerciseConfirmMessage: '¿Quitar este ejercicio del día?',
       moveUp: 'Subir',
       moveDown: 'Bajar',
-      dragHandleLabel: 'Mantené presionado para arrastrar y reordenar',
+      dragHandleLabel: 'Mantén presionado para arrastrar y reordenar',
       groupButton: 'Superserie',
       cancelGroupButton: 'Cancelar',
       confirmGroupButton: (count: number) => `Confirmar superserie (${count})`,
       groupSelectionHint:
-        'Tocá 2 o más ejercicios para agruparlos en una superserie.',
+        'Toca 2 o más ejercicios para agruparlos en una superserie.',
       ungroupButton: 'Desagrupar',
       ungroupConfirmTitle: 'Desagrupar superserie',
       ungroupConfirmMessage:
@@ -235,6 +248,7 @@ export const es = {
       training: 'Entrenamiento',
       weight: 'Peso',
       appearance: 'Apariencia',
+      language: 'Idioma',
       timer: 'Temporizador',
       notifications: 'Notificaciones',
       data: 'Datos',
@@ -252,6 +266,13 @@ export const es = {
       dark: 'Oscuro',
       system: 'Sistema',
     },
+    languageLabel: 'Idioma',
+    languageOptions: {
+      en: 'Inglés',
+      es: 'Español',
+      pt: 'Portugués',
+      system: 'Sistema',
+    },
     timerSoundLabel: 'Sonido al terminar el descanso',
     timerVibrationLabel: 'Vibración al terminar el descanso',
     dailyReminderLabel: 'Recordatorio diario de entrenamiento',
@@ -263,15 +284,16 @@ export const es = {
       'Genera un archivo con tus planes, sesiones, historial y peso corporal para guardarlo o compartirlo.',
     exportSuccessTitle: 'Backup exportado',
     exportSuccessMessage:
-      'Se generó el archivo. Elegí dónde guardarlo o compartirlo.',
+      'Se generó el archivo. Elige dónde guardarlo o compartirlo.',
     exportErrorTitle: 'No se pudo exportar',
-    exportErrorMessage: 'Ocurrió un error generando el backup. Probá de nuevo.',
+    exportErrorMessage:
+      'Ocurrió un error generando el backup. Intenta de nuevo.',
     importButton: 'Importar backup',
     importHint:
-      'Fusiona los datos de un archivo de backup con los que ya tenés en la app, sin perder lo que ya cargaste.',
+      'Fusiona los datos de un archivo de backup con los que ya tienes en la app, sin perder lo que ya cargaste.',
     importConfirmTitle: 'Importar backup',
     importConfirmMessage:
-      'Esto va a fusionar los datos del archivo con los que ya tenés en la app. Los registros existentes no se pierden.',
+      'Esto va a fusionar los datos del archivo con los que ya tienes en la app. Los registros existentes no se pierden.',
     importConfirmButton: 'Sí, importar',
     importSuccessTitle: 'Backup importado',
     importSuccessMessage: 'Los datos del archivo se fusionaron con los tuyos.',

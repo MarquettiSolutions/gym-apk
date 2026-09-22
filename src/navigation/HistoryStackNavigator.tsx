@@ -5,32 +5,33 @@ import { HistoryScreen } from '../features/history/screens/HistoryScreen';
 import { SessionDetailScreen } from '../features/history/screens/SessionDetailScreen';
 import { ExerciseProgressScreen } from '../features/history/screens/ExerciseProgressScreen';
 import { BodyWeightScreen } from '../features/history/screens/BodyWeightScreen';
-import { es } from '../shared/i18n/es';
+import { useTranslation } from '../shared/i18n';
 
 const Stack = createNativeStackNavigator<HistoryStackParamList>();
 
 export function HistoryStackNavigator() {
+  const { t } = useTranslation();
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="HistoryList"
         component={HistoryScreen}
-        options={{ title: es.history.list.title }}
+        options={{ title: t.history.list.title }}
       />
       <Stack.Screen
         name="SessionDetail"
         component={SessionDetailScreen}
-        options={{ title: es.history.detail.title }}
+        options={{ title: t.history.detail.title }}
       />
       <Stack.Screen
         name="ExerciseProgress"
         component={ExerciseProgressScreen}
-        options={{ title: es.history.exerciseProgress.title }}
+        options={{ title: t.history.exerciseProgress.title }}
       />
       <Stack.Screen
         name="BodyWeight"
         component={BodyWeightScreen}
-        options={{ title: es.bodyWeight.title }}
+        options={{ title: t.bodyWeight.title }}
       />
     </Stack.Navigator>
   );

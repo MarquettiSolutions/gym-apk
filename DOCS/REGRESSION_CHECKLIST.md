@@ -223,3 +223,52 @@ en un clon nuevo del repo)**
 - [ ] El detalle de cualquier ejercicio abre igual, mostrando la miniatura
       estática y el aviso "conéctate para ver el video la primera vez" nunca
       aparece (no hay `video_remote_url` para ningún ejercicio).
+
+## Internacionalización — arquitectura e idioma de la UI (issue #30, paso 1)
+
+> Los nombres de ejercicios del catálogo (`exercises.name`), `muscleGroup` y
+> `equipment` siguen en inglés en este paso — eso es esperado, es el paso 2
+> de la issue #30.
+
+**Detección automática por idioma del sistema (Ajustes → Idioma en "Sistema",
+el valor por defecto)**
+- [ ] Cambiar el idioma del sistema del emulador a inglés (Ajustes de Android
+      → Sistema → Idiomas → English (US) o cualquier variante `en-*`) y
+      reabrir la app: toda la UI (tabs, títulos de pantalla, botones,
+      formularios, alertas de confirmación) queda en inglés, sin ningún
+      texto residual en español.
+- [ ] Cambiar el idioma del sistema a español (cualquier variante, `es-MX`,
+      `es-AR`, `es-ES`) y reabrir la app: toda la UI queda en español
+      latinoamericano neutro — con "tú" (nunca "vos" ni "vosotros").
+- [ ] Cambiar el idioma del sistema a portugués (`pt-BR` o `pt-PT`) y reabrir
+      la app: toda la UI queda en portugués de Brasil (nunca vocabulario de
+      Portugal).
+- [ ] Cambiar el idioma del sistema a uno no soportado (francés, alemán,
+      japonés) y reabrir la app: la UI cae a inglés sin crashear y sin textos
+      rotos ni mezclados.
+- [ ] Con la app abierta (sin reiniciarla), cambiar el idioma del sistema
+      desde Ajustes de Android y volver a la app: la UI cambia de idioma sola
+      al volver a foco, sin necesidad de forzar el cierre de la app.
+
+**Selector manual en Ajustes → Idioma (anula la detección automática)**
+- [ ] Elegir "Inglés" en Ajustes → Idioma con el sistema en español: la UI
+      cambia a inglés al instante y se mantiene así al reiniciar la app
+      (persistida en SQLite, igual que Tema).
+- [ ] Elegir "Español" o "Portugués" de la misma forma y confirmar que
+      persiste igual.
+- [ ] Volver a "Sistema" hace que la UI vuelva a seguir el idioma del
+      dispositivo.
+
+**Fechas y notificaciones en el idioma activo**
+- [ ] Con el idioma en inglés, las fechas del historial y del progreso de
+      ejercicio se muestran en formato en-US (ej. "Jan 12, 2026"), no en
+      español.
+- [ ] Con el idioma en portugués, programar un recordatorio diario o dejar
+      correr un descanso hasta el final: la notificación (título, cuerpo,
+      nombre de canal) aparece en portugués.
+
+**Exportar/importar backup no se rompe con el nuevo campo**
+- [ ] Exportar un backup con cualquier idioma elegido en Ajustes, cambiar de
+      idioma y luego importar ese mismo backup: el idioma guardado en el
+      archivo se restaura correctamente (mismo mecanismo que tema/unidad de
+      peso).

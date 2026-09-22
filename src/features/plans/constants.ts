@@ -1,15 +1,6 @@
-// Mismo criterio que `Date.prototype.getDay()` (spec 4.4: `weekday` 0-6):
-// 0 = domingo ... 6 = sábado. Se guarda así para que, en Fase 3, calcular
-// "hoy" sea un simple `new Date().getDay()` sin conversiones.
-export const WEEKDAY_LABELS = [
-  'Domingo',
-  'Lunes',
-  'Martes',
-  'Miércoles',
-  'Jueves',
-  'Viernes',
-  'Sábado',
-] as const;
+// Los nombres de los días viven en `shared/i18n` (`Translations['weekdays']`,
+// mismo índice 0=domingo...6=sábado) — ver `WeekdayPicker.tsx`,
+// `PlanEditorScreen.tsx`, `DayEditorScreen.tsx` y `historyService.ts`.
 
 // Orden de visualización tipo semana laboral (lunes primero) para listas de
 // días — el valor guardado en `weekday` no cambia, solo el orden en pantalla.

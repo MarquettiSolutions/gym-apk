@@ -53,6 +53,15 @@ jest.mock('@react-navigation/native', () => ({
   },
 }));
 
+jest.mock('../../../../shared/i18n', () => ({
+  useTranslation: () => ({
+    language: 'es',
+    t: require('../../../../shared/i18n/es').es,
+  }),
+  getActiveLanguage: () => 'es',
+  LOCALE_TAG: { en: 'en-US', es: 'es-MX', pt: 'pt-BR' },
+}));
+
 // Evita la cadena de imports de react-native-reanimated/worklets (rota bajo
 // Jest con las versiones instaladas, ver jest.config.js): en este test solo
 // nos interesa el sheet de alta, no las acciones de swipe de la lista.
