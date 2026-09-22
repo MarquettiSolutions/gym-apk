@@ -665,18 +665,8 @@ agente de implementación.
 
 ## 13. TODO para la próxima versión
 
-- **Registro de peso corporal con fecha/hora manual** (spec 5.5: "indicando
-  el peso y, opcionalmente, la fecha/hora (por defecto 'ahora')"). La Fase 4
-  implementó el alta rápida (siempre con `loggedAt = ahora`,
-  `bodyWeightService.addLog` en `src/features/history/services/`), pero
-  todavía no hay selector de fecha/hora en `BodyWeightScreen` para cargar un
-  registro atrasado. `addLog` ya acepta un `loggedAt` opcional, así que solo
-  falta el control de UI — y la Fase 6 ya sumó
-  `@react-native-community/datetimepicker` al proyecto (usado hoy en
-  Ajustes para la hora del recordatorio diario), así que ni siquiera hace
-  falta agregar una librería nueva, solo reusarlo en modo `date`.
-
-A partir de acá, el backlog de mejoras puntuales (no fases completas) se
-trackea en [GitHub Issues](https://github.com/MarquettiSolutions/gym-apk/issues)
-en vez de sumarse a esta lista — esta sección queda como resumen de lo que
-ya se identificó pero no se asignó todavía a ninguna fase/issue formal.
+No quedan ítems sueltos identificados acá sin asignar. El backlog de mejoras
+puntuales (no fases completas) se trackea directamente en
+[GitHub Issues](https://github.com/MarquettiSolutions/gym-apk/issues) —
+por ejemplo, el registro de peso corporal con fecha/hora manual (spec 5.5)
+quedó como [issue #26](https://github.com/MarquettiSolutions/gym-apk/issues/26).
