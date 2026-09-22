@@ -36,12 +36,18 @@ El detalle de ejercicio (imagen/GIF + instrucciones) usa el plan gratuito de
 offline-first, como siempre— solo que el detalle muestra la miniatura
 estática sin GIF.
 
+`src/config/apiKeys.ts` ya existe en el repo (trackeado, con la key vacía por
+defecto — así compila siempre, en cualquier clon o en CI). Para cargar tu
+propia key sin riesgo de commitearla:
+
 ```bash
-cp src/config/apiKeys.example.ts src/config/apiKeys.ts
-# completar EXERCISEDB_RAPIDAPI_KEY con tu key gratuita (ver instrucciones en el archivo)
+git update-index --skip-worktree src/config/apiKeys.ts
 ```
 
-`src/config/apiKeys.ts` está gitignoreado — nunca se commitea.
+Y después completá `EXERCISEDB_RAPIDAPI_KEY` en ese archivo con tu key
+gratuita (ver instrucciones en `src/config/apiKeys.example.ts`). Ese comando
+le dice a git que ignore cambios futuros en ese archivo puntual, sin afectar
+a nadie más que clone el repo.
 
 ## Desarrollo
 
