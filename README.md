@@ -177,6 +177,14 @@ npm test
 **v1 cerrada (0.0.1)** — Fases 0 a 6 completas y mergeadas a `main` (setup,
 catálogo, planes, sesión de entrenamiento, historial/progreso/peso corporal,
 ajustes/tema/backup, superseries/ejercicios personalizados/recordatorio
-diario). Ver [`CHANGELOG.md`](./CHANGELOG.md) para el detalle de qué incluye
-cada versión y la sección 9 de `DOCS/SPEC.md` para el detalle de fases y lo
+diario).
+
+**Fase 7 concluida** — pulido de UX y estabilidad post-v1: iconos reales en
+el tab bar, acciones de listas (editar/eliminar/etc.) ocultas detrás de un
+gesto de swipe, y varias correcciones (nombre de ruta duplicado, ruido de
+Reanimated en consola, un bug de integridad referencial al eliminar un
+ejercicio/día/plan con series de sesión ya registradas).
+
+Ver [`CHANGELOG.md`](./CHANGELOG.md) para el detalle de qué incluye cada
+versión y la sección 9 de `DOCS/SPEC.md` para el detalle de fases y lo
 pendiente para v2.

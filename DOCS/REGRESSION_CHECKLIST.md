@@ -122,7 +122,9 @@
       reprograma el recordatorio (sin duplicarlo).
 - [ ] Desactivar el switch cancela el recordatorio programado.
 
-## Mejoras de UX — Iconos del tab bar (issue #14)
+## Fase 7 — Pulido de UX y estabilidad post-v1
+
+**Iconos del tab bar (issue #14)**
 - [ ] Las 5 tabs (Plan de hoy, Mis planes, Ejercicios, Historial, Ajustes)
       muestran un ícono real; ninguna deja un recuadro vacío en su lugar.
 - [ ] La tab activa muestra su ícono **relleno** y en color primario; las
@@ -132,7 +134,7 @@
       emulador) los iconos siguen siendo legibles, tanto el activo como los
       inactivos.
 
-## Mejoras de UX — Swipe actions en listas (issue #15)
+**Swipe actions en listas (issue #15)**
 - [ ] En "Mis planes", las tarjetas no muestran botones; al deslizar una hacia
       la izquierda aparecen **Activar** (solo si no es el plan activo),
       **Duplicar** y **Eliminar**. Tocar una acción la ejecuta y la tarjeta
@@ -156,3 +158,24 @@
       esquinas redondeadas; en tema oscuro las acciones siguen legibles.
 - [ ] Con un lector de pantalla (TalkBack), enfocar una tarjeta anuncia su
       nombre y ofrece las mismas acciones como acciones personalizadas.
+
+**Nombre de ruta duplicado y aviso de Reanimated (issues #18, #20)**
+- [ ] Al abrir la app en debug, el logcat no muestra el warning "Found
+      screens with the same name nested inside one another".
+- [ ] El flujo Plan de hoy → Comenzar entrenamiento → Finalizar entrenamiento
+      vuelve a "Plan de hoy" sin errores de navegación.
+- [ ] Al abrir un día con 2+ ejercicios no aparece el toast de LogBox por el
+      aviso `[Reanimated] dependencies should only be used in web
+      implementation` (sigue en `adb logcat`, pero no debe tapar la UI con el
+      toast — spec 9.2 paso 6).
+
+**Integridad al eliminar con historial de sesión ya registrado**
+- [ ] Registrar (o solo omitir) al menos una serie de un ejercicio en una
+      sesión, y luego eliminar ese ejercicio puntual desde el editor del día:
+      no debe fallar (antes tiraba `FOREIGN KEY constraint failed`
+      silencioso, ver detalle abajo). El historial de esa sesión sigue
+      mostrando el ejercicio y sus series.
+- [ ] Mismo caso pero eliminando el **día completo** (con ejercicios que ya
+      tienen series de sesión): no debe fallar, y el historial sobrevive.
+- [ ] Mismo caso pero eliminando el **plan completo**: no debe fallar, y el
+      historial sobrevive (la sesión pasa a mostrar "Plan eliminado").

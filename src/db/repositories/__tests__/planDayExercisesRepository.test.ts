@@ -3,6 +3,7 @@ import { createPlanDaysRepository } from '../planDaysRepository';
 import { createPlansRepository } from '../plansRepository';
 import { createExercisesRepository } from '../exercisesRepository';
 import { createUsersRepository } from '../usersRepository';
+import { createWorkoutSessionsRepository } from '../workoutSessionsRepository';
 import { createTestDb } from '../testDb';
 
 async function setup() {
@@ -12,6 +13,7 @@ async function setup() {
   const plansRepo = createPlansRepository(db);
   const exercisesRepo = createExercisesRepository(db);
   const usersRepo = createUsersRepository(db);
+  const sessionsRepo = createWorkoutSessionsRepository(db);
 
   const user = await usersRepo.getOrCreateLocalUser();
   const plan = await plansRepo.create({ userId: user.id, name: 'Fuerza' });
@@ -22,7 +24,7 @@ async function setup() {
     { id: 'ex-3', name: 'Row' },
   ]);
 
-  return { repo, day };
+  return { repo, day, user, sessionsRepo };
 }
 
 describe('PlanDayExercisesRepository', () => {
@@ -100,6 +102,33 @@ describe('PlanDayExercisesRepository', () => {
     await repo.remove(created.id);
 
     expect(await repo.listByDay(day.id)).toEqual([]);
+  });
+
+  it('remove no rompe si el ejercicio ya tiene series de sesión registradas (incluso omitidas)', async () => {
+    const { repo, day, user, sessionsRepo } = await setup();
+    const created = await repo.create({
+      planDayId: day.id,
+      exerciseId: 'ex-1',
+      targetSets: 3,
+      targetReps: 10,
+    });
+    const session = await sessionsRepo.create({
+      userId: user.id,
+      planDayId: day.id,
+    });
+    await sessionsRepo.addSet({
+      sessionId: session.id,
+      planDayExerciseId: created.id,
+      exerciseId: 'ex-1',
+      setNumber: 1,
+      skipped: true,
+    });
+
+    await expect(repo.remove(created.id)).resolves.not.toThrow();
+
+    expect(await repo.listByDay(day.id)).toEqual([]);
+    const [set] = await sessionsRepo.listSetsBySession(session.id);
+    expect(set?.planDayExerciseId).toBeNull();
   });
 
   it('reorder reasigna orderIndex según el nuevo orden dado', async () => {
