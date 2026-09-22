@@ -5,6 +5,7 @@ import { PlansScreen } from '../features/plans/screens/PlansScreen';
 import { PlanEditorScreen } from '../features/plans/screens/PlanEditorScreen';
 import { DayEditorScreen } from '../features/plans/screens/DayEditorScreen';
 import { ExercisePickerScreen } from '../features/plans/screens/ExercisePickerScreen';
+import { ExerciseDetailScreen } from '../features/exercises/screens/ExerciseDetailScreen';
 import { es } from '../shared/i18n/es';
 
 const Stack = createNativeStackNavigator<PlansStackParamList>();
@@ -31,6 +32,11 @@ export function PlansStackNavigator() {
         name="ExercisePicker"
         component={ExercisePickerScreen}
         options={{ title: es.plans.exercisePicker.title }}
+      />
+      <Stack.Screen
+        name="ExerciseDetail"
+        component={ExerciseDetailScreen}
+        options={{ title: es.tabs.exercises }}
       />
     </Stack.Navigator>
   );

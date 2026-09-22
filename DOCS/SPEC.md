@@ -628,6 +628,33 @@ si quedan desalineados:
   registrada (incluso solo omitida). Al agregar una tabla nueva que referencie `plan_days` o
   `plan_day_exercises`, hay que revisar si sus `remove()` necesitan el mismo tratamiento.
 
+- **Proveedor de video del detalle de ejercicio: ExerciseDB oficial vía RapidAPI, plan
+  Basic gratuito** (issue #24) — 690 requests/mes, sin tarjeta, GIF fijo en resolución
+  180px. Se investigaron y descartaron: **WorkoutX** (alternativa nueva de 2026, ya
+  señalada como "licencia de imágenes no documentada" en un comentario preexistente de
+  `src/catalog/freeExerciseDbSource.ts`, y su página de Términos de Uso devuelve 404 en
+  vivo); **self-host de `exercisedb-api`** (exigiría operar y pagar un servidor propio,
+  contra el principio "sin backend" de la sección 4.1); **ExerciseDB en plan pago**
+  (innecesario: el patrón de uso real —import único + descarga bajo demanda cacheada
+  para siempre— entra cómodo en la cuota gratuita). El catálogo base sigue siendo
+  `free-exercise-db` (Fase 1); ExerciseDB se usa solo para completar
+  `video_remote_url`/`video_source` de los ejercicios ya importados, matcheando por
+  nombre en un backfill de una sola vez (`src/catalog/videoUrlBackfill.ts`), sin pisar
+  la fuente del catálogo.
+- **La API key de RapidAPI vive en `src/config/apiKeys.ts`, gitignoreado** (plantilla
+  committeada en `apiKeys.example.ts`) — sin `react-native-config`/`.env`, porque es un
+  solo string y el proyecto no tenía ningún mecanismo de env todavía. La URL guardada
+  en `exercises.video_remote_url` nunca lleva la key embebida (esa fila se exporta en
+  el backup de datos, spec 5.6); la key se agrega como header recién al momento de
+  descargar el archivo (`videoCache.ts`).
+- **GIF animado vía Fresco (`com.facebook.fresco:animated-gif`), no una librería JS
+  nueva** — ExerciseDB sirve GIF, no mp4 (`react-native-video`, ya instalado, no sirve
+  para esto). En vez de sumar `react-native-fast-image` (alternativa que menciona la
+  sección 4.1), se agregó el módulo de Fresco para GIF animado en
+  `android/app/build.gradle`, pineado a la misma versión que ya trae `react-native`
+  transitivamente — así el `<Image>` de RN ya renderiza el GIF, sin dependencia JS
+  nueva. Requiere rebuild nativo (`./gradlew installDebug`), no alcanza con Fast Refresh.
+
 No quedan decisiones abiertas de producto para v1 — el documento está listo para pasarle a un
 agente de implementación.
 
@@ -637,25 +664,6 @@ agente de implementación.
 - ExerciseDB API (catálogo con GIFs/videos, revisar términos de uso): https://github.com/exercisedb/exercisedb-api
 
 ## 13. TODO para la próxima versión
-
-- **Pantalla de detalle del ejercicio con imagen/video demostrativo**
-  (spec 5.2 y 5.3: "Al tocar un ejercicio se abre el detalle con imagen/video
-  de cómo ejecutarlo correctamente"). No se implementó en la Fase 3 porque
-  todavía no hay un proveedor de video elegido: la fuente actual del catálogo
-  (`free-exercise-db`, usada en la Fase 1) no trae `video_remote_url` — ese
-  campo queda `null` para todos los ejercicios importados. La infraestructura
-  de cache bajo demanda (`src/catalog/videoCache.ts`,
-  `src/catalog/mediaCache.ts`, columnas `video_remote_url`/
-  `video_local_path`/`video_cached_at` en `exercises`) ya está lista desde la
-  Fase 1; falta:
-  1. Elegir y confirmar el proveedor concreto (ExerciseDB u otro con
-     licencia/cuota clara para uso comercial, ver tabla de la sección 5.2).
-  2. Poblar `video_remote_url` al importar/actualizar el catálogo desde ese
-     proveedor.
-  3. Construir la pantalla de detalle (imagen grande + reproductor
-     `react-native-video` + instrucciones + grupo muscular), enganchada
-     desde el checklist de la sesión (`WorkoutSessionScreen`) y desde el
-     catálogo (`ExercisesScreen`/`ExercisePickerScreen`).
 
 - **Registro de peso corporal con fecha/hora manual** (spec 5.5: "indicando
   el peso y, opcionalmente, la fecha/hora (por defecto 'ahora')"). La Fase 4
@@ -667,15 +675,6 @@ agente de implementación.
   `@react-native-community/datetimepicker` al proyecto (usado hoy en
   Ajustes para la hora del recordatorio diario), así que ni siquiera hace
   falta agregar una librería nueva, solo reusarlo en modo `date`.
-
-- **Iconos reales en el menú de tabs principal** (`RootTabNavigator` no
-  define `tabBarIcon` en ninguno de los 5 tabs) — ver
-  [issue #14](https://github.com/MarquettiSolutions/gym-apk/issues/14).
-
-- **Ocultar botones de editar/eliminar/etc. detrás de un gesto de swipe**
-  en las listas de `DayEditorScreen`, `PlanEditorScreen`, `PlansScreen` y
-  `BodyWeightScreen` (hoy siempre visibles) — ver
-  [issue #15](https://github.com/MarquettiSolutions/gym-apk/issues/15).
 
 A partir de acá, el backlog de mejoras puntuales (no fases completas) se
 trackea en [GitHub Issues](https://github.com/MarquettiSolutions/gym-apk/issues)

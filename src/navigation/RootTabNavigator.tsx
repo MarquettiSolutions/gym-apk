@@ -4,7 +4,7 @@ import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 import type { RootTabParamList } from './types';
 import { WorkoutSessionStackNavigator } from './WorkoutSessionStackNavigator';
 import { PlansStackNavigator } from './PlansStackNavigator';
-import { ExercisesScreen } from '../features/exercises/screens/ExercisesScreen';
+import { ExercisesStackNavigator } from './ExercisesStackNavigator';
 import { HistoryStackNavigator } from './HistoryStackNavigator';
 import { SettingsScreen } from '../features/settings/screens/SettingsScreen';
 import { es } from '../shared/i18n/es';
@@ -52,10 +52,11 @@ export function RootTabNavigator() {
       />
       <Tab.Screen
         name="Exercises"
-        component={ExercisesScreen}
+        component={ExercisesStackNavigator}
         options={{
           title: es.tabs.exercises,
           tabBarIcon: tabIcon('barbell', 'barbell-outline'),
+          headerShown: false,
         }}
       />
       <Tab.Screen

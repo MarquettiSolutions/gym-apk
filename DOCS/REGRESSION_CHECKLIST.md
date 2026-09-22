@@ -179,3 +179,35 @@
       tienen series de sesión): no debe fallar, y el historial sobrevive.
 - [ ] Mismo caso pero eliminando el **plan completo**: no debe fallar, y el
       historial sobrevive (la sesión pasa a mostrar "Plan eliminado").
+
+## Detalle de ejercicio con GIF (ExerciseDB)
+
+**Con API key de ExerciseDB configurada (`src/config/apiKeys.ts`)**
+- [ ] Tocar un ejercicio en la tab "Ejercicios" abre su detalle: imagen/GIF
+      grande arriba, nombre, grupo muscular, equipo e instrucciones.
+- [ ] La primera vez que se abre el detalle de un ejercicio con video
+      disponible, el GIF tarda un instante en aparecer (se está descargando)
+      y después queda animado. Revisar `adb logcat`/tráfico: solo se pide una
+      vez por ejercicio.
+- [ ] Cerrar y volver a abrir el mismo ejercicio (o reiniciar la app) muestra
+      el GIF al instante, sin volver a pedirlo a la red (offline también).
+- [ ] Desde "Mis planes" → un día → tocar un ejercicio para configurarlo,
+      aparece el link "Ver detalle del ejercicio" arriba del formulario;
+      tocarlo abre el mismo detalle y **no** pierde la configuración de
+      series/reps si se vuelve atrás con el botón nativo.
+- [ ] Desde la sesión de entrenamiento en curso, tocar la miniatura o el
+      nombre de un ejercicio (no el botón "Omitir") abre su detalle.
+- [ ] Un ejercicio del catálogo cuyo nombre no matcheó con ninguno de
+      ExerciseDB (ej. un ejercicio poco común) muestra igual la miniatura
+      estática, **sin** el aviso de "conéctate para ver el video" (no hay
+      nada que descargar, no es un problema de conexión).
+- [ ] Un ejercicio personalizado (creado a mano en "Ejercicios") abre su
+      detalle mostrando su propia foto/video, sin intentar buscarlo en
+      ExerciseDB.
+
+**Sin API key configurada (`src/config/apiKeys.ts` vacío, estado por defecto
+en un clon nuevo del repo)**
+- [ ] La app arranca normal, sin errores en logcat por la falta de key.
+- [ ] El detalle de cualquier ejercicio abre igual, mostrando la miniatura
+      estática y el aviso "conéctate para ver el video la primera vez" nunca
+      aparece (no hay `video_remote_url` para ningún ejercicio).

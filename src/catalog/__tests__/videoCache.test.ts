@@ -84,4 +84,37 @@ describe('ensureExerciseVideoCached', () => {
     expect(updated?.videoLocalPath).toBe('/local/a.mp4');
     expect(updated?.videoCachedAt).toBeTruthy();
   });
+
+  it('para videoSource "exercisedb" pide GIF (no mp4) y manda la API key por header', async () => {
+    const db = createTestDb();
+    const repo = createExercisesRepository(db);
+    await repo.insertMany([
+      {
+        id: 'a',
+        name: 'Push Up',
+        videoSource: 'exercisedb',
+        videoRemoteUrl:
+          'https://exercisedb.p.rapidapi.com/image?exerciseId=0001&resolution=180',
+      },
+    ]);
+    const downloadVideo = jest.fn(async () => '/local/a.gif');
+
+    const exercise = await repo.getById('a');
+    const result = await ensureExerciseVideoCached(exercise!, repo, {
+      downloadVideo,
+    });
+
+    expect(result).toBe('/local/a.gif');
+    expect(downloadVideo).toHaveBeenCalledWith(
+      'a',
+      'https://exercisedb.p.rapidapi.com/image?exerciseId=0001&resolution=180',
+      {
+        extension: 'gif',
+        headers: expect.objectContaining({
+          'X-RapidAPI-Key': expect.any(String),
+          'X-RapidAPI-Host': 'exercisedb.p.rapidapi.com',
+        }),
+      },
+    );
+  });
 });

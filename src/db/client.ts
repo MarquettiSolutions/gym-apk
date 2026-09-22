@@ -5,6 +5,7 @@ import * as schema from './schema';
 import migrations from './migrations/migrations';
 import { createRepositories } from './repositories';
 import { importExerciseCatalogIfNeeded } from '../catalog/importCatalog';
+import { backfillExerciseVideoUrlsIfNeeded } from '../catalog/videoUrlBackfill';
 
 const opsqlite = open({ name: 'gymapk.db' });
 
@@ -20,6 +21,7 @@ export function initDatabase(): Promise<void> {
       await migrate(db, migrations);
       await repositories.users.getOrCreateLocalUser();
       await importExerciseCatalogIfNeeded(repositories);
+      await backfillExerciseVideoUrlsIfNeeded(repositories);
     })();
   }
   return initPromise;

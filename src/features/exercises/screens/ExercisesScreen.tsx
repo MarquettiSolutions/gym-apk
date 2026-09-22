@@ -2,11 +2,14 @@ import React, { useMemo, useState } from 'react';
 import {
   Alert,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { ExercisesStackParamList } from '../../../navigation/types';
 import { repositories } from '../../../db/client';
 import { useExerciseCatalog } from '../../plans/hooks/useExerciseCatalog';
 import { useLocalUserId } from '../../../shared/hooks/useLocalUserId';
@@ -31,7 +34,9 @@ const emptyForm: CreateCustomExerciseInput = {
   videoUri: null,
 };
 
-export function ExercisesScreen() {
+type Props = NativeStackScreenProps<ExercisesStackParamList, 'ExercisesList'>;
+
+export function ExercisesScreen({ navigation }: Props) {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { exercises, isLoading, reload } = useExerciseCatalog();
@@ -96,7 +101,13 @@ export function ExercisesScreen() {
           )
         }
         renderItem={({ item }) => (
-          <View style={styles.row}>
+          <Pressable
+            accessibilityRole="button"
+            style={styles.row}
+            onPress={() =>
+              navigation.navigate('ExerciseDetail', { exerciseId: item.id })
+            }
+          >
             <ExerciseThumbnail
               localPath={item.thumbnailLocalPath}
               remoteUrl={item.thumbnailRemoteUrl}
@@ -111,7 +122,7 @@ export function ExercisesScreen() {
                 </Text>
               )}
             </View>
-          </View>
+          </Pressable>
         )}
       />
       <View style={styles.footer}>

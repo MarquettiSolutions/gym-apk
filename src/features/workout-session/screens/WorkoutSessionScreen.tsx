@@ -176,20 +176,30 @@ export function WorkoutSessionScreen({ route, navigation }: Props) {
         {detail.exercises.map(exerciseProgress => (
           <View key={exerciseProgress.planDayExercise.id} style={styles.card}>
             <View style={styles.cardHeader}>
-              <ExerciseThumbnail
-                localPath={exerciseProgress.exercise.thumbnailLocalPath}
-                remoteUrl={exerciseProgress.exercise.thumbnailRemoteUrl}
-              />
-              <View style={styles.cardHeaderInfo}>
-                {exerciseProgress.planDayExercise.supersetGroupId ? (
-                  <Text style={styles.supersetBadge}>
-                    {es.plans.dayEditor.supersetBadgeLabel}
+              <Pressable
+                accessibilityRole="button"
+                style={styles.cardHeaderPressable}
+                onPress={() =>
+                  navigation.navigate('ExerciseDetail', {
+                    exerciseId: exerciseProgress.exercise.id,
+                  })
+                }
+              >
+                <ExerciseThumbnail
+                  localPath={exerciseProgress.exercise.thumbnailLocalPath}
+                  remoteUrl={exerciseProgress.exercise.thumbnailRemoteUrl}
+                />
+                <View style={styles.cardHeaderInfo}>
+                  {exerciseProgress.planDayExercise.supersetGroupId ? (
+                    <Text style={styles.supersetBadge}>
+                      {es.plans.dayEditor.supersetBadgeLabel}
+                    </Text>
+                  ) : null}
+                  <Text style={styles.exerciseName}>
+                    {exerciseProgress.exercise.name}
                   </Text>
-                ) : null}
-                <Text style={styles.exerciseName}>
-                  {exerciseProgress.exercise.name}
-                </Text>
-              </View>
+                </View>
+              </Pressable>
               <Button
                 label={t.skipExerciseButton}
                 variant="secondary"
@@ -291,6 +301,12 @@ function createStyles(colors: ThemeColors) {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: spacing.sm,
+      gap: spacing.sm,
+    },
+    cardHeaderPressable: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: spacing.sm,
     },
     cardHeaderInfo: {

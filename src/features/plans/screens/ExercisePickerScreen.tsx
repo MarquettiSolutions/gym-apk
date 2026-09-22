@@ -183,6 +183,20 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
         onSubmit={handleConfirm}
         submitLabel={es.common.add}
       >
+        {selectedExercise && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              const exerciseId = selectedExercise.id;
+              setSelectedExercise(null);
+              navigation.navigate('ExerciseDetail', { exerciseId });
+            }}
+          >
+            <Text style={styles.viewDetailLink}>
+              {es.exerciseDetail.viewDetailLink}
+            </Text>
+          </Pressable>
+        )}
         <DayExerciseForm values={form} onChange={setForm} />
       </FormSheet>
     </View>
@@ -266,6 +280,12 @@ function createStyles(colors: ThemeColors) {
       fontSize: 12,
       color: colors.muted,
       marginTop: 2,
+    },
+    viewDetailLink: {
+      fontSize: 13,
+      color: colors.primary,
+      fontWeight: '600',
+      marginBottom: spacing.sm,
     },
   });
 }
