@@ -131,3 +131,28 @@
 - [ ] En tema claro y en tema oscuro (Ajustes → Tema, o modo noche del
       emulador) los iconos siguen siendo legibles, tanto el activo como los
       inactivos.
+
+## Mejoras de UX — Swipe actions en listas (issue #15)
+- [ ] En "Mis planes", las tarjetas no muestran botones; al deslizar una hacia
+      la izquierda aparecen **Activar** (solo si no es el plan activo),
+      **Duplicar** y **Eliminar**. Tocar una acción la ejecuta y la tarjeta
+      vuelve a cerrarse sola. Tocar el cuerpo de la tarjeta abre el plan.
+- [ ] En el editor de un plan, cada día se desliza para **Duplicar** y
+      **Eliminar**, y tocarlo abre el día.
+- [ ] En el editor de un día, cada ejercicio se desliza para **Subir**,
+      **Bajar**, **Editar** y **Eliminar**. El primero no ofrece "Subir" y el
+      último no ofrece "Bajar".
+- [ ] En ese mismo editor, **mantener presionada** una tarjeta y arrastrarla
+      verticalmente sigue reordenando (el swipe horizontal y el arrastre
+      vertical no se estorban).
+- [ ] En una superserie, deslizar la **cabecera** ofrece Subir/Bajar (según su
+      posición) y **Desagrupar**; deslizar cada ejercicio miembro ofrece
+      **Editar** y **Eliminar**.
+- [ ] En el modo de selección de superserie ("Superserie" → tocar ejercicios),
+      el swipe queda desactivado y tocar una tarjeta la selecciona.
+- [ ] En "Peso corporal", cada registro se desliza para **Eliminar** y la fila
+      no muestra botón permanente.
+- [ ] Con la tarjeta cerrada no se asoma ningún borde de color detrás de las
+      esquinas redondeadas; en tema oscuro las acciones siguen legibles.
+- [ ] Con un lector de pantalla (TalkBack), enfocar una tarjeta anuncia su
+      nombre y ofrece las mismas acciones como acciones personalizadas.

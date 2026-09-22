@@ -5,6 +5,7 @@ import { useBodyWeight } from '../hooks/useBodyWeight';
 import { useLocalUserId } from '../../../shared/hooks/useLocalUserId';
 import { bodyWeightService } from '../services';
 import { Button } from '../../../shared/components/Button';
+import { SwipeableCard } from '../../../shared/components/SwipeableCard';
 import { TextField } from '../../../shared/components/TextField';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { ProgressChart } from '../../../shared/components/ProgressChart';
@@ -145,25 +146,34 @@ export function BodyWeightScreen() {
             <Text style={styles.emptyText}>{t.empty}</Text>
           )
         }
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <Text style={styles.rowDate}>{formatDateTime(item.loggedAt)}</Text>
-            <View style={styles.rowRight}>
-              <Text style={styles.rowValue}>
-                {formatWeight(
-                  item.weight,
-                  item.weightUnit as 'kg' | 'lb',
-                  settings.weightUnit,
-                )}
+        renderItem={({ item }) => {
+          const displayWeight = formatWeight(
+            item.weight,
+            item.weightUnit as 'kg' | 'lb',
+            settings.weightUnit,
+          );
+          return (
+            <SwipeableCard
+              contentStyle={styles.row}
+              accessibilityLabel={`${formatDateTime(
+                item.loggedAt,
+              )}, ${displayWeight}`}
+              actions={[
+                {
+                  key: 'delete',
+                  label: es.common.delete,
+                  variant: 'danger',
+                  onPress: () => handleDelete(item),
+                },
+              ]}
+            >
+              <Text style={styles.rowDate}>
+                {formatDateTime(item.loggedAt)}
               </Text>
-              <Button
-                label={es.common.delete}
-                variant="danger"
-                onPress={() => handleDelete(item)}
-              />
-            </View>
-          </View>
-        )}
+              <Text style={styles.rowValue}>{displayWeight}</Text>
+            </SwipeableCard>
+          );
+        }}
       />
       <View style={styles.footer}>
         <Button label={t.addButton} onPress={() => setAddVisible(true)} />
@@ -240,18 +250,14 @@ function createStyles(colors: ThemeColors) {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: spacing.sm,
+      paddingVertical: spacing.md,
+      backgroundColor: colors.background,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
     },
     rowDate: {
       fontSize: 13,
       color: colors.muted,
-    },
-    rowRight: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: spacing.sm,
     },
     rowValue: {
       fontSize: 14,

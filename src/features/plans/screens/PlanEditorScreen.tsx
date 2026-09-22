@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { PlansStackParamList } from '../../../navigation/types';
@@ -14,6 +7,7 @@ import { usePlanDetail } from '../hooks/usePlanDetail';
 import { useLocalUserId } from '../../../shared/hooks/useLocalUserId';
 import { plansService } from '../services';
 import { Button } from '../../../shared/components/Button';
+import { SwipeableCard } from '../../../shared/components/SwipeableCard';
 import { TextField } from '../../../shared/components/TextField';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { WeekdayPicker } from '../components/WeekdayPicker';
@@ -203,56 +197,44 @@ export function PlanEditorScreen({ route, navigation }: Props) {
             <Text style={styles.emptyText}>{t.emptyDays}</Text>
           )
         }
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Pressable
-              accessibilityRole="button"
-              style={styles.cardTouchable}
+        renderItem={({ item }) => {
+          const dayTitle = `${WEEKDAY_LABELS[item.day.weekday] ?? ''}${
+            item.day.label ? ` · ${item.day.label}` : ''
+          }`;
+          return (
+            <SwipeableCard
+              style={styles.cardWrapper}
+              contentStyle={styles.card}
+              accessibilityLabel={`${dayTitle}, ${t.exercisesCount(
+                item.exercises.length,
+              )}`}
               onPress={() =>
                 navigation.navigate('DayEditor', {
                   planId,
                   dayId: item.day.id,
                 })
               }
+              actions={[
+                {
+                  key: 'duplicate',
+                  label: es.common.duplicate,
+                  onPress: () => handleDuplicateDay(item.day.id),
+                },
+                {
+                  key: 'delete',
+                  label: es.common.delete,
+                  variant: 'danger',
+                  onPress: () => handleDeleteDay(item.day.id),
+                },
+              ]}
             >
-              <Text style={styles.dayTitle}>
-                {WEEKDAY_LABELS[item.day.weekday] ?? ''}
-                {item.day.label ? ` · ${item.day.label}` : ''}
-              </Text>
+              <Text style={styles.dayTitle}>{dayTitle}</Text>
               <Text style={styles.daySubtitle}>
                 {t.exercisesCount(item.exercises.length)}
               </Text>
-            </Pressable>
-            <View style={styles.cardActions}>
-              <View style={styles.cardActionButton}>
-                <Button
-                  label={es.common.edit}
-                  variant="secondary"
-                  onPress={() =>
-                    navigation.navigate('DayEditor', {
-                      planId,
-                      dayId: item.day.id,
-                    })
-                  }
-                />
-              </View>
-              <View style={styles.cardActionButton}>
-                <Button
-                  label={es.common.duplicate}
-                  variant="secondary"
-                  onPress={() => handleDuplicateDay(item.day.id)}
-                />
-              </View>
-              <View style={styles.cardActionButton}>
-                <Button
-                  label={es.common.delete}
-                  variant="danger"
-                  onPress={() => handleDeleteDay(item.day.id)}
-                />
-              </View>
-            </View>
-          </View>
-        )}
+            </SwipeableCard>
+          );
+        }}
       />
 
       <View style={styles.footer}>
@@ -343,14 +325,13 @@ function createStyles(colors: ThemeColors) {
       color: colors.muted,
       textAlign: 'center',
     },
+    cardWrapper: {
+      marginBottom: spacing.sm,
+    },
     card: {
       backgroundColor: colors.surface,
       borderRadius: 12,
       padding: spacing.md,
-      marginBottom: spacing.sm,
-    },
-    cardTouchable: {
-      marginBottom: spacing.sm,
     },
     dayTitle: {
       fontSize: 15,
@@ -361,14 +342,6 @@ function createStyles(colors: ThemeColors) {
       fontSize: 13,
       color: colors.muted,
       marginTop: 2,
-    },
-    cardActions: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: spacing.xs,
-    },
-    cardActionButton: {
-      minWidth: 90,
     },
     footer: {
       padding: spacing.md,

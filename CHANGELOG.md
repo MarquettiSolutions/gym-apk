@@ -13,6 +13,17 @@ y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
   `@react-native-vector-icons/ionicons`) en lugar del recuadro vacío que dejaba
   React Navigation sin `tabBarIcon`. El ícono va relleno cuando la tab está activa
   y con contorno cuando no, y toma su color del tema claro/oscuro (#14).
+- Los botones de acción de las listas (Editar, Duplicar, Activar, Eliminar, Subir,
+  Bajar, Desagrupar) ya no están siempre a la vista: se muestran al deslizar la
+  tarjeta hacia la izquierda, con un componente compartido (`SwipeableCard`) sobre
+  `react-native-gesture-handler`. Aplica a "Mis planes", los días de un plan, los
+  ejercicios de un día (incluidas las superseries, cuya cabecera desliza para
+  Subir/Bajar/Desagrupar y cada ejercicio para Editar/Eliminar) y los registros de
+  peso corporal. Las mismas acciones quedan disponibles para lectores de pantalla
+  como acciones personalizadas de la tarjeta, sin depender del gesto (#15).
+- En "Mis planes", tocar una tarjeta abre el plan (antes lo hacía el botón
+  "Editar", que pasó a ser innecesario), igual que ya ocurría con los días de un
+  plan (#15).
 
 ## [0.0.1] - 2026-09-18
 
