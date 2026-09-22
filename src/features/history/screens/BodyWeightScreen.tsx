@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
 import { useBodyWeight } from '../hooks/useBodyWeight';
 import { useLocalUserId } from '../../../shared/hooks/useLocalUserId';
@@ -43,6 +45,8 @@ export function BodyWeightScreen() {
     useBodyWeight(userId);
   const [isAddVisible, setAddVisible] = useState(false);
   const [weightText, setWeightText] = useState('');
+  const [loggedAt, setLoggedAt] = useState(() => new Date());
+  const [pickerMode, setPickerMode] = useState<'date' | 'time' | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -50,9 +54,15 @@ export function BodyWeightScreen() {
     }, [reload]),
   );
 
+  function openAddSheet() {
+    setLoggedAt(new Date());
+    setAddVisible(true);
+  }
+
   function closeAddSheet() {
     setAddVisible(false);
     setWeightText('');
+    setPickerMode(null);
   }
 
   async function handleAdd() {
@@ -60,9 +70,43 @@ export function BodyWeightScreen() {
     if (!userId || weight === null) {
       return;
     }
-    await bodyWeightService.addLog(userId, weight, settings.weightUnit);
+    await bodyWeightService.addLog(
+      userId,
+      weight,
+      settings.weightUnit,
+      loggedAt.toISOString(),
+    );
     closeAddSheet();
     await reload();
+  }
+
+  // Android no soporta mode="datetime" en el picker nativo (solo iOS): se
+  // encadenan fecha y hora en dos pasos, reusando el mismo patrón que ya usa
+  // SettingsScreen para el horario del recordatorio diario.
+  function handlePickerChange(event: DateTimePickerEvent, selected?: Date) {
+    const mode = pickerMode;
+    setPickerMode(null);
+    if (event.type !== 'set' || !selected) {
+      return;
+    }
+    if (mode === 'date') {
+      setLoggedAt(prev => {
+        const next = new Date(prev);
+        next.setFullYear(
+          selected.getFullYear(),
+          selected.getMonth(),
+          selected.getDate(),
+        );
+        return next;
+      });
+      setPickerMode('time');
+    } else if (mode === 'time') {
+      setLoggedAt(prev => {
+        const next = new Date(prev);
+        next.setHours(selected.getHours(), selected.getMinutes());
+        return next;
+      });
+    }
   }
 
   function handleDelete(log: BodyWeightLog) {
@@ -176,7 +220,7 @@ export function BodyWeightScreen() {
         }}
       />
       <View style={styles.footer}>
-        <Button label={t.addButton} onPress={() => setAddVisible(true)} />
+        <Button label={t.addButton} onPress={openAddSheet} />
       </View>
       <FormSheet
         visible={isAddVisible}
@@ -192,6 +236,22 @@ export function BodyWeightScreen() {
           onChangeText={setWeightText}
           autoFocus
         />
+        <View style={styles.dateTimeRow}>
+          <Text style={styles.dateTimeLabel}>{t.dateTimeLabel}</Text>
+          <Button
+            label={formatDateTime(loggedAt.toISOString())}
+            variant="secondary"
+            onPress={() => setPickerMode('date')}
+          />
+        </View>
+        {pickerMode ? (
+          <DateTimePicker
+            value={loggedAt}
+            mode={pickerMode}
+            is24Hour
+            onChange={handlePickerChange}
+          />
+        ) : null}
       </FormSheet>
     </View>
   );
@@ -268,6 +328,18 @@ function createStyles(colors: ThemeColors) {
       padding: spacing.md,
       borderTopWidth: 1,
       borderTopColor: colors.border,
+    },
+    dateTimeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: spacing.md,
+      gap: spacing.sm,
+    },
+    dateTimeLabel: {
+      fontSize: 14,
+      color: colors.text,
+      flex: 1,
     },
   });
 }

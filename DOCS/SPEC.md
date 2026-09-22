@@ -667,6 +667,4 @@ agente de implementación.
 
 No quedan ítems sueltos identificados acá sin asignar. El backlog de mejoras
 puntuales (no fases completas) se trackea directamente en
-[GitHub Issues](https://github.com/MarquettiSolutions/gym-apk/issues) —
-por ejemplo, el registro de peso corporal con fecha/hora manual (spec 5.5)
-quedó como [issue #26](https://github.com/MarquettiSolutions/gym-apk/issues/26).
+[GitHub Issues](https://github.com/MarquettiSolutions/gym-apk/issues).

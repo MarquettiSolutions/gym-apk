@@ -198,6 +198,7 @@ export const es = {
     addButton: 'Agregar registro',
     addTitle: 'Nuevo registro de peso',
     weightLabel: (unit: string) => `Peso (${unit})`,
+    dateTimeLabel: 'Fecha y hora',
     filterWeek: 'Semana',
     filterMonth: 'Mes',
     filterAll: 'Todo',
