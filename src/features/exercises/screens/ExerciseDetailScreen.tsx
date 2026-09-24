@@ -21,6 +21,7 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
     exerciseName,
     exerciseMuscleGroup,
     exerciseEquipment,
+    exerciseInstructions,
   } = useTranslation();
   const t = translations.exerciseDetail;
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -53,6 +54,7 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
     : exercise.thumbnailRemoteUrl ?? undefined;
   const muscleGroupLabel = exerciseMuscleGroup(exercise);
   const equipmentLabel = exerciseEquipment(exercise);
+  const instructions = exerciseInstructions(exercise);
   // Solo tiene sentido pedir conexión si hay un proveedor de video asignado
   // a este ejercicio y todavía no se descargó — si nunca hubo match con
   // ningún proveedor, no hay nada que "conectarse a buscar".
@@ -102,10 +104,10 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
         </View>
       )}
 
-      {exercise.instructions && (
+      {instructions && (
         <View style={styles.instructionsBlock}>
           <Text style={styles.sectionTitle}>{t.instructionsTitle}</Text>
-          <Text style={styles.instructionsText}>{exercise.instructions}</Text>
+          <Text style={styles.instructionsText}>{instructions}</Text>
         </View>
       )}
       {!exercise.isCustom && (

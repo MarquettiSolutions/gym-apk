@@ -16,6 +16,7 @@ import {
   exerciseNameOverrideKey,
   localizedEquipment,
   localizedExerciseName,
+  localizedInstructions,
   localizedMuscleGroup,
 } from './exerciseLabels';
 import type { ExerciseNameOverrides } from './exerciseLabels';
@@ -34,6 +35,9 @@ interface LanguageContextValue {
   ) => string | null;
   exerciseEquipment: (
     exercise: Parameters<typeof localizedEquipment>[0],
+  ) => string | null;
+  exerciseInstructions: (
+    exercise: Parameters<typeof localizedInstructions>[0],
   ) => string | null;
   matchesExerciseSearch: (
     exercise: Parameters<typeof localizedExerciseName>[0],
@@ -131,6 +135,8 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       reloadExerciseNameOverrides,
       exerciseMuscleGroup: exercise => localizedMuscleGroup(exercise, language),
       exerciseEquipment: exercise => localizedEquipment(exercise, language),
+      exerciseInstructions: exercise =>
+        localizedInstructions(exercise, language),
       matchesExerciseSearch: (exercise, normalizedQuery) =>
         exerciseMatchesSearch(exercise, language, normalizedQuery, overrides),
     }),
