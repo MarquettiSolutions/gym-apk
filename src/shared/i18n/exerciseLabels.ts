@@ -1,3 +1,5 @@
+import { exerciseInstructionsEs } from './exerciseInstructionsEs';
+import { exerciseInstructionsPt } from './exerciseInstructionsPt';
 import { exerciseNameTranslations } from './exerciseNames';
 import { translations } from './translations';
 import type { Language } from './types';
@@ -10,6 +12,7 @@ interface LocalizableExercise {
   isCustom: boolean;
   muscleGroup: string | null;
   equipment: string | null;
+  instructions: string | null;
 }
 
 // Ediciones locales del usuario: clave `exerciseId|language` -> nombre.
@@ -48,6 +51,23 @@ export function localizedExerciseName(
     return exercise.name;
   }
   return exerciseNameTranslations[exercise.name]?.[language] ?? exercise.name;
+}
+
+// Las instrucciones del catálogo también vienen en inglés (pasos unidos con
+// "\n"). Igual que los nombres, la traducción vive en código, indexada por el
+// nombre canónico en inglés; si falta se muestra el texto original — nunca
+// vacío. Los ejercicios personalizados (texto del usuario) no se traducen.
+export function localizedInstructions(
+  exercise: Pick<LocalizableExercise, 'name' | 'isCustom' | 'instructions'>,
+  language: Language,
+): string | null {
+  const { instructions } = exercise;
+  if (!instructions || exercise.isCustom || language === 'en') {
+    return instructions;
+  }
+  const dictionary =
+    language === 'es' ? exerciseInstructionsEs : exerciseInstructionsPt;
+  return dictionary[exercise.name] ?? instructions;
 }
 
 // `muscle_group` guarda una lista separada por ", " (músculos primarios +

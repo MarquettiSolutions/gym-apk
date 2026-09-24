@@ -45,6 +45,8 @@ jest.mock('../../../../shared/i18n', () => {
       restoreExerciseName: (...args: unknown[]) => mockRestore(...args),
       exerciseMuscleGroup: (e: unknown) => labels.localizedMuscleGroup(e, 'es'),
       exerciseEquipment: (e: unknown) => labels.localizedEquipment(e, 'es'),
+      exerciseInstructions: (e: unknown) =>
+        labels.localizedInstructions(e, 'es'),
     }),
   };
 });

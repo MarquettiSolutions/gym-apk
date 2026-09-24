@@ -297,6 +297,22 @@ el valor por defecto)**
       filtran igual que antes.
 - [ ] Un ejercicio sin traducción muestra su nombre en inglés (nunca vacío).
 
+## Instrucciones de ejercicios traducidas (issue #37)
+
+- [ ] Con el idioma en español, el detalle de un ejercicio del catálogo (ej.
+      "Barbell Deadlift") muestra los pasos de instrucciones en español
+      LatAm neutro, en el mismo orden y con la misma cantidad de pasos que el
+      original en inglés; sin vosotros ni vocabulario de España.
+- [ ] Con el idioma en portugués, el mismo ejercicio muestra las instrucciones
+      en portugués de Brasil (nunca de Portugal).
+- [ ] Con el idioma en inglés, las instrucciones quedan en el texto original.
+- [ ] Un ejercicio del catálogo sin traducción de instrucciones (o sin
+      instrucciones en la fuente) no rompe la pantalla: se muestra el texto
+      en inglés o no aparece la sección, nunca un bloque vacío o roto.
+- [ ] Un ejercicio personalizado creado a mano muestra las instrucciones
+      exactamente como las escribió el usuario, en cualquiera de los 3
+      idiomas.
+
 ## Edición local de nombres de ejercicios (issue #33)
 
 - [ ] En el detalle de un ejercicio del catálogo aparece "Editar nombre"; en

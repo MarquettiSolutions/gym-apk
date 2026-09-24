@@ -2,9 +2,12 @@ import {
   exerciseMatchesSearch,
   localizedEquipment,
   localizedExerciseName,
+  localizedInstructions,
   localizedMuscleGroup,
   normalizeSearchText,
 } from '../exerciseLabels';
+import { exerciseInstructionsEs } from '../exerciseInstructionsEs';
+import { exerciseInstructionsPt } from '../exerciseInstructionsPt';
 import { exerciseNameTranslations } from '../exerciseNames';
 import { en } from '../en';
 import { es } from '../es';
@@ -64,6 +67,66 @@ describe('localizedExerciseName', () => {
       expect(value.es.trim()).not.toBe('');
       expect(value.pt.trim()).not.toBe('');
     }
+  });
+});
+
+describe('localizedInstructions', () => {
+  const original = 'Stand up.\nLower the bar.';
+  const exercise = {
+    name: 'Barbell Deadlift',
+    isCustom: false,
+    instructions: original,
+  };
+
+  it('traduce las instrucciones del catálogo a español y portugués', () => {
+    expect(localizedInstructions(exercise, 'es')).toBe(
+      exerciseInstructionsEs['Barbell Deadlift'],
+    );
+    expect(localizedInstructions(exercise, 'pt')).toBe(
+      exerciseInstructionsPt['Barbell Deadlift'],
+    );
+    expect(localizedInstructions(exercise, 'es')).not.toBe(original);
+    expect(localizedInstructions(exercise, 'pt')).not.toBe(original);
+  });
+
+  it('en inglés devuelve el texto original', () => {
+    expect(localizedInstructions(exercise, 'en')).toBe(original);
+  });
+
+  it('cae al texto original si el ejercicio no tiene traducción', () => {
+    expect(
+      localizedInstructions({ ...exercise, name: 'Some Unknown Move' }, 'es'),
+    ).toBe(original);
+  });
+
+  it('nunca traduce ejercicios personalizados', () => {
+    expect(localizedInstructions({ ...exercise, isCustom: true }, 'pt')).toBe(
+      original,
+    );
+  });
+
+  it('devuelve null si el ejercicio no tiene instrucciones', () => {
+    expect(
+      localizedInstructions({ ...exercise, instructions: null }, 'es'),
+    ).toBe(null);
+  });
+
+  it('cubre todo el catálogo en es y pt, con pasos no vacíos', () => {
+    const names = Object.keys(exerciseNameTranslations);
+    for (const dictionary of [exerciseInstructionsEs, exerciseInstructionsPt]) {
+      const withInstructions = Object.keys(dictionary);
+      // 5 ejercicios de la fuente no traen instrucciones.
+      expect(withInstructions).toHaveLength(names.length - 5);
+      for (const name of withInstructions) {
+        expect(names).toContain(name);
+        for (const step of (dictionary[name] ?? '').split('\n')) {
+          expect(step.trim()).not.toBe('');
+        }
+      }
+    }
+    expect(Object.keys(exerciseInstructionsEs).sort()).toEqual(
+      Object.keys(exerciseInstructionsPt).sort(),
+    );
   });
 });
 
