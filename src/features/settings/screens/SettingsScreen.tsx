@@ -19,10 +19,9 @@ import { SegmentedControl } from '../../../shared/components/SegmentedControl';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
-import type { ThemePreference, WeightUnit } from '../types';
+import { useTranslation } from '../../../shared/i18n';
+import type { LanguagePreference, ThemePreference, WeightUnit } from '../types';
 
-const t = es.settings;
 const appVersion = DeviceInfo.getVersion();
 const appBuildNumber = DeviceInfo.getBuildNumber();
 
@@ -44,6 +43,8 @@ function Section({ title, children }: SectionProps) {
 
 export function SettingsScreen() {
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.settings;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings, updateSetting, reload } = useSettings();
   const [restSecondsText, setRestSecondsText] = useState(
@@ -87,7 +88,7 @@ export function SettingsScreen() {
 
   function handleImport() {
     Alert.alert(t.importConfirmTitle, t.importConfirmMessage, [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       { text: t.importConfirmButton, onPress: runImport },
     ]);
   }
@@ -148,6 +149,20 @@ export function SettingsScreen() {
             { value: 'light', label: t.themeOptions.light },
             { value: 'dark', label: t.themeOptions.dark },
             { value: 'system', label: t.themeOptions.system },
+          ]}
+        />
+      </Section>
+
+      <Section title={t.sections.language}>
+        <SegmentedControl<LanguagePreference>
+          accessibilityLabel={t.languageLabel}
+          value={settings.language}
+          onChange={value => updateSetting('language', value)}
+          options={[
+            { value: 'en', label: t.languageOptions.en },
+            { value: 'es', label: t.languageOptions.es },
+            { value: 'pt', label: t.languageOptions.pt },
+            { value: 'system', label: t.languageOptions.system },
           ]}
         />
       </Section>

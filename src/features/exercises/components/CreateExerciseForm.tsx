@@ -6,7 +6,7 @@ import { Button } from '../../../shared/components/Button';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import type { CreateCustomExerciseInput } from '../types';
 
 interface CreateExerciseFormProps {
@@ -14,13 +14,13 @@ interface CreateExerciseFormProps {
   onChange: (values: CreateCustomExerciseInput) => void;
 }
 
-const t = es.exercises;
-
 export function CreateExerciseForm({
   values,
   onChange,
 }: CreateExerciseFormProps) {
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.exercises;
   const styles = useMemo(() => createStyles(colors), [colors]);
 
   async function pickThumbnail() {

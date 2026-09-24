@@ -18,17 +18,17 @@ import { DayExerciseForm } from '../components/DayExerciseForm';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { useSettings } from '../../settings/context/SettingsContext';
 import type { DayExerciseFormValues, Exercise } from '../types';
 
 type Props = NativeStackScreenProps<PlansStackParamList, 'ExercisePicker'>;
 
-const t = es.plans.exercisePicker;
-
 export function ExercisePickerScreen({ route, navigation }: Props) {
   const { dayId } = route.params;
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.plans.exercisePicker;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
   const { exercises, isLoading } = useExerciseCatalog();
@@ -147,7 +147,7 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
         }
         ListEmptyComponent={
           isLoading ? (
-            <Text style={styles.emptyText}>{es.common.loading}</Text>
+            <Text style={styles.emptyText}>{translations.common.loading}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.empty}</Text>
           )
@@ -181,7 +181,7 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
         title={selectedExercise ? selectedExercise.name : t.configureTitle}
         onCancel={() => setSelectedExercise(null)}
         onSubmit={handleConfirm}
-        submitLabel={es.common.add}
+        submitLabel={translations.common.add}
       >
         {selectedExercise && (
           <Pressable
@@ -193,7 +193,7 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
             }}
           >
             <Text style={styles.viewDetailLink}>
-              {es.exerciseDetail.viewDetailLink}
+              {translations.exerciseDetail.viewDetailLink}
             </Text>
           </Pressable>
         )}

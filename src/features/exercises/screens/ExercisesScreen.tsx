@@ -21,10 +21,8 @@ import { createCustomExercise } from '../services/customExercisesService';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import type { CreateCustomExerciseInput } from '../types';
-
-const t = es.exercises;
 
 const emptyForm: CreateCustomExerciseInput = {
   name: '',
@@ -38,6 +36,8 @@ type Props = NativeStackScreenProps<ExercisesStackParamList, 'ExercisesList'>;
 
 export function ExercisesScreen({ navigation }: Props) {
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.exercises;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { exercises, isLoading, reload } = useExerciseCatalog();
   const userId = useLocalUserId();
@@ -95,7 +95,7 @@ export function ExercisesScreen({ navigation }: Props) {
         }
         ListEmptyComponent={
           isLoading ? (
-            <Text style={styles.emptyText}>{es.common.loading}</Text>
+            <Text style={styles.emptyText}>{translations.common.loading}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.empty}</Text>
           )
@@ -134,7 +134,7 @@ export function ExercisesScreen({ navigation }: Props) {
         title={t.createTitle}
         onCancel={() => setCreating(false)}
         onSubmit={handleCreate}
-        submitLabel={es.common.create}
+        submitLabel={translations.common.create}
         submitDisabled={form.name.trim() === ''}
       >
         <CreateExerciseForm values={form} onChange={setForm} />

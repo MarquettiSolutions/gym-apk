@@ -7,18 +7,18 @@ import { Button } from '../../../shared/components/Button';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { REST_TIMER_STEP_SECONDS } from '../constants';
 import { formatMinutesSeconds } from '../utils/restTimer';
 import { useSettings } from '../../settings/context/SettingsContext';
 
 type Props = NativeStackScreenProps<WorkoutSessionStackParamList, 'RestTimer'>;
 
-const t = es.workoutSession.restTimer;
-
 export function RestTimerScreen({ route, navigation }: Props) {
   const { seconds } = route.params;
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.workoutSession.restTimer;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
 

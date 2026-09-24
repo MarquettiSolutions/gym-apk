@@ -1,6 +1,11 @@
 import type { Repositories } from '../../../db/repositories';
 import { DEFAULT_SETTINGS } from '../types';
-import type { AppSettings, ThemePreference, WeightUnit } from '../types';
+import type {
+  AppSettings,
+  LanguagePreference,
+  ThemePreference,
+  WeightUnit,
+} from '../types';
 
 // Cada campo de `AppSettings` vive como una fila `key`/`value` (texto) en la
 // única tabla mutable in-place (ver spec 4.4) — el resto de las tablas son
@@ -9,6 +14,7 @@ const SETTINGS_KEYS: Record<keyof AppSettings, string> = {
   defaultRestSeconds: 'default_rest_seconds',
   weightUnit: 'weight_unit',
   theme: 'theme',
+  language: 'language',
   timerSoundEnabled: 'timer_sound_enabled',
   timerVibrationEnabled: 'timer_vibration_enabled',
   dailyReminderEnabled: 'daily_reminder_enabled',
@@ -38,12 +44,22 @@ function parseTheme(value: string | undefined): ThemePreference {
     : DEFAULT_SETTINGS.theme;
 }
 
+function parseLanguage(value: string | undefined): LanguagePreference {
+  return value === 'en' ||
+    value === 'es' ||
+    value === 'pt' ||
+    value === 'system'
+    ? value
+    : DEFAULT_SETTINGS.language;
+}
+
 export function createSettingsService(repositories: Repositories) {
   async function loadSettings(): Promise<AppSettings> {
     const [
       defaultRestSecondsRaw,
       weightUnitRaw,
       themeRaw,
+      languageRaw,
       timerSoundEnabledRaw,
       timerVibrationEnabledRaw,
       dailyReminderEnabledRaw,
@@ -53,6 +69,7 @@ export function createSettingsService(repositories: Repositories) {
       repositories.settings.get(SETTINGS_KEYS.defaultRestSeconds),
       repositories.settings.get(SETTINGS_KEYS.weightUnit),
       repositories.settings.get(SETTINGS_KEYS.theme),
+      repositories.settings.get(SETTINGS_KEYS.language),
       repositories.settings.get(SETTINGS_KEYS.timerSoundEnabled),
       repositories.settings.get(SETTINGS_KEYS.timerVibrationEnabled),
       repositories.settings.get(SETTINGS_KEYS.dailyReminderEnabled),
@@ -67,6 +84,7 @@ export function createSettingsService(repositories: Repositories) {
       ),
       weightUnit: parseWeightUnit(weightUnitRaw),
       theme: parseTheme(themeRaw),
+      language: parseLanguage(languageRaw),
       timerSoundEnabled: parseBoolean(
         timerSoundEnabledRaw,
         DEFAULT_SETTINGS.timerSoundEnabled,

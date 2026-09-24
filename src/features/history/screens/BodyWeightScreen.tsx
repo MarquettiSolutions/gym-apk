@@ -14,19 +14,11 @@ import { ProgressChart } from '../../../shared/components/ProgressChart';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { formatDateTime, formatShortDate } from '../../../shared/utils/dates';
 import { convertWeight, formatWeight } from '../../../shared/utils/weight';
 import { useSettings } from '../../settings/context/SettingsContext';
 import type { BodyWeightLog, BodyWeightRangeFilter } from '../types';
-
-const t = es.bodyWeight;
-
-const FILTERS: Array<{ value: BodyWeightRangeFilter; label: string }> = [
-  { value: 'week', label: t.filterWeek },
-  { value: 'month', label: t.filterMonth },
-  { value: 'all', label: t.filterAll },
-];
 
 function parseWeight(text: string): number | null {
   if (text.trim() === '') {
@@ -38,6 +30,8 @@ function parseWeight(text: string): number | null {
 
 export function BodyWeightScreen() {
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.bodyWeight;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
   const userId = useLocalUserId();
@@ -47,6 +41,17 @@ export function BodyWeightScreen() {
   const [weightText, setWeightText] = useState('');
   const [loggedAt, setLoggedAt] = useState(() => new Date());
   const [pickerMode, setPickerMode] = useState<'date' | 'time' | null>(null);
+
+  const filters = useMemo<
+    Array<{ value: BodyWeightRangeFilter; label: string }>
+  >(
+    () => [
+      { value: 'week', label: t.filterWeek },
+      { value: 'month', label: t.filterMonth },
+      { value: 'all', label: t.filterAll },
+    ],
+    [t],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -111,9 +116,9 @@ export function BodyWeightScreen() {
 
   function handleDelete(log: BodyWeightLog) {
     Alert.alert(t.deleteConfirmTitle, t.deleteConfirmMessage, [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       {
-        text: es.common.confirmDeleteButton,
+        text: translations.common.confirmDeleteButton,
         style: 'destructive',
         onPress: async () => {
           await bodyWeightService.deleteLog(log.id);
@@ -158,7 +163,7 @@ export function BodyWeightScreen() {
                 </View>
               )}
               <View style={styles.filterRow}>
-                {FILTERS.map(option => (
+                {filters.map(option => (
                   <View key={option.value} style={styles.filterButton}>
                     <Button
                       label={option.label}
@@ -185,7 +190,7 @@ export function BodyWeightScreen() {
         }
         ListEmptyComponent={
           isLoading ? (
-            <Text style={styles.emptyText}>{es.common.loading}</Text>
+            <Text style={styles.emptyText}>{translations.common.loading}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.empty}</Text>
           )
@@ -205,7 +210,7 @@ export function BodyWeightScreen() {
               actions={[
                 {
                   key: 'delete',
-                  label: es.common.delete,
+                  label: translations.common.delete,
                   variant: 'danger',
                   onPress: () => handleDelete(item),
                 },

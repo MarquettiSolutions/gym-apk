@@ -5,35 +5,36 @@ import { TodayWorkoutScreen } from '../features/workout-session/screens/TodayWor
 import { WorkoutSessionScreen } from '../features/workout-session/screens/WorkoutSessionScreen';
 import { RestTimerScreen } from '../features/workout-session/screens/RestTimerScreen';
 import { ExerciseDetailScreen } from '../features/exercises/screens/ExerciseDetailScreen';
-import { es } from '../shared/i18n/es';
+import { useTranslation } from '../shared/i18n';
 
 const Stack = createNativeStackNavigator<WorkoutSessionStackParamList>();
 
 export function WorkoutSessionStackNavigator() {
+  const { t } = useTranslation();
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="TodayWorkout"
         component={TodayWorkoutScreen}
-        options={{ title: es.screens.today.title }}
+        options={{ title: t.screens.today.title }}
       />
       <Stack.Screen
         name="WorkoutSession"
         component={WorkoutSessionScreen}
-        options={{ title: es.tabs.today }}
+        options={{ title: t.tabs.today }}
       />
       <Stack.Screen
         name="RestTimer"
         component={RestTimerScreen}
         options={{
-          title: es.workoutSession.restTimer.title,
+          title: t.workoutSession.restTimer.title,
           gestureEnabled: false,
         }}
       />
       <Stack.Screen
         name="ExerciseDetail"
         component={ExerciseDetailScreen}
-        options={{ title: es.tabs.exercises }}
+        options={{ title: t.tabs.exercises }}
       />
     </Stack.Navigator>
   );

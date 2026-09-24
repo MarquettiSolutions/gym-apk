@@ -4,25 +4,25 @@ import { useExerciseDetail } from '../hooks/useExerciseDetail';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { toImageUri } from '../../../shared/utils/mediaUri';
 
 interface ExerciseDetailScreenProps {
   route: { params: { exerciseId: string } };
 }
 
-const t = es.exerciseDetail;
-
 export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
   const { exerciseId } = route.params;
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.exerciseDetail;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { exercise, isLoading } = useExerciseDetail(exerciseId);
 
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>{es.common.loading}</Text>
+        <Text style={styles.message}>{translations.common.loading}</Text>
       </View>
     );
   }

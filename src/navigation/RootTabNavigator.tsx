@@ -7,7 +7,7 @@ import { PlansStackNavigator } from './PlansStackNavigator';
 import { ExercisesStackNavigator } from './ExercisesStackNavigator';
 import { HistoryStackNavigator } from './HistoryStackNavigator';
 import { SettingsScreen } from '../features/settings/screens/SettingsScreen';
-import { es } from '../shared/i18n/es';
+import { useTranslation } from '../shared/i18n';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -30,13 +30,14 @@ function tabIcon(active: IconName, inactive: IconName) {
 }
 
 export function RootTabNavigator() {
+  const { t } = useTranslation();
   return (
     <Tab.Navigator screenOptions={{ headerShown: true }}>
       <Tab.Screen
         name="TodayTab"
         component={WorkoutSessionStackNavigator}
         options={{
-          title: es.tabs.today,
+          title: t.tabs.today,
           tabBarIcon: tabIcon('today', 'today-outline'),
           headerShown: false,
         }}
@@ -45,7 +46,7 @@ export function RootTabNavigator() {
         name="Plans"
         component={PlansStackNavigator}
         options={{
-          title: es.tabs.plans,
+          title: t.tabs.plans,
           tabBarIcon: tabIcon('clipboard', 'clipboard-outline'),
           headerShown: false,
         }}
@@ -54,7 +55,7 @@ export function RootTabNavigator() {
         name="Exercises"
         component={ExercisesStackNavigator}
         options={{
-          title: es.tabs.exercises,
+          title: t.tabs.exercises,
           tabBarIcon: tabIcon('barbell', 'barbell-outline'),
           headerShown: false,
         }}
@@ -63,7 +64,7 @@ export function RootTabNavigator() {
         name="History"
         component={HistoryStackNavigator}
         options={{
-          title: es.tabs.history,
+          title: t.tabs.history,
           tabBarIcon: tabIcon('time', 'time-outline'),
           headerShown: false,
         }}
@@ -72,7 +73,7 @@ export function RootTabNavigator() {
         name="Settings"
         component={SettingsScreen}
         options={{
-          title: es.tabs.settings,
+          title: t.tabs.settings,
           tabBarIcon: tabIcon('settings', 'settings-outline'),
         }}
       />

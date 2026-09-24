@@ -3,7 +3,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { WEEKDAY_DISPLAY_ORDER, WEEKDAY_LABELS } from '../constants';
+import { useTranslation } from '../../../shared/i18n';
+import { WEEKDAY_DISPLAY_ORDER } from '../constants';
 
 interface WeekdayPickerProps {
   value: number;
@@ -12,12 +13,13 @@ interface WeekdayPickerProps {
 
 export function WeekdayPicker({ value, onChange }: WeekdayPickerProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.row}>
       {WEEKDAY_DISPLAY_ORDER.map(weekday => {
         const selected = weekday === value;
-        const label = WEEKDAY_LABELS[weekday];
+        const label = t.weekdays[weekday] ?? '';
         return (
           <Pressable
             key={weekday}

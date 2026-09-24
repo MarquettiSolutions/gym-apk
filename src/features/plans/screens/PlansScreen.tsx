@@ -16,15 +16,15 @@ import { FormSheet } from '../../../shared/components/FormSheet';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import type { Plan } from '../types';
 
 type Props = NativeStackScreenProps<PlansStackParamList, 'PlansList'>;
 
-const t = es.plans.list;
-
 export function PlansScreen({ navigation }: Props) {
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.plans.list;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const userId = useLocalUserId();
   const { plans, isLoading, reload } = usePlans(userId);
@@ -70,9 +70,9 @@ export function PlansScreen({ navigation }: Props) {
 
   function handleDelete(plan: Plan) {
     Alert.alert(t.deleteConfirmTitle, t.deleteConfirmMessage(plan.name), [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       {
-        text: es.common.confirmDeleteButton,
+        text: translations.common.confirmDeleteButton,
         style: 'destructive',
         onPress: async () => {
           await plansService.deletePlan(plan.id);
@@ -89,18 +89,18 @@ export function PlansScreen({ navigation }: Props) {
         : [
             {
               key: 'activate',
-              label: es.common.activate,
+              label: translations.common.activate,
               onPress: () => handleActivate(plan),
             },
           ]),
       {
         key: 'duplicate',
-        label: es.common.duplicate,
+        label: translations.common.duplicate,
         onPress: () => handleDuplicate(plan),
       },
       {
         key: 'delete',
-        label: es.common.delete,
+        label: translations.common.delete,
         variant: 'danger',
         onPress: () => handleDelete(plan),
       },
@@ -119,7 +119,7 @@ export function PlansScreen({ navigation }: Props) {
         }
         ListEmptyComponent={
           isLoading ? (
-            <Text style={styles.emptyText}>{es.common.loading}</Text>
+            <Text style={styles.emptyText}>{translations.common.loading}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.empty}</Text>
           )
@@ -130,7 +130,7 @@ export function PlansScreen({ navigation }: Props) {
             contentStyle={styles.card}
             accessibilityLabel={
               item.isActive
-                ? `${item.name}, ${es.common.activeBadge}`
+                ? `${item.name}, ${translations.common.activeBadge}`
                 : item.name
             }
             onPress={() =>
@@ -143,7 +143,7 @@ export function PlansScreen({ navigation }: Props) {
               {item.isActive && (
                 <View style={styles.activeBadge}>
                   <Text style={styles.activeBadgeText}>
-                    {es.common.activeBadge}
+                    {translations.common.activeBadge}
                   </Text>
                 </View>
               )}

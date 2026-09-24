@@ -20,11 +20,10 @@ import { FormSheet } from '../../../shared/components/FormSheet';
 import { ExerciseThumbnail } from '../../../shared/components/ExerciseThumbnail';
 import { WeekdayPicker } from '../components/WeekdayPicker';
 import { DayExerciseForm } from '../components/DayExerciseForm';
-import { WEEKDAY_LABELS } from '../constants';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { useSettings } from '../../settings/context/SettingsContext';
 import { groupConsecutiveBy } from '../../../shared/utils/grouping';
 import type { DayExerciseFormValues, PlanDayExerciseDetail } from '../types';
@@ -32,12 +31,12 @@ import type { DayExerciseFormValues, PlanDayExerciseDetail } from '../types';
 type Props = NativeStackScreenProps<PlansStackParamList, 'DayEditor'>;
 type ExerciseBlock = { groupId: string | null; items: PlanDayExerciseDetail[] };
 
-const t = es.plans.dayEditor;
-const editorT = es.plans.editor;
-
 export function DayEditorScreen({ route, navigation }: Props) {
   const { planId, dayId } = route.params;
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.plans.dayEditor;
+  const editorT = translations.plans.editor;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
   const { detail, isLoading, reload } = useDayDetail(dayId);
@@ -67,14 +66,14 @@ export function DayEditorScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     if (detail) {
-      const weekdayLabel = WEEKDAY_LABELS[detail.day.weekday] ?? '';
+      const weekdayLabel = translations.weekdays[detail.day.weekday] ?? '';
       navigation.setOptions({
         title: detail.day.label
           ? `${weekdayLabel} · ${detail.day.label}`
           : weekdayLabel,
       });
     }
-  }, [detail, navigation]);
+  }, [detail, navigation, translations]);
 
   function openEditDaySheet() {
     if (!detail) {
@@ -99,9 +98,9 @@ export function DayEditorScreen({ route, navigation }: Props) {
       editorT.deleteDayConfirmTitle,
       editorT.deleteDayConfirmMessage,
       [
-        { text: es.common.cancel, style: 'cancel' },
+        { text: translations.common.cancel, style: 'cancel' },
         {
-          text: es.common.confirmDeleteButton,
+          text: translations.common.confirmDeleteButton,
           style: 'destructive',
           onPress: async () => {
             await plansService.deleteDay(dayId);
@@ -137,9 +136,9 @@ export function DayEditorScreen({ route, navigation }: Props) {
 
   function handleRemoveExercise(id: string) {
     Alert.alert(t.deleteExerciseConfirmTitle, t.deleteExerciseConfirmMessage, [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       {
-        text: es.common.confirmDeleteButton,
+        text: translations.common.confirmDeleteButton,
         style: 'destructive',
         onPress: async () => {
           await plansService.removeDayExercise(id);
@@ -214,9 +213,9 @@ export function DayEditorScreen({ route, navigation }: Props) {
 
   function handleDissolveGroup(groupId: string) {
     Alert.alert(t.ungroupConfirmTitle, t.ungroupConfirmMessage, [
-      { text: es.common.cancel, style: 'cancel' },
+      { text: translations.common.cancel, style: 'cancel' },
       {
-        text: es.common.confirmDeleteButton,
+        text: translations.common.confirmDeleteButton,
         style: 'destructive',
         onPress: async () => {
           await plansService.dissolveSupersetGroup(dayId, groupId);
@@ -263,12 +262,12 @@ export function DayEditorScreen({ route, navigation }: Props) {
     return [
       {
         key: 'edit',
-        label: es.common.edit,
+        label: translations.common.edit,
         onPress: () => openEditExerciseSheet(item),
       },
       {
         key: 'delete',
-        label: es.common.delete,
+        label: translations.common.delete,
         variant: 'danger',
         onPress: () => handleRemoveExercise(item.planDayExercise.id),
       },
@@ -311,7 +310,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
         <View style={styles.dayActions}>
           <View style={styles.dayActionButton}>
             <Button
-              label={es.common.edit}
+              label={translations.common.edit}
               variant="secondary"
               onPress={openEditDaySheet}
             />
@@ -325,7 +324,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
           </View>
           <View style={styles.dayActionButton}>
             <Button
-              label={es.common.delete}
+              label={translations.common.delete}
               variant="danger"
               onPress={handleDeleteDay}
             />
@@ -346,7 +345,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
         }
         ListEmptyComponent={
           isLoading ? (
-            <Text style={styles.emptyText}>{es.common.loading}</Text>
+            <Text style={styles.emptyText}>{translations.common.loading}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.emptyExercises}</Text>
           )

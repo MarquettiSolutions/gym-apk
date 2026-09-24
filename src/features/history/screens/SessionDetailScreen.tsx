@@ -7,19 +7,19 @@ import { ExerciseThumbnail } from '../../../shared/components/ExerciseThumbnail'
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { es } from '../../../shared/i18n/es';
+import { useTranslation } from '../../../shared/i18n';
 import { formatDateTime } from '../../../shared/utils/dates';
 import { convertWeight } from '../../../shared/utils/weight';
 import { useSettings } from '../../settings/context/SettingsContext';
 
 type Props = NativeStackScreenProps<HistoryStackParamList, 'SessionDetail'>;
 
-const t = es.history.detail;
-const listT = es.history.list;
-
 export function SessionDetailScreen({ route, navigation }: Props) {
   const { sessionId } = route.params;
   const { colors } = useTheme();
+  const { t: translations } = useTranslation();
+  const t = translations.history.detail;
+  const listT = translations.history.list;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
   const { detail, isLoading } = useSessionHistoryDetail(sessionId);
@@ -27,7 +27,7 @@ export function SessionDetailScreen({ route, navigation }: Props) {
   if (isLoading || !detail) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>{es.common.loading}</Text>
+        <Text style={styles.message}>{translations.common.loading}</Text>
       </View>
     );
   }

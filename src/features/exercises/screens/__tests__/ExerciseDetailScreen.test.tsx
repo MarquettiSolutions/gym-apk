@@ -18,6 +18,13 @@ jest.mock('../../../../shared/theme/ThemeContext', () => ({
   }),
 }));
 
+jest.mock('../../../../shared/i18n', () => ({
+  useTranslation: () => ({
+    language: 'es',
+    t: require('../../../../shared/i18n/es').es,
+  }),
+}));
+
 function buildExercise(overrides: Partial<Exercise> = {}): Exercise {
   return {
     id: 'a',
