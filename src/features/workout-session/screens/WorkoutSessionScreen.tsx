@@ -62,7 +62,7 @@ function suggestedValues(
 export function WorkoutSessionScreen({ route, navigation }: Props) {
   const { sessionId } = route.params;
   const { colors } = useTheme();
-  const { t: translations } = useTranslation();
+  const { t: translations, exerciseName } = useTranslation();
   const t = translations.workoutSession.session;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
@@ -196,7 +196,7 @@ export function WorkoutSessionScreen({ route, navigation }: Props) {
                     </Text>
                   ) : null}
                   <Text style={styles.exerciseName}>
-                    {exerciseProgress.exercise.name}
+                    {exerciseName(exerciseProgress.exercise)}
                   </Text>
                 </View>
               </Pressable>

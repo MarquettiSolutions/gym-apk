@@ -17,7 +17,7 @@ type Props = NativeStackScreenProps<HistoryStackParamList, 'SessionDetail'>;
 export function SessionDetailScreen({ route, navigation }: Props) {
   const { sessionId } = route.params;
   const { colors } = useTheme();
-  const { t: translations } = useTranslation();
+  const { t: translations, exerciseName } = useTranslation();
   const t = translations.history.detail;
   const listT = translations.history.list;
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -54,7 +54,7 @@ export function SessionDetailScreen({ route, navigation }: Props) {
               onPress={() =>
                 navigation.navigate('ExerciseProgress', {
                   exerciseId: exercise.id,
-                  exerciseName: exercise.name,
+                  exerciseName: exerciseName(exercise),
                 })
               }
             >
@@ -62,7 +62,7 @@ export function SessionDetailScreen({ route, navigation }: Props) {
                 localPath={exercise.thumbnailLocalPath}
                 remoteUrl={exercise.thumbnailRemoteUrl}
               />
-              <Text style={styles.exerciseName}>{exercise.name}</Text>
+              <Text style={styles.exerciseName}>{exerciseName(exercise)}</Text>
             </Pressable>
 
             {sets.map(set => (

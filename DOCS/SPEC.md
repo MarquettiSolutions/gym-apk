@@ -404,8 +404,10 @@ Reglas de negocio:
   de pantalla en las acciones principales (marcar serie, iniciar descanso).
 - **Idioma**: inglés (US), español (Latinoamérica) y portugués (Brasil), detectado
   automáticamente del idioma del sistema operativo (con selector manual en Ajustes para anular la
-  detección) — ver issue #30. Los nombres del catálogo de ejercicios siguen en inglés hasta el
-  paso 2 de esa issue.
+  detección) — ver issue #30. Los nombres del catálogo, grupo muscular y equipo se traducen desde
+  diccionarios en código (`src/shared/i18n/exerciseNames.ts`, keyed por el nombre original en
+  inglés, con fallback a inglés); los ejercicios personalizados nunca se traducen. La búsqueda
+  del catálogo también busca sobre el nombre traducido.
 - **Tamaño de la APK**: cuidar el peso de los assets multimedia empaquetados (imágenes optimizadas,
   considerar descarga bajo demanda para videos si el catálogo crece mucho).
 
@@ -435,8 +437,7 @@ Estas son recomendaciones a evaluar y decidir si entran en v1 o quedan para v2:
 - **Widget/atajo** en pantalla de inicio de Android para abrir directo el entrenamiento del día.
 - **Modo cronómetro con audio/vibración también al finalizar cada ejercicio**, no solo el descanso.
 - ~~**Multi-idioma**~~ — implementado (paso 1 de la issue #30, ver 6): inglés/español/portugués
-  con detección automática y selector manual. Nombres de ejercicios del catálogo pendientes
-  (paso 2 de la misma issue).
+  con detección automática y selector manual, incluyendo nombres de ejercicios (paso 2).
 
 ## 9. Fases de desarrollo sugeridas
 1. **Fase 0** — ✅ Concluida (mergeada a `main`). Setup del proyecto (React Native CLI + TS +

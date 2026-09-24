@@ -21,7 +21,7 @@ type Props = NativeStackScreenProps<
 
 export function TodayWorkoutScreen({ navigation }: Props) {
   const { colors } = useTheme();
-  const { t: translations } = useTranslation();
+  const { t: translations, exerciseName } = useTranslation();
   const t = translations.workoutSession.today;
   const dayEditorT = translations.plans.dayEditor;
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -95,7 +95,7 @@ export function TodayWorkoutScreen({ navigation }: Props) {
               remoteUrl={item.exercise.thumbnailRemoteUrl}
             />
             <View style={styles.rowInfo}>
-              <Text style={styles.rowName}>{item.exercise.name}</Text>
+              <Text style={styles.rowName}>{exerciseName(item.exercise)}</Text>
               <Text style={styles.rowMeta}>
                 {dayEditorT.setsRepsFormat(
                   item.planDayExercise.targetSets,

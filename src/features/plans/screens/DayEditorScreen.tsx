@@ -34,7 +34,7 @@ type ExerciseBlock = { groupId: string | null; items: PlanDayExerciseDetail[] };
 export function DayEditorScreen({ route, navigation }: Props) {
   const { planId, dayId } = route.params;
   const { colors } = useTheme();
-  const { t: translations } = useTranslation();
+  const { t: translations, exerciseName } = useTranslation();
   const t = translations.plans.dayEditor;
   const editorT = translations.plans.editor;
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -233,7 +233,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
           remoteUrl={item.exercise.thumbnailRemoteUrl}
         />
         <View style={styles.cardInfo}>
-          <Text style={styles.exerciseName}>{item.exercise.name}</Text>
+          <Text style={styles.exerciseName}>{exerciseName(item.exercise)}</Text>
           <Text style={styles.exerciseMeta}>
             {t.setsRepsFormat(
               item.planDayExercise.targetSets,
@@ -275,7 +275,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
   }
 
   function exerciseSummary(item: PlanDayExerciseDetail) {
-    return `${item.exercise.name}, ${t.setsRepsFormat(
+    return `${exerciseName(item.exercise)}, ${t.setsRepsFormat(
       item.planDayExercise.targetSets,
       item.planDayExercise.targetReps,
     )}`;

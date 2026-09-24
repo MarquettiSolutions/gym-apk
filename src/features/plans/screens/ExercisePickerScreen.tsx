@@ -18,7 +18,7 @@ import { DayExerciseForm } from '../components/DayExerciseForm';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { useTranslation } from '../../../shared/i18n';
+import { normalizeSearchText, useTranslation } from '../../../shared/i18n';
 import { useSettings } from '../../settings/context/SettingsContext';
 import type { DayExerciseFormValues, Exercise } from '../types';
 
@@ -27,7 +27,13 @@ type Props = NativeStackScreenProps<PlansStackParamList, 'ExercisePicker'>;
 export function ExercisePickerScreen({ route, navigation }: Props) {
   const { dayId } = route.params;
   const { colors } = useTheme();
-  const { t: translations } = useTranslation();
+  const {
+    t: translations,
+    exerciseName,
+    exerciseMuscleGroup,
+    exerciseEquipment,
+    matchesExerciseSearch,
+  } = useTranslation();
   const t = translations.plans.exercisePicker;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
@@ -56,16 +62,16 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
   }, [exercises]);
 
   const filteredExercises = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+    const normalizedSearch = normalizeSearchText(search.trim());
     return exercises.filter(exercise => {
       const matchesSearch =
         normalizedSearch === '' ||
-        exercise.name.toLowerCase().includes(normalizedSearch);
+        matchesExerciseSearch(exercise, normalizedSearch);
       const matchesGroup =
         muscleGroup === null || exercise.muscleGroup === muscleGroup;
       return matchesSearch && matchesGroup;
     });
-  }, [exercises, search, muscleGroup]);
+  }, [exercises, search, muscleGroup, matchesExerciseSearch]);
 
   function openConfigureSheet(exercise: Exercise) {
     setSelectedExercise(exercise);
@@ -130,7 +136,7 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
               <Text
                 style={[styles.chipLabel, selected && styles.chipLabelSelected]}
               >
-                {group}
+                {exerciseMuscleGroup({ muscleGroup: group, isCustom: false })}
               </Text>
             </Pressable>
           );
@@ -163,10 +169,10 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
               remoteUrl={item.thumbnailRemoteUrl}
             />
             <View style={styles.rowInfo}>
-              <Text style={styles.rowName}>{item.name}</Text>
+              <Text style={styles.rowName}>{exerciseName(item)}</Text>
               {(item.muscleGroup || item.equipment) && (
                 <Text style={styles.rowMeta}>
-                  {[item.muscleGroup, item.equipment]
+                  {[exerciseMuscleGroup(item), exerciseEquipment(item)]
                     .filter(Boolean)
                     .join(' · ')}
                 </Text>
@@ -178,7 +184,9 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
 
       <FormSheet
         visible={selectedExercise !== null}
-        title={selectedExercise ? selectedExercise.name : t.configureTitle}
+        title={
+          selectedExercise ? exerciseName(selectedExercise) : t.configureTitle
+        }
         onCancel={() => setSelectedExercise(null)}
         onSubmit={handleConfirm}
         submitLabel={translations.common.add}
