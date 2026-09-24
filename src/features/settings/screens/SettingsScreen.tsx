@@ -43,7 +43,7 @@ function Section({ title, children }: SectionProps) {
 
 export function SettingsScreen() {
   const { colors } = useTheme();
-  const { t: translations } = useTranslation();
+  const { t: translations, reloadExerciseNameOverrides } = useTranslation();
   const t = translations.settings;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings, updateSetting, reload } = useSettings();
@@ -101,6 +101,7 @@ export function SettingsScreen() {
         return;
       }
       await reload();
+      await reloadExerciseNameOverrides();
       const message =
         result.skippedExerciseRefs > 0
           ? `${t.importSuccessMessage} ${t.importSkippedMessage(

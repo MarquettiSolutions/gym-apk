@@ -278,6 +278,20 @@ export const pt = {
       'Conecte-se à internet para ver o vídeo pela primeira vez.',
     viewDetailLink: 'Ver detalhe do exercício',
     notFound: 'Exercício não encontrado.',
+    editName: 'Editar nome',
+    editNameTitle: 'Editar nome do exercício',
+    nameFieldLabel: 'Nome',
+    restoreOriginal: 'Restaurar original',
+    nameEmptyError: 'O nome não pode ficar vazio.',
+    nameTooLongError: (max: number) =>
+      `O nome pode ter no máximo ${max} caracteres.`,
+    confirmTitle: 'Salvar nome',
+    confirmMessage:
+      'Escolha o que fazer com a sua alteração. As sugestões são públicas: são publicadas como uma issue no repositório do app (github.com/MarquettiSolutions/gym-apk) com a sua conta do GitHub.',
+    saveLocalOnly: 'Salvar só no meu celular',
+    saveAndSend: 'Salvar e enviar sugestão',
+    openBrowserError:
+      'Seu nome foi salvo, mas não foi possível abrir a página da sugestão. Verifique sua conexão e seu navegador.',
   },
   settings: {
     sections: {

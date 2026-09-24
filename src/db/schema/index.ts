@@ -7,3 +7,4 @@ export * from './workoutSessions';
 export * from './workoutSessionSets';
 export * from './bodyWeightLogs';
 export * from './settings';
+export * from './exerciseNameOverrides';

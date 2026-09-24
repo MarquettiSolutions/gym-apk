@@ -296,3 +296,31 @@ el valor por defecto)**
 - [ ] Las chips de grupo muscular del selector de ejercicio están traducidas y
       filtran igual que antes.
 - [ ] Un ejercicio sin traducción muestra su nombre en inglés (nunca vacío).
+
+## Edición local de nombres de ejercicios (issue #33)
+
+- [ ] En el detalle de un ejercicio del catálogo aparece "Editar nombre"; en
+      un ejercicio personalizado no aparece.
+- [ ] Editar el nombre en el idioma activo (pre-cargado con el nombre
+      actual) y elegir "Solo guardar en mi teléfono": el nuevo nombre se ve
+      en Ejercicios, selector de ejercicio, editor de día, plan de hoy,
+      sesión en curso e historial; no se abre el navegador.
+- [ ] Cambiar de idioma: el nombre editado solo aplica al idioma donde se
+      editó; en los otros idiomas sigue el nombre del diccionario.
+- [ ] "Restaurar original" (visible solo si hay edición) vuelve al nombre del
+      diccionario.
+- [ ] Nombre vacío / solo espacios / demasiado largo: muestra error y no
+      avanza al paso de confirmación.
+- [ ] Al guardar siempre aparece el paso de confirmación con "Solo guardar
+      en mi teléfono" y "Guardar y enviar sugerencia", con aviso de que la
+      sugerencia es pública; ninguna opción viene pre-elegida y "Cancelar"
+      vuelve a la edición sin guardar.
+- [ ] "Guardar y enviar sugerencia" guarda local y abre en el navegador la
+      issue de GitHub prellenada (título, nombre original, idioma, nombre
+      actual, sugerido, versión de la app; label "traducción").
+- [ ] Buscar por el nombre editado en "Ejercicios" y en el selector lo
+      encuentra.
+- [ ] Exportar backup, borrar/reinstalar la app, importar: los nombres
+      editados siguen ahí.
+- [ ] En inglés también se puede editar el nombre canónico con el mismo
+      flujo.

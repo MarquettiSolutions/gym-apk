@@ -1,6 +1,7 @@
 import type { AppDatabase } from '../types';
 import { createUsersRepository } from './usersRepository';
 import { createExercisesRepository } from './exercisesRepository';
+import { createExerciseNameOverridesRepository } from './exerciseNameOverridesRepository';
 import { createPlansRepository } from './plansRepository';
 import { createPlanDaysRepository } from './planDaysRepository';
 import { createPlanDayExercisesRepository } from './planDayExercisesRepository';
@@ -10,6 +11,7 @@ import { createSettingsRepository } from './settingsRepository';
 
 export * from './usersRepository';
 export * from './exercisesRepository';
+export * from './exerciseNameOverridesRepository';
 export * from './plansRepository';
 export * from './planDaysRepository';
 export * from './planDayExercisesRepository';
@@ -21,6 +23,7 @@ export function createRepositories(db: AppDatabase) {
   return {
     users: createUsersRepository(db),
     exercises: createExercisesRepository(db),
+    exerciseNameOverrides: createExerciseNameOverridesRepository(db),
     plans: createPlansRepository(db),
     planDays: createPlanDaysRepository(db),
     planDayExercises: createPlanDayExercisesRepository(db),

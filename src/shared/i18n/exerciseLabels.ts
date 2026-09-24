@@ -5,22 +5,46 @@ import type { Language } from './types';
 // Subconjunto de `Exercise` que hace falta acá; evita depender de la capa de
 // features desde `shared`.
 interface LocalizableExercise {
+  id?: string;
   name: string;
   isCustom: boolean;
   muscleGroup: string | null;
   equipment: string | null;
 }
 
+// Ediciones locales del usuario: clave `exerciseId|language` -> nombre.
+export type ExerciseNameOverrides = ReadonlyMap<string, string>;
+
+export function exerciseNameOverrideKey(
+  exerciseId: string,
+  language: Language,
+): string {
+  return `${exerciseId}|${language}`;
+}
+
 // Los nombres canónicos del catálogo (free-exercise-db) están en inglés; la
 // traducción vive en código, no en la DB, así no hace falta migración y una
 // corrección de traducción llega con una actualización de la app. Si no hay
 // traducción (o el ejercicio es personalizado, texto libre del usuario) se
-// muestra el nombre original — nunca vacío.
+// muestra el nombre original — nunca vacío. Prioridad: edición local del
+// usuario > traducción del diccionario > nombre en inglés.
 export function localizedExerciseName(
-  exercise: Pick<LocalizableExercise, 'name' | 'isCustom'>,
+  exercise: Pick<LocalizableExercise, 'id' | 'name' | 'isCustom'>,
   language: Language,
+  overrides?: ExerciseNameOverrides,
 ): string {
-  if (exercise.isCustom || language === 'en') {
+  if (exercise.isCustom) {
+    return exercise.name;
+  }
+  if (exercise.id && overrides) {
+    const override = overrides.get(
+      exerciseNameOverrideKey(exercise.id, language),
+    );
+    if (override) {
+      return override;
+    }
+  }
+  if (language === 'en') {
     return exercise.name;
   }
   return exerciseNameTranslations[exercise.name]?.[language] ?? exercise.name;
@@ -66,16 +90,18 @@ export function normalizeSearchText(text: string): string {
 }
 
 // Busca sobre el nombre canónico en inglés Y sobre el traducido al idioma
-// activo, para que "sentadilla" encuentre "Squat" y "squat" también.
+// activo (incluida la edición local del usuario), para que "sentadilla"
+// encuentre "Squat" y "squat" también.
 export function exerciseMatchesSearch(
-  exercise: Pick<LocalizableExercise, 'name' | 'isCustom'>,
+  exercise: Pick<LocalizableExercise, 'id' | 'name' | 'isCustom'>,
   language: Language,
   normalizedQuery: string,
+  overrides?: ExerciseNameOverrides,
 ): boolean {
   return (
     normalizeSearchText(exercise.name).includes(normalizedQuery) ||
-    normalizeSearchText(localizedExerciseName(exercise, language)).includes(
-      normalizedQuery,
-    )
+    normalizeSearchText(
+      localizedExerciseName(exercise, language, overrides),
+    ).includes(normalizedQuery)
   );
 }
