@@ -129,6 +129,32 @@ describe('backupService', () => {
     expect(result.importedCounts.bodyWeightLogs).toBe(1);
   });
 
+  it('los nombres editados sobreviven a exportar/importar en otra DB (reenlace por nombre)', async () => {
+    const source = setup();
+    await seedSourceData(source, 'ex-catalog-1');
+    await source.repositories.exerciseNameOverrides.upsert(
+      'ex-catalog-1',
+      'es',
+      'Sentadilla libre',
+    );
+    const backup = await source.service.buildBackup();
+    expect(backup.data.exerciseNameOverrides).toEqual([
+      { exerciseName: 'Sentadilla', language: 'es', name: 'Sentadilla libre' },
+    ]);
+
+    const target = setup();
+    await target.db
+      .insert(exercises)
+      .values({ id: 'ex-catalog-99', name: 'Sentadilla', isCustom: false });
+    const result = await target.service.importBackup(backup);
+
+    expect(result.importedCounts.exerciseNameOverrides).toBe(1);
+    const rows = await target.repositories.exerciseNameOverrides.listAll();
+    expect(rows).toMatchObject([
+      { exerciseId: 'ex-catalog-99', language: 'es', name: 'Sentadilla libre' },
+    ]);
+  });
+
   it('la versión del backup se valida antes de importar', async () => {
     const { service } = setup();
     const invalid = { version: 2 } as unknown as BackupFile;

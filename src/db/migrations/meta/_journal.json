@@ -15,6 +15,13 @@
       "when": 1789666291189,
       "tag": "0001_known_centennial",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1790249316385,
+      "tag": "0002_loving_bromley",
+      "breakpoints": true
     }
   ]
 }

@@ -12,6 +12,7 @@ import type { AppDatabase } from '../../../db/types';
 import type { Repositories } from '../../../db/repositories';
 import {
   bodyWeightLogs,
+  exerciseNameOverrides,
   exercises,
   planDayExercises,
   planDays,
@@ -39,6 +40,13 @@ export interface BackupFile {
     // donde el catálogo se reimportó con IDs nuevos (ver comentario en
     // `importBackup`).
     catalogExerciseRefs: { id: string; name: string }[];
+    // Ediciones locales de nombres del catálogo, identificadas por el nombre
+    // canónico en inglés (los IDs del catálogo cambian entre instalaciones).
+    exerciseNameOverrides?: {
+      exerciseName: string;
+      language: string;
+      name: string;
+    }[];
     plans: (typeof plans.$inferSelect)[];
     planDays: (typeof planDays.$inferSelect)[];
     planDayExercises: (typeof planDayExercises.$inferSelect)[];
@@ -85,6 +93,7 @@ export function createBackupService(
     const [
       allUsers,
       allExercises,
+      allNameOverrides,
       allPlans,
       allPlanDays,
       allPlanDayExercises,
@@ -95,6 +104,7 @@ export function createBackupService(
     ] = await Promise.all([
       db.select().from(users),
       db.select().from(exercises),
+      db.select().from(exerciseNameOverrides),
       db.select().from(plans),
       db.select().from(planDays),
       db.select().from(planDayExercises),
@@ -127,6 +137,13 @@ export function createBackupService(
       }
     }
 
+    const nameOverrides = allNameOverrides.flatMap(row => {
+      const exerciseName = exerciseNameById.get(row.exerciseId);
+      return exerciseName && !customExerciseIds.has(row.exerciseId)
+        ? [{ exerciseName, language: row.language, name: row.name }]
+        : [];
+    });
+
     return {
       version: BACKUP_VERSION,
       exportedAt: new Date().toISOString(),
@@ -134,6 +151,7 @@ export function createBackupService(
         users: allUsers,
         exercises: customExercises,
         catalogExerciseRefs,
+        exerciseNameOverrides: nameOverrides,
         plans: allPlans,
         planDays: allPlanDays,
         planDayExercises: allPlanDayExercises,
@@ -188,6 +206,26 @@ export function createBackupService(
       }
       return exerciseIdRemap.get(exerciseId) ?? null;
     }
+
+    // Mismo criterio de fusión que el resto (upsert): la edición del backup
+    // pisa la local del mismo ejercicio+idioma. Se reenlaza por nombre
+    // canónico; si el ejercicio ya no existe se omite.
+    const catalogIdByName = new Map(
+      currentExercises.filter(e => !e.isCustom).map(e => [e.name, e.id]),
+    );
+    let nameOverridesImported = 0;
+    for (const row of backup.data.exerciseNameOverrides ?? []) {
+      const exerciseId = catalogIdByName.get(row.exerciseName);
+      if (exerciseId) {
+        await repositories.exerciseNameOverrides.upsert(
+          exerciseId,
+          row.language,
+          row.name,
+        );
+        nameOverridesImported += 1;
+      }
+    }
+    importedCounts.exerciseNameOverrides = nameOverridesImported;
 
     importedCounts.plans = await upsertRows(db, plans, backup.data.plans);
     importedCounts.planDays = await upsertRows(

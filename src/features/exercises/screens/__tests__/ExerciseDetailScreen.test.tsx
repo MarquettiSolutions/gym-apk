@@ -1,10 +1,19 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { Linking } from 'react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 import { ExerciseDetailScreen } from '../ExerciseDetailScreen';
 import { es } from '../../../../shared/i18n/es';
 import type { Exercise } from '../../types';
 
 const mockUseExerciseDetail = jest.fn();
+const mockSaveOverride = jest.fn().mockResolvedValue(undefined);
+const mockRestore = jest.fn().mockResolvedValue(undefined);
+const mockOpenURL = jest.fn().mockResolvedValue(undefined);
+
+jest.mock('react-native-device-info', () => ({
+  __esModule: true,
+  default: { getVersion: () => '0.0.1' },
+}));
 
 jest.mock('../../hooks/useExerciseDetail', () => ({
   useExerciseDetail: (exerciseId: string) => mockUseExerciseDetail(exerciseId),
@@ -25,6 +34,11 @@ jest.mock('../../../../shared/i18n', () => {
       language: 'es',
       t: require('../../../../shared/i18n/es').es,
       exerciseName: (e: unknown) => labels.localizedExerciseName(e, 'es'),
+      exerciseBaseName: (e: unknown) => labels.localizedExerciseName(e, 'es'),
+      hasExerciseNameOverride: () => false,
+      saveExerciseNameOverride: (...args: unknown[]) =>
+        mockSaveOverride(...args),
+      restoreExerciseName: (...args: unknown[]) => mockRestore(...args),
       exerciseMuscleGroup: (e: unknown) => labels.localizedMuscleGroup(e, 'es'),
       exerciseEquipment: (e: unknown) => labels.localizedEquipment(e, 'es'),
     }),
@@ -55,6 +69,8 @@ function buildExercise(overrides: Partial<Exercise> = {}): Exercise {
 const t = es.exerciseDetail;
 
 describe('ExerciseDetailScreen', () => {
+  beforeEach(() => jest.clearAllMocks());
+
   const route = { params: { exerciseId: 'a' } };
 
   it('muestra el estado de carga', async () => {
@@ -126,5 +142,86 @@ describe('ExerciseDetailScreen', () => {
     await render(<ExerciseDetailScreen route={route} />);
 
     expect(screen.queryByText(t.offlineBannerMessage)).toBeNull();
+  });
+
+  it('ofrece editar el nombre en ejercicios del catálogo pero no en personalizados', async () => {
+    mockUseExerciseDetail.mockReturnValue({
+      exercise: buildExercise(),
+      isLoading: false,
+    });
+    const first = await render(<ExerciseDetailScreen route={route} />);
+    expect(screen.getByText(t.editName)).toBeTruthy();
+    await first.unmount();
+
+    mockUseExerciseDetail.mockReturnValue({
+      exercise: buildExercise({ isCustom: true }),
+      isLoading: false,
+    });
+    await render(<ExerciseDetailScreen route={route} />);
+    expect(screen.queryByText(t.editName)).toBeNull();
+  });
+
+  it('pide confirmación explícita y "solo local" no abre el navegador', async () => {
+    mockUseExerciseDetail.mockReturnValue({
+      exercise: buildExercise(),
+      isLoading: false,
+    });
+    jest.spyOn(Linking, 'openURL').mockImplementation(mockOpenURL);
+    await render(<ExerciseDetailScreen route={route} />);
+
+    await fireEvent.press(screen.getByText(t.editName));
+    await fireEvent.changeText(
+      screen.getByLabelText(t.nameFieldLabel),
+      '  Flexión de pecho ',
+    );
+    await fireEvent.press(screen.getByText(es.common.save));
+
+    expect(mockSaveOverride).not.toHaveBeenCalled();
+    expect(screen.getByText(t.saveLocalOnly)).toBeTruthy();
+    expect(screen.getByText(t.saveAndSend)).toBeTruthy();
+
+    await fireEvent.press(screen.getByText(t.saveLocalOnly));
+
+    expect(mockSaveOverride).toHaveBeenCalledWith('a', 'Flexión de pecho');
+    expect(mockOpenURL).not.toHaveBeenCalled();
+  });
+
+  it('"guardar y enviar" guarda y abre la issue prellenada', async () => {
+    mockUseExerciseDetail.mockReturnValue({
+      exercise: buildExercise(),
+      isLoading: false,
+    });
+    jest.spyOn(Linking, 'openURL').mockImplementation(mockOpenURL);
+    await render(<ExerciseDetailScreen route={route} />);
+
+    await fireEvent.press(screen.getByText(t.editName));
+    await fireEvent.changeText(
+      screen.getByLabelText(t.nameFieldLabel),
+      'Flexión de pecho',
+    );
+    await fireEvent.press(screen.getByText(es.common.save));
+    await fireEvent.press(screen.getByText(t.saveAndSend));
+
+    expect(mockSaveOverride).toHaveBeenCalledWith('a', 'Flexión de pecho');
+    expect(mockOpenURL).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'github.com/MarquettiSolutions/gym-apk/issues/new',
+      ),
+    );
+  });
+
+  it('no deja continuar con un nombre vacío', async () => {
+    mockUseExerciseDetail.mockReturnValue({
+      exercise: buildExercise(),
+      isLoading: false,
+    });
+    await render(<ExerciseDetailScreen route={route} />);
+
+    await fireEvent.press(screen.getByText(t.editName));
+    await fireEvent.changeText(screen.getByLabelText(t.nameFieldLabel), '   ');
+    await fireEvent.press(screen.getByText(es.common.save));
+
+    expect(screen.getByText(t.nameEmptyError)).toBeTruthy();
+    expect(screen.queryByText(t.saveLocalOnly)).toBeNull();
   });
 });

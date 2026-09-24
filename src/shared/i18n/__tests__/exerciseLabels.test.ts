@@ -37,6 +37,20 @@ describe('localizedExerciseName', () => {
     ).toBe('Some Unknown Move');
   });
 
+  it('la edición local del usuario gana sobre el diccionario, por idioma', () => {
+    const overrides = new Map([['ex1|es', 'Peso muerto convencional']]);
+    const exercise = { id: 'ex1', ...catalogExercise };
+    expect(localizedExerciseName(exercise, 'es', overrides)).toBe(
+      'Peso muerto convencional',
+    );
+    expect(localizedExerciseName(exercise, 'pt', overrides)).toBe(
+      'Levantamento terra com barra',
+    );
+    expect(
+      exerciseMatchesSearch(exercise, 'es', 'convencional', overrides),
+    ).toBe(true);
+  });
+
   it('nunca traduce ejercicios personalizados', () => {
     expect(
       localizedExerciseName({ name: 'Barbell Deadlift', isCustom: true }, 'pt'),

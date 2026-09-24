@@ -1,5 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button } from '../../../shared/components/Button';
+import { EditExerciseNameSheet } from '../components/EditExerciseNameSheet';
 import { useExerciseDetail } from '../hooks/useExerciseDetail';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
@@ -23,6 +25,7 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
   const t = translations.exerciseDetail;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { exercise, isLoading } = useExerciseDetail(exerciseId);
+  const [isEditingName, setIsEditingName] = useState(false);
 
   if (isLoading) {
     return (
@@ -72,6 +75,15 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
       )}
 
       <Text style={styles.name}>{exerciseName(exercise)}</Text>
+      {!exercise.isCustom && (
+        <View style={styles.editNameButton}>
+          <Button
+            label={t.editName}
+            variant="secondary"
+            onPress={() => setIsEditingName(true)}
+          />
+        </View>
+      )}
 
       {(exercise.muscleGroup || exercise.equipment) && (
         <View style={styles.metaRow}>
@@ -95,6 +107,13 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
           <Text style={styles.sectionTitle}>{t.instructionsTitle}</Text>
           <Text style={styles.instructionsText}>{exercise.instructions}</Text>
         </View>
+      )}
+      {!exercise.isCustom && (
+        <EditExerciseNameSheet
+          visible={isEditingName}
+          exercise={exercise}
+          onClose={() => setIsEditingName(false)}
+        />
       )}
     </ScrollView>
   );
@@ -135,6 +154,10 @@ function createStyles(colors: ThemeColors) {
       fontSize: 20,
       fontWeight: '700',
       color: colors.text,
+    },
+    editNameButton: {
+      marginTop: spacing.sm,
+      alignSelf: 'flex-start',
     },
     metaRow: {
       flexDirection: 'row',
