@@ -5,6 +5,10 @@ import { ExerciseDetailScreen } from '../ExerciseDetailScreen';
 import { es } from '../../../../shared/i18n/es';
 import type { Exercise } from '../../types';
 
+// El primer render de la pantalla carga Modal/FormSheet y en CI en frío puede
+// pasar los 5 s por defecto.
+jest.setTimeout(20000);
+
 const mockUseExerciseDetail = jest.fn();
 const mockSaveOverride = jest.fn().mockResolvedValue(undefined);
 const mockRestore = jest.fn().mockResolvedValue(undefined);
