@@ -18,12 +18,18 @@ jest.mock('../../../../shared/theme/ThemeContext', () => ({
   }),
 }));
 
-jest.mock('../../../../shared/i18n', () => ({
-  useTranslation: () => ({
-    language: 'es',
-    t: require('../../../../shared/i18n/es').es,
-  }),
-}));
+jest.mock('../../../../shared/i18n', () => {
+  const labels = require('../../../../shared/i18n/exerciseLabels');
+  return {
+    useTranslation: () => ({
+      language: 'es',
+      t: require('../../../../shared/i18n/es').es,
+      exerciseName: (e: unknown) => labels.localizedExerciseName(e, 'es'),
+      exerciseMuscleGroup: (e: unknown) => labels.localizedMuscleGroup(e, 'es'),
+      exerciseEquipment: (e: unknown) => labels.localizedEquipment(e, 'es'),
+    }),
+  };
+});
 
 function buildExercise(overrides: Partial<Exercise> = {}): Exercise {
   return {
@@ -76,7 +82,7 @@ describe('ExerciseDetailScreen', () => {
     await render(<ExerciseDetailScreen route={route} />);
 
     expect(screen.getByText('Push Up')).toBeTruthy();
-    expect(screen.getByText('chest')).toBeTruthy();
+    expect(screen.getByText('Pecho')).toBeTruthy();
     expect(screen.getByText('body weight')).toBeTruthy();
     expect(screen.getByText('Baja el pecho y empuja.')).toBeTruthy();
   });

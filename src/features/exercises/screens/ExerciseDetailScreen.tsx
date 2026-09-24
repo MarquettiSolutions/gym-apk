@@ -14,7 +14,12 @@ interface ExerciseDetailScreenProps {
 export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
   const { exerciseId } = route.params;
   const { colors } = useTheme();
-  const { t: translations } = useTranslation();
+  const {
+    t: translations,
+    exerciseName,
+    exerciseMuscleGroup,
+    exerciseEquipment,
+  } = useTranslation();
   const t = translations.exerciseDetail;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { exercise, isLoading } = useExerciseDetail(exerciseId);
@@ -43,6 +48,8 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
     : exercise.thumbnailLocalPath
     ? toImageUri(exercise.thumbnailLocalPath)
     : exercise.thumbnailRemoteUrl ?? undefined;
+  const muscleGroupLabel = exerciseMuscleGroup(exercise);
+  const equipmentLabel = exerciseEquipment(exercise);
   // Solo tiene sentido pedir conexión si hay un proveedor de video asignado
   // a este ejercicio y todavía no se descargó — si nunca hubo match con
   // ningún proveedor, no hay nada que "conectarse a buscar".
@@ -55,7 +62,7 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
         <Image
           source={{ uri: heroUri }}
           style={styles.hero}
-          accessibilityLabel={exercise.name}
+          accessibilityLabel={exerciseName(exercise)}
         />
       ) : (
         <View style={styles.hero} />
@@ -64,20 +71,20 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
         <Text style={styles.offlineBanner}>{t.offlineBannerMessage}</Text>
       )}
 
-      <Text style={styles.name}>{exercise.name}</Text>
+      <Text style={styles.name}>{exerciseName(exercise)}</Text>
 
       {(exercise.muscleGroup || exercise.equipment) && (
         <View style={styles.metaRow}>
-          {exercise.muscleGroup && (
+          {muscleGroupLabel && (
             <View style={styles.metaItem}>
               <Text style={styles.metaLabel}>{t.muscleGroupLabel}</Text>
-              <Text style={styles.metaValue}>{exercise.muscleGroup}</Text>
+              <Text style={styles.metaValue}>{muscleGroupLabel}</Text>
             </View>
           )}
-          {exercise.equipment && (
+          {equipmentLabel && (
             <View style={styles.metaItem}>
               <Text style={styles.metaLabel}>{t.equipmentLabel}</Text>
-              <Text style={styles.metaValue}>{exercise.equipment}</Text>
+              <Text style={styles.metaValue}>{equipmentLabel}</Text>
             </View>
           )}
         </View>

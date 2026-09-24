@@ -21,7 +21,7 @@ import { createCustomExercise } from '../services/customExercisesService';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
-import { useTranslation } from '../../../shared/i18n';
+import { normalizeSearchText, useTranslation } from '../../../shared/i18n';
 import type { CreateCustomExerciseInput } from '../types';
 
 const emptyForm: CreateCustomExerciseInput = {
@@ -36,7 +36,13 @@ type Props = NativeStackScreenProps<ExercisesStackParamList, 'ExercisesList'>;
 
 export function ExercisesScreen({ navigation }: Props) {
   const { colors } = useTheme();
-  const { t: translations } = useTranslation();
+  const {
+    t: translations,
+    exerciseName,
+    exerciseMuscleGroup,
+    exerciseEquipment,
+    matchesExerciseSearch,
+  } = useTranslation();
   const t = translations.exercises;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { exercises, isLoading, reload } = useExerciseCatalog();
@@ -46,14 +52,14 @@ export function ExercisesScreen({ navigation }: Props) {
   const [form, setForm] = useState<CreateCustomExerciseInput>(emptyForm);
 
   const filteredExercises = useMemo(() => {
-    const normalized = search.trim().toLowerCase();
+    const normalized = normalizeSearchText(search.trim());
     if (normalized === '') {
       return exercises;
     }
     return exercises.filter(exercise =>
-      exercise.name.toLowerCase().includes(normalized),
+      matchesExerciseSearch(exercise, normalized),
     );
-  }, [exercises, search]);
+  }, [exercises, search, matchesExerciseSearch]);
 
   function openCreateSheet() {
     setForm(emptyForm);
@@ -113,10 +119,10 @@ export function ExercisesScreen({ navigation }: Props) {
               remoteUrl={item.thumbnailRemoteUrl}
             />
             <View style={styles.rowInfo}>
-              <Text style={styles.rowName}>{item.name}</Text>
+              <Text style={styles.rowName}>{exerciseName(item)}</Text>
               {(item.muscleGroup || item.equipment) && (
                 <Text style={styles.rowMeta}>
-                  {[item.muscleGroup, item.equipment]
+                  {[exerciseMuscleGroup(item), exerciseEquipment(item)]
                     .filter(Boolean)
                     .join(' · ')}
                 </Text>

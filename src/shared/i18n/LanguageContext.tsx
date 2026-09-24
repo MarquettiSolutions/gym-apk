@@ -3,6 +3,12 @@ import type { ReactNode } from 'react';
 import { useLocalize } from 'react-native-localize';
 import { useSettings } from '../../features/settings/context/SettingsContext';
 import { setActiveLanguage } from './activeLanguage';
+import {
+  exerciseMatchesSearch,
+  localizedEquipment,
+  localizedExerciseName,
+  localizedMuscleGroup,
+} from './exerciseLabels';
 import { resolveLanguage } from './locale';
 import { translations } from './translations';
 import type { Language, Translations } from './types';
@@ -10,6 +16,19 @@ import type { Language, Translations } from './types';
 interface LanguageContextValue {
   language: Language;
   t: Translations;
+  exerciseName: (
+    exercise: Parameters<typeof localizedExerciseName>[0],
+  ) => string;
+  exerciseMuscleGroup: (
+    exercise: Parameters<typeof localizedMuscleGroup>[0],
+  ) => string | null;
+  exerciseEquipment: (
+    exercise: Parameters<typeof localizedEquipment>[0],
+  ) => string | null;
+  matchesExerciseSearch: (
+    exercise: Parameters<typeof localizedExerciseName>[0],
+    normalizedQuery: string,
+  ) => boolean;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -36,7 +55,15 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   }, [language]);
 
   const value = useMemo<LanguageContextValue>(
-    () => ({ language, t: translations[language] }),
+    () => ({
+      language,
+      t: translations[language],
+      exerciseName: exercise => localizedExerciseName(exercise, language),
+      exerciseMuscleGroup: exercise => localizedMuscleGroup(exercise, language),
+      exerciseEquipment: exercise => localizedEquipment(exercise, language),
+      matchesExerciseSearch: (exercise, normalizedQuery) =>
+        exerciseMatchesSearch(exercise, language, normalizedQuery),
+    }),
     [language],
   );
 

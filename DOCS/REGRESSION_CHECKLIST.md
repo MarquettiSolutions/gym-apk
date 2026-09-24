@@ -226,9 +226,8 @@ en un clon nuevo del repo)**
 
 ## Internacionalización — arquitectura e idioma de la UI (issue #30, paso 1)
 
-> Los nombres de ejercicios del catálogo (`exercises.name`), `muscleGroup` y
-> `equipment` siguen en inglés en este paso — eso es esperado, es el paso 2
-> de la issue #30.
+> Los nombres de ejercicios del catálogo, `muscleGroup` y `equipment` se
+> traducen en el paso 2 de la issue #30 (ver sección siguiente).
 
 **Detección automática por idioma del sistema (Ajustes → Idioma en "Sistema",
 el valor por defecto)**
@@ -272,3 +271,28 @@ el valor por defecto)**
       idioma y luego importar ese mismo backup: el idioma guardado en el
       archivo se restaura correctamente (mismo mecanismo que tema/unidad de
       peso).
+
+## Nombres de ejercicios traducidos (issue #30, paso 2)
+
+- [ ] Con el idioma en español, la tab "Ejercicios" muestra nombres en español
+      neutro (ej. "Peso muerto con barra", "Sentadilla completa con barra"),
+      y grupo muscular / equipo traducidos (ej. "Pecho · Mancuerna"); sin
+      "gemelos", voseo ni vocabulario de España.
+- [ ] Con el idioma en portugués, los mismos ejercicios salen en portugués de
+      Brasil (ej. "Levantamento terra com barra", "Agachamento completo com
+      barra", "Peito · Halter").
+- [ ] Con el idioma en inglés, todo queda con el nombre original en inglés.
+- [ ] Buscar "sentadilla" (español) o "agachamento" (portugués) en "Ejercicios"
+      y en el selector de ejercicio de un día encuentra los ejercicios cuyo
+      nombre canónico es "Squat"; buscar "squat" también los encuentra, y la
+      búsqueda ignora tildes ("sentadilla" = "sentádilla").
+- [ ] El detalle de ejercicio, el editor de un día, el plan de hoy, la sesión
+      en curso, el historial de sesión y el título de "Progreso del ejercicio"
+      muestran el nombre en el idioma activo.
+- [ ] Un ejercicio personalizado creado a mano se ve exactamente como se
+      escribió (nombre, grupo muscular y equipo) en cualquiera de los 3
+      idiomas, y no aparece traducido aunque coincida con un nombre del
+      catálogo.
+- [ ] Las chips de grupo muscular del selector de ejercicio están traducidas y
+      filtran igual que antes.
+- [ ] Un ejercicio sin traducción muestra su nombre en inglés (nunca vacío).
