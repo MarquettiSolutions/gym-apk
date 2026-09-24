@@ -136,6 +136,7 @@ export function EditExerciseNameSheet({
               />
               <Button
                 label={t.saveAndSend}
+                variant="secondary"
                 onPress={() => save(true)}
                 disabled={isBusy}
               />
