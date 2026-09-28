@@ -340,3 +340,17 @@ el valor por defecto)**
       editados siguen ahí.
 - [ ] En inglés también se puede editar el nombre canónico con el mismo
       flujo.
+
+## Teclado no tapa el formulario (issue #40)
+
+- [ ] Abrir cualquier `FormSheet` (ej. "Editar nombre" de un ejercicio, crear
+      ejercicio personalizado, editor de plan/día, agregar registro de peso
+      corporal) y tocar el campo de texto: el campo y el botón
+      "Guardar"/"Crear" quedan visibles arriba del teclado, sin necesidad de
+      cerrarlo para verlos.
+- [ ] En un `FormSheet` con varios campos (ej. crear ejercicio personalizado),
+      con el teclado abierto se puede hacer scroll y seguir viendo el campo
+      activo.
+- [ ] Los buscadores de "Ejercicios" y del selector de ejercicio de un día
+      (fuera de cualquier modal) siguen funcionando igual que antes: el
+      teclado no los tapa.
