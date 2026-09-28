@@ -92,15 +92,24 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            // Credenciales fuera del repo: definidas en ~/.gradle/gradle.properties
+            // (nunca commitear el keystore ni las contraseñas). Si faltan, el build
+            // release cae al keystore de debug para no romper builds locales sin firma propia.
+            if (project.hasProperty('GYMAPK_RELEASE_STORE_FILE')) {
+                storeFile file(GYMAPK_RELEASE_STORE_FILE)
+                storePassword GYMAPK_RELEASE_STORE_PASSWORD
+                keyAlias GYMAPK_RELEASE_KEY_ALIAS
+                keyPassword GYMAPK_RELEASE_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig project.hasProperty('GYMAPK_RELEASE_STORE_FILE') ? signingConfigs.release : signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
