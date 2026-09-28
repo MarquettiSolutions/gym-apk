@@ -1,6 +1,14 @@
 import React, { useMemo } from 'react';
 import type { ReactNode } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import type { ThemeColors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
@@ -36,7 +44,10 @@ export function FormSheet({
       transparent
       onRequestClose={onCancel}
     >
-      <View style={styles.backdrop}>
+      <KeyboardAvoidingView
+        style={styles.backdrop}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <View style={styles.sheet}>
           <Text style={styles.title}>{title}</Text>
           <ScrollView keyboardShouldPersistTaps="handled">
@@ -59,7 +70,7 @@ export function FormSheet({
             </View>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
