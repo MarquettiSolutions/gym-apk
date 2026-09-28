@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#1B5E20"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E8F5E9"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="500" fill="url(#bg)"/>
+
+  <!-- barbell mark, left side -->
+  <g transform="translate(70, 138) scale(0.86)">
+    <rect x="120" y="236" width="272" height="40" rx="20" fill="url(#bar)"/>
+    <rect x="46" y="146" width="46" height="220" rx="14" fill="#FFFFFF"/>
+    <rect x="94" y="176" width="30" height="160" rx="10" fill="#FFFFFF" opacity="0.92"/>
+    <rect x="420" y="146" width="46" height="220" rx="14" fill="#FFFFFF"/>
+    <rect x="388" y="176" width="30" height="160" rx="10" fill="#FFFFFF" opacity="0.92"/>
+    <rect x="226" y="248" width="10" height="16" rx="3" fill="#1B5E20" opacity="0.55"/>
+    <rect x="251" y="248" width="10" height="16" rx="3" fill="#1B5E20" opacity="0.55"/>
+    <rect x="276" y="248" width="10" height="16" rx="3" fill="#1B5E20" opacity="0.55"/>
+  </g>
+
+  <!-- wordmark, right side -->
+  <text x="560" y="260" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="700" fill="#FFFFFF">Gym Apk</text>
+  <text x="562" y="306" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" fill="#E8F5E9" opacity="0.92">Tu rutina de gym, 100% offline</text>
+</svg>
