@@ -21,11 +21,11 @@ código (firma de release, assets, textos, política de privacidad — ver
       producción)
 
 ## 1. Crear la app
-- [ ] Play Console → **Crear app**
-- [ ] Nombre: `Gym Apk`
-- [ ] Idioma predeterminado (recomendado: español)
-- [ ] Tipo: **App** (no juego), gratis
-- [ ] Aceptar declaraciones de developer program policies y US export laws
+- [x] Play Console → **Crear app** (hecho 2026-09-29)
+- [x] Nombre: `Gym Apk`
+- [x] Idioma predeterminado: español
+- [x] Tipo: **App** (no juego), gratis
+- [x] Aceptar declaraciones de developer program policies y US export laws
 
 ## 2. Ficha principal de la tienda
 `Grow → Store presence → Main store listing`
