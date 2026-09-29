@@ -20,6 +20,14 @@ cuando se cree la ficha de la app — no se usa en el build de la app.
   una ficha localizada (hoy están en inglés porque el emulador estaba en
   ese idioma).
 
+  **Proporción 9:16**: el emulador captura en 1080x2400 (20:9), fuera del
+  rango 16:9–9:16 que exige el uploader de Play Console para capturas de
+  teléfono. Se corrigió agregando pillarbox blanco a los costados (queda
+  invisible porque el fondo de la app es blanco) hasta 1350x2400 = 9:16
+  exacto, sin recortar ningún contenido. Regenerar así tras sacar capturas
+  nuevas del emulador:
+  `magick captura-original.png -gravity center -background white -extent 1350x2400 screenshot-N-nombre.png`
+
 ## Textos de la ficha (nombre, descripciones)
 
 **Nombre de la app** (máx. 30 caracteres): `Gym Apk`
