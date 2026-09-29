@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gym Apk — Privacy Policy / Política de privacidad</title>
-<meta name="description" content="Privacy policy for the Gym Apk Android app / Política de privacidad de la app Gym Apk.">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gym Apk</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@500;600;700&display=swap">
 <style>
   :root {
-    color-scheme: light dark;
     --bg: #faf9f5;
     --surface: #ffffff;
     --text: #1b201c;
@@ -19,7 +13,7 @@
     --code-bg: #f0efe6;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --bg: #12150f;
       --surface: #1a1f18;
       --text: #eceee9;
@@ -30,17 +24,27 @@
       --code-bg: #202620;
     }
   }
+  :root[data-theme="dark"] {
+    --bg: #12150f;
+    --surface: #1a1f18;
+    --text: #eceee9;
+    --muted: #9aa39c;
+    --border: #2c342b;
+    --accent: #59b980;
+    --accent-ink: #08130c;
+    --code-bg: #202620;
+  }
 
   * { box-sizing: border-box; }
-  html, body { margin: 0; }
   body {
+    margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
     line-height: 1.6;
     padding: 0 16px;
   }
-  .wrap { max-width: 680px; margin: 0 auto; padding: 28px 0 64px; }
+  .wrap { max-width: 760px; margin: 0 auto; padding-block: 28px 64px; }
 
   header.top {
     display: flex;
@@ -61,14 +65,10 @@
     font-size: 1.05rem;
     letter-spacing: -0.01em;
   }
-  .brand .mark {
+  .brand img {
     width: 30px; height: 30px;
     border-radius: 8px;
-    background: var(--accent);
-    display: grid;
-    place-items: center;
-    color: var(--accent-ink);
-    font-size: 15px;
+    display: block;
   }
   .langs {
     display: flex;
@@ -114,11 +114,12 @@
     text-wrap: balance;
     margin: 0 0 6px;
   }
-  .updated {
+  .tagline {
     font-family: Inter, sans-serif;
     color: var(--muted);
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     margin: 0 0 28px;
+    max-width: 60ch;
   }
   h2 {
     font-family: Inter, sans-serif;
@@ -132,35 +133,35 @@
   li { margin-bottom: 6px; }
   strong { font-weight: 600; }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
     margin: 0 0 14px;
   }
-  .card h3 {
-    font-family: Inter, sans-serif;
-    font-size: 0.92rem;
-    font-weight: 600;
-    margin: 0 0 6px;
-    display: flex;
+  .shots img {
+    width: 100%;
+    display: block;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  @media (min-width: 560px) {
+    .shots { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .cta {
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-  }
-  .card p:last-child { margin-bottom: 0; }
-  .tag {
-    display: inline-block;
     font-family: Inter, sans-serif;
-    font-size: 0.68rem;
     font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    padding: 2px 8px;
+    font-size: 0.88rem;
+    text-decoration: none;
+    color: var(--accent-ink);
+    background: var(--accent);
+    padding: 10px 18px;
     border-radius: 999px;
   }
-  .tag.local { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
-  .tag.network { background: var(--code-bg); color: var(--muted); border: 1px solid var(--border); }
 
   code {
     font-family: ui-monospace, Menlo, Consolas, monospace;
@@ -183,11 +184,10 @@
   [data-lang-panel] { display: none; }
   [data-lang-panel].active { display: block; }
 </style>
-</head>
-<body>
+
 <div class="wrap">
   <header class="top">
-    <div class="brand"><span class="mark">G</span> Gym Apk</div>
+    <div class="brand"><img src="assets/icon-512.png" alt="Gym Apk"> Gym Apk</div>
     <div class="langs" role="tablist" aria-label="Language">
       <button type="button" data-lang="es" aria-pressed="true">ES</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -197,195 +197,67 @@
 
   <!-- ES -->
   <main data-lang-panel data-lang="es" class="active">
-    <p class="eyebrow">Política de privacidad</p>
-    <h1>Cómo maneja tus datos Gym Apk</h1>
-    <p class="updated">Última actualización: 28 de septiembre de 2026</p>
+    <p class="eyebrow">Documentación</p>
+    <h1>Gym Apk</h1>
+    <p class="tagline">Arma tu rutina de gym, controla series y peso. 100% offline, sin cuenta.</p>
 
-    <p>Gym Apk es una aplicación de Android para armar y ejecutar rutinas de entrenamiento. Está diseñada para funcionar <strong>sin cuenta de usuario y sin backend propio</strong>: no hay ningún servidor de MarquettiSolutions que reciba tus datos.</p>
-
-    <h2>Qué se guarda, y dónde</h2>
-    <p>Todo lo que registrás en la app &mdash;tus planes de entrenamiento, el historial de sesiones, series/repeticiones/peso levantado, tus registros de peso corporal y los ejercicios personalizados que crees&mdash; se guarda <strong>únicamente en la base de datos local del teléfono</strong> (SQLite). Nosotros no tenemos acceso a esa información, no la recibimos ni la almacenamos en ningún servidor.</p>
-
-    <div class="card">
-      <h3><span class="tag local">Local</span> Fotos y videos de ejercicios personalizados</h3>
-      <p>Si elegís una foto o un video de tu galería para un ejercicio personalizado, el archivo se copia al almacenamiento privado de la app en tu propio teléfono. Nunca se sube a ningún servidor.</p>
+    <div class="shots">
+      <img src="assets/screenshot-1-exercises.png" alt="Catálogo de ejercicios">
+      <img src="assets/screenshot-2-today-plan.png" alt="Plan del día">
+      <img src="assets/screenshot-3-plan-editor.png" alt="Editor de plan">
+      <img src="assets/screenshot-4-workout-session.png" alt="Sesión de entrenamiento">
     </div>
 
-    <div class="card">
-      <h3><span class="tag local">Local</span> Recordatorios y temporizador de descanso</h3>
-      <p>Las notificaciones (recordatorio diario de entrenamiento, aviso de fin de descanso) se programan enteramente en tu dispositivo. No usamos notificaciones push ni un servicio en la nube para esto.</p>
-    </div>
+    <p>Gym Apk es una app 100% offline para armar y ejecutar tus rutinas de entrenamiento de gimnasio, sin cuenta de usuario ni costo. Armá tu plan semanal eligiendo ejercicios de un catálogo con más de 1000 opciones, registrá series/repeticiones/peso durante una sesión guiada con temporizador de descanso, y seguí tu progreso con gráficos de evolución.</p>
 
-    <div class="card">
-      <h3><span class="tag local">Local</span> Copia de seguridad (backup)</h3>
-      <p>Si exportás un backup de tus datos, el archivo se guarda donde vos elijas (almacenamiento del teléfono o un servicio en la nube que vos mismo manejes, como Google Drive). Nosotros no recibimos ni tenemos acceso a ese archivo.</p>
-    </div>
+    <p>No hace falta conexión para usar la app día a día: tus datos quedan guardados únicamente en tu teléfono.</p>
 
-    <h2>Conexiones a internet que sí hace la app</h2>
-    <p>La app hace pedidos de red únicamente para descargar contenido público del catálogo de ejercicios &mdash;no para enviar tus datos personales:</p>
-
-    <div class="card">
-      <h3><span class="tag network">Red</span> <code>raw.githubusercontent.com</code></h3>
-      <p>Descarga el catálogo público de ejercicios (nombre, grupo muscular, equipo, miniatura) la primera vez que abrís la app o cuando se actualiza. No se envía ningún dato tuyo en este pedido.</p>
-    </div>
-
-    <div class="card">
-      <h3><span class="tag network">Red</span> <code>exercisedb.p.rapidapi.com</code> (ExerciseDB)</h3>
-      <p>Descarga el video/GIF demostrativo de un ejercicio puntual, solo cuando abrís su pantalla de detalle por primera vez. Se envía únicamente el identificador del ejercicio, nunca datos personales. Una vez descargado, el video queda guardado en tu teléfono y se reproduce sin conexión.</p>
-    </div>
-
-    <h2>Lo que no hacemos</h2>
-    <ul>
-      <li>No pedimos ni requerimos cuenta, login ni correo electrónico.</li>
-      <li>No usamos analíticas, rastreo de comportamiento ni publicidad.</li>
-      <li>No compartimos ni vendemos datos a terceros, porque no los recibimos en primer lugar.</li>
-      <li>No usamos servicios de reporte de errores/crashes que envíen datos a un servidor externo.</li>
-    </ul>
-
-    <h2>Datos de salud y estado físico</h2>
-    <p>Los registros de peso corporal y de entrenamiento son datos relacionados con tu salud y estado físico. Se tratan igual que el resto de la información de la app: quedan guardados únicamente en tu dispositivo. Gym Apk <strong>no es un dispositivo médico</strong> y no brinda asesoramiento médico; es una herramienta de organización personal de entrenamiento.</p>
-
-    <h2>Borrar tus datos</h2>
-    <p>Podés borrar registros puntuales (por ejemplo, un registro de peso corporal cargado por error) desde dentro de la app. Para borrar absolutamente todo, alcanza con desinstalar la aplicación: al no existir ningún servidor, no queda ninguna copia en otro lado.</p>
-
-    <h2>Menores de edad</h2>
-    <p>Gym Apk no está dirigida a niños y no recolecta datos de nadie, independientemente de su edad.</p>
-
-    <h2>Cambios a esta política</h2>
-    <p>Si el funcionamiento de la app cambia de forma que afecte lo descripto acá (por ejemplo, si en el futuro se agrega alguna función que sí envíe datos a un servidor propio), esta página se va a actualizar y la fecha de arriba va a reflejar ese cambio.</p>
-
-    <footer>
-      Contacto: <a href="mailto:wasosky313@gmail.com">wasosky313@gmail.com</a> &middot; MarquettiSolutions
-    </footer>
+    <p><a class="cta" href="privacy-policy/">Ver política de privacidad</a></p>
   </main>
 
   <!-- EN -->
   <main data-lang-panel data-lang="en">
-    <p class="eyebrow">Privacy policy</p>
-    <h1>How Gym Apk handles your data</h1>
-    <p class="updated">Last updated: September 28, 2026</p>
+    <p class="eyebrow">Documentation</p>
+    <h1>Gym Apk</h1>
+    <p class="tagline">Build your gym routine, track sets and weight. 100% offline, no account.</p>
 
-    <p>Gym Apk is an Android app for building and running gym workout routines. It's designed to work <strong>without a user account and without a backend of our own</strong>: there is no MarquettiSolutions server that receives your data.</p>
-
-    <h2>What's stored, and where</h2>
-    <p>Everything you log in the app &mdash;your workout plans, session history, sets/reps/weight lifted, body weight entries, and any custom exercises you create&mdash; is stored <strong>only in the phone's local database</strong> (SQLite). We don't have access to that information; we never receive it or store it on any server.</p>
-
-    <div class="card">
-      <h3><span class="tag local">Local</span> Photos and videos for custom exercises</h3>
-      <p>If you pick a photo or video from your gallery for a custom exercise, the file is copied into the app's private storage on your own phone. It is never uploaded anywhere.</p>
+    <div class="shots">
+      <img src="assets/screenshot-1-exercises.png" alt="Exercise catalog">
+      <img src="assets/screenshot-2-today-plan.png" alt="Today's plan">
+      <img src="assets/screenshot-3-plan-editor.png" alt="Plan editor">
+      <img src="assets/screenshot-4-workout-session.png" alt="Workout session">
     </div>
 
-    <div class="card">
-      <h3><span class="tag local">Local</span> Reminders and rest timer</h3>
-      <p>Notifications (the daily workout reminder, the rest-timer alert) are scheduled entirely on your device. We don't use push notifications or a cloud service for this.</p>
-    </div>
+    <p>Gym Apk is a 100% offline app to build and run your gym workout routines, no account and no cost. Build your weekly plan by choosing exercises from a catalog of 1000+ options, log sets/reps/weight during a guided session with a rest timer, and track your progress with charts.</p>
 
-    <div class="card">
-      <h3><span class="tag local">Local</span> Backup export</h3>
-      <p>If you export a backup of your data, the file is saved wherever you choose (device storage, or a cloud service you personally manage, like Google Drive). We never receive or have access to that file.</p>
-    </div>
+    <p>No connection needed for day-to-day use: your data is stored only on your phone.</p>
 
-    <h2>Network requests the app does make</h2>
-    <p>The app makes network requests only to download public exercise-catalog content &mdash;never to send your personal data:</p>
-
-    <div class="card">
-      <h3><span class="tag network">Network</span> <code>raw.githubusercontent.com</code></h3>
-      <p>Downloads the public exercise catalog (name, muscle group, equipment, thumbnail) the first time you open the app, and whenever it updates. No personal data is sent with this request.</p>
-    </div>
-
-    <div class="card">
-      <h3><span class="tag network">Network</span> <code>exercisedb.p.rapidapi.com</code> (ExerciseDB)</h3>
-      <p>Downloads the demo video/GIF for one specific exercise, only when you first open its detail screen. Only the exercise's identifier is sent &mdash; never personal data. Once downloaded, the video is saved on your phone and plays back offline afterwards.</p>
-    </div>
-
-    <h2>What we don't do</h2>
-    <ul>
-      <li>We don't ask for or require an account, login, or email address.</li>
-      <li>We don't use analytics, behavioral tracking, or advertising.</li>
-      <li>We don't share or sell data to third parties &mdash; because we never receive it in the first place.</li>
-      <li>We don't use crash-reporting services that send data to an external server.</li>
-    </ul>
-
-    <h2>Health and fitness data</h2>
-    <p>Body weight and workout records are health- and fitness-related data. They're treated the same as everything else in the app: stored only on your device. Gym Apk is <strong>not a medical device</strong> and does not provide medical advice; it's a personal workout-organization tool.</p>
-
-    <h2>Deleting your data</h2>
-    <p>You can delete individual records (for example, a body weight entry logged by mistake) from within the app. To delete everything at once, simply uninstall the app: since there's no server, no copy exists anywhere else.</p>
-
-    <h2>Children</h2>
-    <p>Gym Apk isn't directed at children and doesn't collect data from anyone, regardless of age.</p>
-
-    <h2>Changes to this policy</h2>
-    <p>If how the app works ever changes in a way that affects what's described here (for example, if a future feature sends data to a server of our own), this page will be updated and the date above will reflect that change.</p>
-
-    <footer>
-      Contact: <a href="mailto:wasosky313@gmail.com">wasosky313@gmail.com</a> &middot; MarquettiSolutions
-    </footer>
+    <p><a class="cta" href="privacy-policy/">View privacy policy</a></p>
   </main>
 
   <!-- PT -->
   <main data-lang-panel data-lang="pt">
-    <p class="eyebrow">Política de privacidade</p>
-    <h1>Como o Gym Apk trata seus dados</h1>
-    <p class="updated">Última atualização: 28 de setembro de 2026</p>
+    <p class="eyebrow">Documentação</p>
+    <h1>Gym Apk</h1>
+    <p class="tagline">Monte seu treino, registre séries e peso. 100% offline, sem conta.</p>
 
-    <p>Gym Apk é um aplicativo Android para montar e executar rotinas de treino de academia. Foi criado para funcionar <strong>sem conta de usuário e sem um back-end próprio</strong>: não existe nenhum servidor da MarquettiSolutions que receba seus dados.</p>
-
-    <h2>O que é armazenado, e onde</h2>
-    <p>Tudo que você registra no app &mdash;seus planos de treino, histórico de sessões, séries/repetições/peso levantado, registros de peso corporal e os exercícios personalizados que você criar&mdash; fica salvo <strong>somente no banco de dados local do celular</strong> (SQLite). Não temos acesso a essas informações; nunca as recebemos nem as armazenamos em nenhum servidor.</p>
-
-    <div class="card">
-      <h3><span class="tag local">Local</span> Fotos e vídeos de exercícios personalizados</h3>
-      <p>Se você escolher uma foto ou vídeo da sua galeria para um exercício personalizado, o arquivo é copiado para o armazenamento privado do app no seu próprio celular. Ele nunca é enviado a nenhum servidor.</p>
+    <div class="shots">
+      <img src="assets/screenshot-1-exercises.png" alt="Catálogo de exercícios">
+      <img src="assets/screenshot-2-today-plan.png" alt="Plano do dia">
+      <img src="assets/screenshot-3-plan-editor.png" alt="Editor de plano">
+      <img src="assets/screenshot-4-workout-session.png" alt="Sessão de treino">
     </div>
 
-    <div class="card">
-      <h3><span class="tag local">Local</span> Lembretes e cronômetro de descanso</h3>
-      <p>As notificações (lembrete diário de treino, aviso de fim do descanso) são agendadas inteiramente no seu dispositivo. Não usamos notificações push nem um serviço em nuvem para isso.</p>
-    </div>
+    <p>Gym Apk é um aplicativo 100% offline para montar e executar suas rotinas de treino de academia, sem conta e sem custo. Monte seu plano semanal escolhendo exercícios de um catálogo com mais de 1000 opções, registre séries/repetições/peso durante uma sessão guiada com cronômetro de descanso, e acompanhe seu progresso com gráficos.</p>
 
-    <div class="card">
-      <h3><span class="tag local">Local</span> Backup dos dados</h3>
-      <p>Se você exportar um backup dos seus dados, o arquivo é salvo onde você escolher (armazenamento do celular ou um serviço em nuvem que você mesmo gerencie, como Google Drive). Nunca recebemos nem temos acesso a esse arquivo.</p>
-    </div>
+    <p>Não precisa de conexão para o uso do dia a dia: seus dados ficam salvos somente no seu celular.</p>
 
-    <h2>Conexões de internet que o app realmente faz</h2>
-    <p>O app faz requisições de rede somente para baixar conteúdo público do catálogo de exercícios &mdash;nunca para enviar seus dados pessoais:</p>
-
-    <div class="card">
-      <h3><span class="tag network">Rede</span> <code>raw.githubusercontent.com</code></h3>
-      <p>Baixa o catálogo público de exercícios (nome, grupo muscular, equipamento, miniatura) na primeira vez que você abre o app, e sempre que ele é atualizado. Nenhum dado pessoal é enviado nessa requisição.</p>
-    </div>
-
-    <div class="card">
-      <h3><span class="tag network">Rede</span> <code>exercisedb.p.rapidapi.com</code> (ExerciseDB)</h3>
-      <p>Baixa o vídeo/GIF demonstrativo de um exercício específico, apenas quando você abre a tela de detalhes dele pela primeira vez. Só é enviado o identificador do exercício, nunca dados pessoais. Depois de baixado, o vídeo fica salvo no celular e é reproduzido offline nas próximas vezes.</p>
-    </div>
-
-    <h2>O que não fazemos</h2>
-    <ul>
-      <li>Não pedimos nem exigimos conta, login ou e-mail.</li>
-      <li>Não usamos análise de comportamento (analytics), rastreamento nem publicidade.</li>
-      <li>Não compartilhamos nem vendemos dados a terceiros &mdash; porque nunca os recebemos.</li>
-      <li>Não usamos serviços de relatório de falhas (crash reporting) que enviem dados a um servidor externo.</li>
-    </ul>
-
-    <h2>Dados de saúde e atividade física</h2>
-    <p>Os registros de peso corporal e de treino são dados relacionados à saúde e atividade física. Recebem o mesmo tratamento do restante das informações do app: ficam salvos somente no seu dispositivo. Gym Apk <strong>não é um dispositivo médico</strong> e não fornece aconselhamento médico; é uma ferramenta pessoal de organização de treinos.</p>
-
-    <h2>Apagar seus dados</h2>
-    <p>Você pode apagar registros pontuais (por exemplo, um registro de peso lançado por engano) direto no app. Para apagar tudo de uma vez, basta desinstalar o app: como não existe servidor, nenhuma cópia fica guardada em outro lugar.</p>
-
-    <h2>Menores de idade</h2>
-    <p>Gym Apk não é direcionado a crianças e não coleta dados de ninguém, independentemente da idade.</p>
-
-    <h2>Mudanças nesta política</h2>
-    <p>Se o funcionamento do app mudar de um jeito que afete o que está descrito aqui (por exemplo, se uma futura funcionalidade passar a enviar dados a um servidor próprio), esta página será atualizada e a data acima vai refletir essa mudança.</p>
-
-    <footer>
-      Contato: <a href="mailto:wasosky313@gmail.com">wasosky313@gmail.com</a> &middot; MarquettiSolutions
-    </footer>
+    <p><a class="cta" href="privacy-policy/">Ver política de privacidade</a></p>
   </main>
+
+  <footer>
+    Contacto: <a href="mailto:wasosky313@gmail.com">wasosky313@gmail.com</a> &middot; MarquettiSolutions
+  </footer>
 </div>
 
 <script>
@@ -401,11 +273,11 @@
         document.querySelectorAll('main[data-lang-panel]').forEach(function (p) {
           p.classList.toggle('active', p.getAttribute('data-lang') === lang);
         });
-        try { localStorage.setItem('gymapk-privacy-lang', lang); } catch (e) {}
+        try { localStorage.setItem('gymapk-lang', lang); } catch (e) {}
       });
     });
     try {
-      var saved = localStorage.getItem('gymapk-privacy-lang');
+      var saved = localStorage.getItem('gymapk-lang');
       if (saved) {
         var target = document.querySelector('button[data-lang="' + saved + '"]');
         if (target) target.click();
@@ -413,5 +285,4 @@
     } catch (e) {}
   })();
 </script>
-</body>
 </html>
