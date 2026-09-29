@@ -121,6 +121,7 @@ Mais informações: https://landing.nodylabs.com
 
 ## Política de privacidad
 
-URL: https://gymapk.nodylabs.com/ — código fuente en
-`docs/privacy-policy/index.html`, hosteada en Cloudflare Pages (detalles de
-despliegue en el comentario correspondiente de la issue #38).
+URL: https://gymapk.nodylabs.com/privacy-policy — código fuente en
+`docs/privacy-policy/privacy-policy/index.html`, hosteada en Cloudflare Pages
+junto con la landing de documentación en `docs/privacy-policy/index.html`
+(detalles de despliegue en el comentario correspondiente de la issue #38).

@@ -13,7 +13,7 @@ código (firma de release, assets, textos, política de privacidad — ver
 - [x] Ícono, feature graphic, 4 capturas de pantalla: `android/app/store-assets/`
 - [x] Textos de nombre/descripciones (ES/EN/PT) + sitio web:
       `android/app/store-assets/README.md`
-- [x] Política de privacidad publicada: https://gymapk.nodylabs.com/
+- [x] Política de privacidad publicada: https://gymapk.nodylabs.com/privacy-policy
 - [x] Decisión sobre la API key de ExerciseDB (Bloque 2, ver comentario en
       la issue #38): aceptar el riesgo, key embebida tal cual
 - [x] Cuenta de Google Play Developer aprobada (cuenta **personal** — implica
@@ -37,7 +37,7 @@ código (firma de release, assets, textos, política de privacidad — ver
 
 ## 3. Política de privacidad
 `App content → Privacy policy`
-- [ ] Pegar `https://gymapk.nodylabs.com/`
+- [ ] Pegar `https://gymapk.nodylabs.com/privacy-policy`
 
 ## 4. Data safety
 `App content → Data safety`
