@@ -5,6 +5,7 @@ React Native CLI (bare) + TypeScript + SQLite (Drizzle ORM + op-sqlite).
 
 Ver la especificación funcional y técnica completa en [`DOCS/SPEC.md`](./DOCS/SPEC.md).
 Historial de versiones en [`CHANGELOG.md`](./CHANGELOG.md).
+Checklist de publicación en Google Play en [`DOCS/PLAY_STORE_CHECKLIST.md`](./DOCS/PLAY_STORE_CHECKLIST.md).
 
 ## Requisitos
 
