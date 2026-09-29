@@ -1,4 +1,4 @@
-package com.marquettisolutions.gymapk
+package com.nodylabs.gymapk
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

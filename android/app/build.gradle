@@ -77,9 +77,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.marquettisolutions.gymapk"
+    namespace "com.nodylabs.gymapk"
     defaultConfig {
-        applicationId "com.marquettisolutions.gymapk"
+        applicationId "com.nodylabs.gymapk"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
