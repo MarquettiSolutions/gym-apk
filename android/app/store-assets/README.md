@@ -53,6 +53,8 @@ EJERCICIOS PERSONALIZADOS
 No hace falta conexión para usar la app día a día: el catálogo y los videos que uses quedan guardados en tu teléfono. No pedimos cuenta, no usamos analíticas ni publicidad, y tus datos nunca salen de tu dispositivo (podés exportar un backup manual cuando quieras).
 
 Ideal si buscás una alternativa gratuita a apps de seguimiento de gimnasio de pago.
+
+Más info: https://landing.nodylabs.com
 ```
 
 — EN:
@@ -79,6 +81,8 @@ Missing an exercise from the catalog? Create your own with a name and a photo or
 No connection needed for day-to-day use: the catalog and any videos you open are stored on your phone. No account required, no analytics, no ads, and your data never leaves your device (you can export a manual backup whenever you want).
 
 A great free alternative to paid gym-tracking apps.
+
+More info: https://landing.nodylabs.com
 ```
 
 — PT:
@@ -105,7 +109,15 @@ Falta algum exercício no catálogo? Crie o seu, com nome e uma foto ou vídeo d
 Não precisa de conexão para o uso do dia a dia: o catálogo e os vídeos que você abrir ficam salvos no celular. Não pedimos conta, não usamos análise de comportamento nem anúncios, e seus dados nunca saem do seu dispositivo (você pode exportar um backup manual quando quiser).
 
 Uma ótima alternativa gratuita a apps pagos de acompanhamento de treino.
+
+Mais informações: https://landing.nodylabs.com
 ```
+
+## Sitio web
+
+`https://landing.nodylabs.com` — usar este link tanto en el campo dedicado
+"Sitio web" de la ficha de tienda como en el cierre de la descripción larga
+(ya incluido arriba en los 3 idiomas).
 
 ## Política de privacidad
 
