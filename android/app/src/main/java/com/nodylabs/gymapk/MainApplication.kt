@@ -1,4 +1,4 @@
-package com.marquettisolutions.gymapk
+package com.nodylabs.gymapk
 
 import android.app.Application
 import com.facebook.react.PackageList

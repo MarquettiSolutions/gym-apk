@@ -68,7 +68,7 @@ adb reverse tcp:8081 tcp:8081   # solo necesario si usás emulador y no se hizo 
 ```
 
 Después reabrí la app (o relanzá con `adb shell am start -n
-com.marquettisolutions.gymapk/.MainActivity`).
+com.nodylabs.gymapk/.MainActivity`).
 
 ## 4. `TypeError: undefined is not a function` al iniciar la app (bug real, ya arreglado)
 

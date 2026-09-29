@@ -502,8 +502,8 @@ asumir que "compiló" significa "funciona". Pasos:
    JS/TS, no hace falta reinstalar: Fast Refresh alcanza, pero conviene igual forzar un reload
    limpio (paso 4) para no arrastrar estado viejo de la sesión de Metro.
 4. **Relanzar la app en limpio**: `adb -s <device> shell am force-stop
-   com.marquettisolutions.gymapk && adb -s <device> shell am start -n
-   com.marquettisolutions.gymapk/.MainActivity`.
+   com.nodylabs.gymapk && adb -s <device> shell am start -n
+   com.nodylabs.gymapk/.MainActivity`.
 5. **Sacar screenshot** después de cada paso con
    `adb -s <device> exec-out screencap -p > archivo.png` y leerlo (herramienta `Read`) para ver
    qué pasó — no asumir el resultado de una acción sin mirarlo.
@@ -576,7 +576,7 @@ si quedan desalineados:
 2. Agregar la entrada correspondiente en `CHANGELOG.md` (formato Keep a Changelog:
    qué se agregó/cambió/corrigió desde la versión anterior).
 3. Reinstalar el APK y confirmar la versión con
-   `adb shell dumpsys package com.marquettisolutions.gymapk | grep version` antes de
+   `adb shell dumpsys package com.nodylabs.gymapk | grep version` antes de
    dar la tarea por terminada — no asumir que el bump "compiló" significa que quedó
    bien aplicado.
 4. Recién después de mergear ese PR, crear el tag de git (`vX.Y.Z`) sobre el commit
