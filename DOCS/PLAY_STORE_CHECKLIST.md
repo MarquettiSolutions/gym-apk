@@ -29,36 +29,41 @@ código (firma de release, assets, textos, política de privacidad — ver
 
 ## 2. Ficha principal de la tienda
 `Grow → Store presence → Main store listing`
-- [ ] Pegar nombre, descripción corta y completa (desde el README, por idioma)
-- [ ] Subir `icon-512.png`, `feature-graphic-1024x500.png`, los 4 `screenshot-*.png`
-- [ ] Categoría: Salud y bienestar (o Deportes)
-- [ ] Sitio web: `https://landing.nodylabs.com`
-- [ ] Correo de contacto público
+- [x] Nombre, descripción corta y completa (español) — pegadas 2026-09-30
+- [x] `icon-512.png`, `feature-graphic-1024x500.png`, los 4 `screenshot-*.png`
+      subidos (capturas re-exportadas a proporción 9:16 antes de subir, ver
+      `android/app/store-assets/README.md`)
+- [x] Categoría: Saúde e fitness
+- [x] Sitio web: `https://landing.nodylabs.com`
+- [x] Correo de contacto: wasosky313@gmail.com
+- Página completa, estado "Pronta para revisão"
 
 ## 3. Política de privacidad
 `App content → Privacy policy`
-- [ ] Pegar `https://gymapk.nodylabs.com/privacy-policy`
+- [x] `https://gymapk.nodylabs.com/privacy-policy/` — ya cargada, verificada
 
 ## 4. Data safety
 `App content → Data safety`
-- [ ] Completar el formulario — todo queda local en el dispositivo, no hay
-      servidor propio; revisar con cuidado igual (pedidos anónimos a
-      `raw.githubusercontent.com` y `exercisedb.p.rapidapi.com`, sin datos
-      personales)
+- [x] Verificado: "Não" a recolección de datos obligatorios — ya estaba
+      correcto tal como lo había cargado el usuario
 
 ## 5. Clasificación de contenido (IARC)
 `App content → Content ratings`
-- [ ] Completar el cuestionario (sin violencia/sexual/apuestas/sustancias,
-      debería salir clasificación general baja)
+- [x] Verificado: cuestionario ya completado, clasificación "Livre"/"E"
+      (todo público), sin descriptores de contenido — correcto para esta app
 
 ## 6. Público objetivo
 `App content → Target audience`
-- [ ] Mayores de 13/18, no dirigida a niños
-- [ ] Declaración de anuncios: la app no tiene anuncios
+- [x] Corregido: estaba limitado a solo mayores de 18 → ampliado a 13, 16-17
+      y 18+ (decisión del usuario, la app no tiene contenido inapropiado
+      para adolescentes)
+- [x] Declaración de anuncios: "Não, meu app não tem anúncios" — correcto
 
 ## 7. Declaración de app de salud
-- [ ] Aclarar que no es un dispositivo médico ni da consejo médico — es una
-      herramienta de organización de entrenamientos
+`App content → Apps de saúde`
+- [x] Corregido: tenía marcado "Atividade e condicionamento físicos" pero
+      faltaba "Controle de nutrição e peso" (la app trackea peso corporal)
+      → agregado. Sin requisitos regionales de dispositivo médico.
 
 ## 8. Permiso sensible: Foreground Service
 La app usa `FOREGROUND_SERVICE_SPECIAL_USE` (temporizador de descanso).
@@ -71,21 +76,35 @@ Texto de justificación sugerido:
 > perdería, afectando la funcionalidad principal de la app (ejecutar una
 > rutina de gimnasio con descansos cronometrados).
 
-- [ ] Pegar la justificación si Play la pide
+- [ ] Pegar la justificación si Play la pide (todavía no apareció el pedido
+      explícito — puede salir recién al momento de la revisión real)
 - [ ] Grabar un video corto mostrando el temporizador en background, si lo piden
+
+Otras declaraciones ya revisadas y correctas sin cambios: Detalhes do login
+(No), Anúncios (No), Apps governamentais (No), Recursos financeiros (No
+oferece), ID de publicidade (No).
 
 ## 9. Prueba interna
 `Testing → Internal testing → Create new release`
-- [ ] Subir `app-release.aab`
-- [ ] Agregarte a vos mismo como tester
-- [ ] Publicar, esperar el procesamiento
+- [x] AAB regenerado con las **4 arquitecturas** (ojo: un build anterior se
+      hizo por error solo con `-PreactNativeArchitectures=x86_64`, que solo
+      sirve para emulador — no usar ese para subir a Play)
+- [x] Lista de testers cargada — formato correcto: **un email por línea, sin
+      cabezal** (un primer intento con emails separados por comas en una
+      sola línea dio error "líneas inválidas" en Play Console)
+- [x] Subido y publicado 2026-09-30 14:12 — versión 0.0.1, "Disponível para
+      testadores internos"
 - [ ] Instalar desde el link de Play (no adb) y confirmar que anda bien
 
 ## 10. Prueba cerrada (12 testers x 14 días)
 `Testing → Closed testing → Create track` (ej. "alpha")
-- [ ] Subir el AAB (o promover el de internal testing)
+- [x] Lista de 13 testers lista (familia/amigos + njdesignprint) — **guardada
+      solo local**, no versionada en el repo público (son emails reales de
+      terceros; se probó un gist "secreto" de GitHub y se borró a pedido del
+      usuario, que prefiere decidir después dónde guardarla)
+- [ ] Subir el AAB (o promover el de internal testing) a un track de prueba cerrada
 - [ ] Generar el link de opt-in
-- [ ] Compartirlo con 12 testers (Gmail)
+- [ ] Compartirlo con los 13 testers
 - [ ] Anotar la fecha en que se completan los 12 — desde ahí corren los 14 días
 
 **Fecha de inicio de la prueba cerrada:** _(completar cuando arranque)_
