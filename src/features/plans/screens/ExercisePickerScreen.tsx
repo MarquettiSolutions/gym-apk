@@ -37,7 +37,7 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
   const t = translations.plans.exercisePicker;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
-  const { exercises, isLoading } = useExerciseCatalog();
+  const { exercises, isLoading, isCatalogImporting } = useExerciseCatalog();
   const [search, setSearch] = useState('');
   const [muscleGroup, setMuscleGroup] = useState<string | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
@@ -154,6 +154,8 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
         ListEmptyComponent={
           isLoading ? (
             <Text style={styles.emptyText}>{translations.common.loading}</Text>
+          ) : isCatalogImporting ? (
+            <Text style={styles.emptyText}>{t.loadingCatalog}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.empty}</Text>
           )

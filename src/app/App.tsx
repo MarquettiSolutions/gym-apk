@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootTabNavigator } from '../navigation/RootTabNavigator';
-import { initDatabase } from '../db/client';
+import { importCatalogInBackground, initDatabase } from '../db/client';
 import { LanguageProvider, useTranslation } from '../shared/i18n';
 import { SettingsProvider } from '../features/settings/context/SettingsContext';
 import { ThemeProvider, useTheme } from '../shared/theme/ThemeContext';
@@ -50,7 +50,12 @@ export function App() {
   const [isDbReady, setIsDbReady] = useState(false);
 
   useEffect(() => {
-    initDatabase().then(() => setIsDbReady(true));
+    initDatabase().then(() => {
+      setIsDbReady(true);
+      // Sin esperar: si falla (sin red, etc.) se reintenta solo en el
+      // próximo arranque, ver comentarios en `importExerciseCatalogIfNeeded`.
+      importCatalogInBackground().catch(() => {});
+    });
   }, []);
 
   return (
