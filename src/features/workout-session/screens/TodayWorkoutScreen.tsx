@@ -27,7 +27,7 @@ export function TodayWorkoutScreen({ navigation }: Props) {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
   const userId = useLocalUserId();
-  const { workout, isLoading, reload } = useTodayWorkout(userId);
+  const { workout, isLoading, hasError, reload } = useTodayWorkout(userId);
   const [isStarting, setIsStarting] = useState(false);
 
   useFocusEffect(
@@ -56,6 +56,15 @@ export function TodayWorkoutScreen({ navigation }: Props) {
     );
     setIsStarting(false);
     navigation.navigate('WorkoutSession', { sessionId: session.id });
+  }
+
+  if (hasError) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.message}>{t.errorMessage}</Text>
+        <Button label={t.retryButton} onPress={reload} />
+      </View>
+    );
   }
 
   if (isLoading || !workout) {
@@ -140,6 +149,7 @@ function createStyles(colors: ThemeColors) {
       fontSize: 14,
       color: colors.muted,
       textAlign: 'center',
+      marginBottom: spacing.md,
     },
     listContent: {
       padding: spacing.md,

@@ -159,6 +159,8 @@ export const pt = {
         'Você ainda não tem um plano ativo. Escolha um em "Meus planos" para ver seu treino de hoje.',
       restDayMessage:
         'Hoje você não tem treino planejado. Aproveite para descansar!',
+      errorMessage: 'Não foi possível carregar o treino de hoje.',
+      retryButton: 'Tentar novamente',
       startButton: 'Começar treino',
       continueButton: 'Continuar treino',
     },

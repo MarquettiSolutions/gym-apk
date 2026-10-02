@@ -5,20 +5,29 @@ import type { TodayWorkout } from '../types';
 export function useTodayWorkout(userId: string | undefined) {
   const [workout, setWorkout] = useState<TodayWorkout>();
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   const reload = useCallback(async () => {
     if (!userId) {
       return;
     }
     setIsLoading(true);
-    const result = await workoutSessionService.getTodayWorkout(userId);
-    setWorkout(result);
-    setIsLoading(false);
+    setHasError(false);
+    try {
+      const result = await workoutSessionService.getTodayWorkout(userId);
+      setWorkout(result);
+    } catch {
+      // Ver TodayWorkoutScreen: muestra errorMessage + botón de reintentar
+      // en vez de quedar trabado en loading (issue #63).
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }, [userId]);
 
   useEffect(() => {
     reload();
   }, [reload]);
 
-  return { workout, isLoading, reload };
+  return { workout, isLoading, hasError, reload };
 }

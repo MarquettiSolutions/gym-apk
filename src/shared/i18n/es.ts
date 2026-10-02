@@ -158,6 +158,8 @@ export const es = {
       noActivePlanMessage:
         'Todavía no tienes un plan activo. Elige uno en "Mis planes" para ver tu entrenamiento de hoy.',
       restDayMessage: 'Hoy no tienes entrenamiento planificado. ¡A descansar!',
+      errorMessage: 'No pudimos cargar el entrenamiento de hoy.',
+      retryButton: 'Reintentar',
       startButton: 'Comenzar entrenamiento',
       continueButton: 'Continuar entrenamiento',
     },
