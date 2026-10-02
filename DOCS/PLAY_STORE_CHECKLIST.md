@@ -88,10 +88,13 @@ oferece), ID de publicidade (No).
       sola línea dio error "líneas inválidas" en Play Console)
 - [x] Subido y publicado 2026-09-30 14:12 — versión 0.0.1 (versionCode 1),
       "Disponível para testadores internos"
-- [x] `versionCode` subido a 2 (PR #53) para poder resubir con el fix del
-      permiso de foreground service — **falta subir ese AAB nuevo** a Play
-      Console (`android/app/build/outputs/bundle/release/app-release.aab`,
-      ya compilado localmente al cierre de esta sesión)
+- [x] `versionCode` subido a 2 (PR #53) para el fix del permiso de
+      foreground service — nunca se llegó a subir ese AAB a Play Console
+- [x] `versionCode` subido a 3 / `versionName` 0.0.2 (PRs #60, #61) para
+      incluir el fix del catálogo en segundo plano (issue #54, PR #59) —
+      AAB firmado y compilado con las 4 arquitecturas en
+      `android/app/build/outputs/bundle/release/app-release.aab`
+      (2026-10-02), **falta subirlo** a Play Console
 - [ ] Instalar desde el link de Play (no adb) y confirmar que anda bien
 
 ## 10. Prueba cerrada (12 testers x 14 días)
@@ -116,11 +119,9 @@ oferece), ID de publicidade (No).
 
 - Issue #52: evaluar a futuro un foreground service real para la sesión de
   entrenamiento (no urgente, el timer actual con `notifee` funciona bien).
-- Issue #54: el primer arranque (DB vacía) bloquea toda la UI en pantalla
-  "Loading..." mientras se importa el catálogo completo + miniaturas
-  (~50s en el emulador) — `initDatabase()` en `src/db/client.ts` espera
-  `importExerciseCatalogIfNeeded`/`backfillExerciseVideoUrlsIfNeeded` antes
-  de dejar pasar. No bloquea publicar, pero es mala primera impresión.
+- Issue #54: **resuelto** (PR #59, versionCode 3) — el catálogo de
+  ejercicios ahora se importa en segundo plano sin bloquear la UI en el
+  primer arranque.
 - La subida de imágenes (ícono/feature graphic/capturas) en Play Console usa
   el selector de archivos nativo del SO, no un `<input type=file>` — no se
   puede automatizar por browser, lo tiene que hacer el usuario a mano. La
