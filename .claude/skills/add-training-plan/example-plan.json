@@ -1,0 +1,24 @@
+{
+  "planName": "Push/Pull/Legs",
+  "activate": true,
+  "days": [
+    {
+      "weekday": 1,
+      "label": "Push",
+      "exercises": [
+        { "name": "Barbell Bench Press - Medium Grip", "sets": 4, "reps": 8, "weight": 60, "restSeconds": 90 },
+        { "name": "Dumbbell Shoulder Press", "sets": 3, "reps": 10, "restSeconds": 60 },
+        { "name": "Triceps Pushdown", "sets": 3, "reps": 12, "restSeconds": 45, "supersetGroup": "A" },
+        { "name": "Side Lateral Raise", "sets": 3, "reps": 15, "restSeconds": 45, "supersetGroup": "A" }
+      ]
+    },
+    {
+      "weekday": 3,
+      "label": "Pull",
+      "exercises": [
+        { "name": "Barbell Deadlift", "sets": 3, "reps": 5, "weight": 100, "restSeconds": 120, "notes": "Progresar de a 2.5kg por semana" },
+        { "name": "Wide-Grip Lat Pulldown", "sets": 4, "reps": 10, "restSeconds": 75 }
+      ]
+    }
+  ]
+}
