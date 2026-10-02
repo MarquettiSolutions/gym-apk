@@ -157,6 +157,8 @@ export const en = {
       noActivePlanMessage:
         'You don\'t have an active plan yet. Pick one in "My plans" to see your workout for today.',
       restDayMessage: 'No workout planned for today. Time to rest!',
+      errorMessage: "Couldn't load today's workout.",
+      retryButton: 'Retry',
       startButton: 'Start workout',
       continueButton: 'Continue workout',
     },
