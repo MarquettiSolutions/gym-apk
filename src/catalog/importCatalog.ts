@@ -7,6 +7,7 @@ import {
   type ExerciseCatalogEntry,
 } from './freeExerciseDbSource';
 import { mapWithConcurrency } from '../shared/utils/concurrency';
+import { notifyCatalogChanged, setIsCatalogImporting } from './catalogEvents';
 
 const CATALOG_IMPORTED_SETTING_KEY = 'catalog_imported_at';
 const THUMBNAIL_DOWNLOAD_CONCURRENCY = 8;
@@ -36,31 +37,40 @@ export async function importExerciseCatalogIfNeeded(
     return;
   }
 
-  const entries = await deps.fetchCatalog();
-  const entriesWithId = entries.map(entry => ({ ...entry, id: uuid() }));
+  setIsCatalogImporting(true);
+  try {
+    const entries = await deps.fetchCatalog();
+    const entriesWithId = entries.map(entry => ({ ...entry, id: uuid() }));
 
-  await repos.exercises.insertMany(entriesWithId);
+    await repos.exercises.insertMany(entriesWithId);
+    // La lista de ejercicios ya puede mostrar estas filas (con miniatura
+    // remota como fallback, ver `ExerciseThumbnail`) aunque la descarga de
+    // miniaturas de abajo todavía no haya terminado.
+    notifyCatalogChanged();
 
-  const entriesWithThumbnail = entriesWithId.filter(
-    (entry): entry is typeof entry & { thumbnailRemoteUrl: string } =>
-      typeof entry.thumbnailRemoteUrl === 'string',
-  );
+    const entriesWithThumbnail = entriesWithId.filter(
+      (entry): entry is typeof entry & { thumbnailRemoteUrl: string } =>
+        typeof entry.thumbnailRemoteUrl === 'string',
+    );
 
-  await mapWithConcurrency(
-    entriesWithThumbnail,
-    THUMBNAIL_DOWNLOAD_CONCURRENCY,
-    async entry => {
-      try {
-        const localPath = await deps.downloadThumbnail(
-          entry.id,
-          entry.thumbnailRemoteUrl,
-        );
-        await repos.exercises.updateThumbnailLocalPath(entry.id, localPath);
-      } catch {
-        // ver comentario de la función: se ignora, no aborta el import.
-      }
-    },
-  );
+    await mapWithConcurrency(
+      entriesWithThumbnail,
+      THUMBNAIL_DOWNLOAD_CONCURRENCY,
+      async entry => {
+        try {
+          const localPath = await deps.downloadThumbnail(
+            entry.id,
+            entry.thumbnailRemoteUrl,
+          );
+          await repos.exercises.updateThumbnailLocalPath(entry.id, localPath);
+        } catch {
+          // ver comentario de la función: se ignora, no aborta el import.
+        }
+      },
+    );
 
-  await repos.settings.set(CATALOG_IMPORTED_SETTING_KEY, nowIso());
+    await repos.settings.set(CATALOG_IMPORTED_SETTING_KEY, nowIso());
+  } finally {
+    setIsCatalogImporting(false);
+  }
 }

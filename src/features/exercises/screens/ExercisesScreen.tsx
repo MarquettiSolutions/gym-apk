@@ -45,7 +45,8 @@ export function ExercisesScreen({ navigation }: Props) {
   } = useTranslation();
   const t = translations.exercises;
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const { exercises, isLoading, reload } = useExerciseCatalog();
+  const { exercises, isLoading, isCatalogImporting, reload } =
+    useExerciseCatalog();
   const userId = useLocalUserId();
   const [search, setSearch] = useState('');
   const [isCreating, setCreating] = useState(false);
@@ -102,6 +103,8 @@ export function ExercisesScreen({ navigation }: Props) {
         ListEmptyComponent={
           isLoading ? (
             <Text style={styles.emptyText}>{translations.common.loading}</Text>
+          ) : isCatalogImporting ? (
+            <Text style={styles.emptyText}>{t.loadingCatalog}</Text>
           ) : (
             <Text style={styles.emptyText}>{t.empty}</Text>
           )
