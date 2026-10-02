@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Linking, Modal, StyleSheet, Text, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../../shared/components/Button';
 import { FormSheet } from '../../../shared/components/FormSheet';
 import { TextField } from '../../../shared/components/TextField';
@@ -37,7 +38,11 @@ export function EditExerciseNameSheet({
     restoreExerciseName,
   } = useTranslation();
   const t = translations.exerciseDetail;
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const insets = useSafeAreaInsets();
+  const styles = useMemo(
+    () => createStyles(colors, insets.bottom),
+    [colors, insets.bottom],
+  );
   const currentName = exerciseName(exercise);
   const [text, setText] = useState(currentName);
   const [step, setStep] = useState<'edit' | 'confirm'>('edit');
@@ -184,7 +189,7 @@ export function EditExerciseNameSheet({
   );
 }
 
-function createStyles(colors: ThemeColors) {
+function createStyles(colors: ThemeColors, bottomInset: number) {
   return StyleSheet.create({
     backdrop: {
       flex: 1,
@@ -196,6 +201,7 @@ function createStyles(colors: ThemeColors) {
       borderTopLeftRadius: 16,
       borderTopRightRadius: 16,
       padding: spacing.lg,
+      paddingBottom: spacing.lg + bottomInset,
     },
     title: {
       fontSize: 18,

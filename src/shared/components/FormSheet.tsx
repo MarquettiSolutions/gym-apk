@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContext';
 import type { ThemeColors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
@@ -36,7 +37,11 @@ export function FormSheet({
 }: FormSheetProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const insets = useSafeAreaInsets();
+  const styles = useMemo(
+    () => createStyles(colors, insets.bottom),
+    [colors, insets.bottom],
+  );
   return (
     <Modal
       visible={visible}
@@ -75,7 +80,7 @@ export function FormSheet({
   );
 }
 
-function createStyles(colors: ThemeColors) {
+function createStyles(colors: ThemeColors, bottomInset: number) {
   return StyleSheet.create({
     backdrop: {
       flex: 1,
@@ -87,6 +92,7 @@ function createStyles(colors: ThemeColors) {
       borderTopLeftRadius: 16,
       borderTopRightRadius: 16,
       padding: spacing.lg,
+      paddingBottom: spacing.lg + bottomInset,
       maxHeight: '85%',
     },
     title: {
