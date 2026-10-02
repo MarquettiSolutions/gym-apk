@@ -66,19 +66,13 @@ código (firma de release, assets, textos, política de privacidad — ver
       → agregado. Sin requisitos regionales de dispositivo médico.
 
 ## 8. Permiso sensible: Foreground Service
-La app usa `FOREGROUND_SERVICE_SPECIAL_USE` (temporizador de descanso).
-Texto de justificación sugerido:
-
-> La app usa un servicio en primer plano para mantener activo el
-> temporizador de descanso entre series durante una sesión de entrenamiento
-> en curso, incluso si la pantalla se apaga o el usuario cambia de app
-> momentáneamente. Sin esto, el temporizador se desincronizaría o se
-> perdería, afectando la funcionalidad principal de la app (ejecutar una
-> rutina de gimnasio con descansos cronometrados).
-
-- [ ] Pegar la justificación si Play la pide (todavía no apareció el pedido
-      explícito — puede salir recién al momento de la revisión real)
-- [ ] Grabar un video corto mostrando el temporizador en background, si lo piden
+- [x] **Resuelto sacando el permiso, no justificándolo** (PR #51): Play pidió
+      justificar `FOREGROUND_SERVICE_SPECIAL_USE`, pero el temporizador de
+      descanso nunca usó un foreground service real — funciona con
+      `notifee`'s `TimestampTrigger`. El permiso estaba de más desde la Fase
+      0 (para un plan que se implementó distinto). Se sacó del manifest en
+      vez de declararle a Google un servicio inexistente.
+- Si en el futuro se implementa un foreground service real, ver issue #52.
 
 Otras declaraciones ya revisadas y correctas sin cambios: Detalhes do login
 (No), Anúncios (No), Apps governamentais (No), Recursos financeiros (No
@@ -92,8 +86,12 @@ oferece), ID de publicidade (No).
 - [x] Lista de testers cargada — formato correcto: **un email por línea, sin
       cabezal** (un primer intento con emails separados por comas en una
       sola línea dio error "líneas inválidas" en Play Console)
-- [x] Subido y publicado 2026-09-30 14:12 — versión 0.0.1, "Disponível para
-      testadores internos"
+- [x] Subido y publicado 2026-09-30 14:12 — versión 0.0.1 (versionCode 1),
+      "Disponível para testadores internos"
+- [x] `versionCode` subido a 2 (PR #53) para poder resubir con el fix del
+      permiso de foreground service — **falta subir ese AAB nuevo** a Play
+      Console (`android/app/build/outputs/bundle/release/app-release.aab`,
+      ya compilado localmente al cierre de esta sesión)
 - [ ] Instalar desde el link de Play (no adb) y confirmar que anda bien
 
 ## 10. Prueba cerrada (12 testers x 14 días)
@@ -116,5 +114,16 @@ oferece), ID de publicidade (No).
 
 ## Notas / bloqueos encontrados
 
-_(agregar acá cualquier cosa rara que aparezca en el camino, para no
-perder contexto entre sesiones)_
+- Issue #52: evaluar a futuro un foreground service real para la sesión de
+  entrenamiento (no urgente, el timer actual con `notifee` funciona bien).
+- Issue #54: el primer arranque (DB vacía) bloquea toda la UI en pantalla
+  "Loading..." mientras se importa el catálogo completo + miniaturas
+  (~50s en el emulador) — `initDatabase()` en `src/db/client.ts` espera
+  `importExerciseCatalogIfNeeded`/`backfillExerciseVideoUrlsIfNeeded` antes
+  de dejar pasar. No bloquea publicar, pero es mala primera impresión.
+- La subida de imágenes (ícono/feature graphic/capturas) en Play Console usa
+  el selector de archivos nativo del SO, no un `<input type=file>` — no se
+  puede automatizar por browser, lo tiene que hacer el usuario a mano. La
+  subida del AAB sí tiene un input real, pero el límite de la herramienta de
+  automatización es 10 MB (el AAB pesa ~66 MB) — tampoco se puede subir por
+  ahí, el usuario lo sube manualmente.
