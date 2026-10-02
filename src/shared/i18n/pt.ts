@@ -151,6 +151,7 @@ export const pt = {
       empty: 'Nenhum exercício encontrado.',
       loadingCatalog: 'Carregando catálogo de exercícios…',
       configureTitle: 'Configurar exercício',
+      createButton: 'Criar exercício novo',
     },
   },
   workoutSession: {

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
+  Alert,
   FlatList,
   Pressable,
   ScrollView,
@@ -12,15 +13,29 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { PlansStackParamList } from '../../../navigation/types';
 import { useExerciseCatalog } from '../hooks/useExerciseCatalog';
 import { plansService } from '../services';
+import { repositories } from '../../../db/client';
+import { useLocalUserId } from '../../../shared/hooks/useLocalUserId';
 import { ExerciseThumbnail } from '../../../shared/components/ExerciseThumbnail';
 import { FormSheet } from '../../../shared/components/FormSheet';
+import { Button } from '../../../shared/components/Button';
 import { DayExerciseForm } from '../components/DayExerciseForm';
+import { CreateExerciseForm } from '../../exercises/components/CreateExerciseForm';
+import { createCustomExercise } from '../../exercises/services/customExercisesService';
 import { useTheme } from '../../../shared/theme/ThemeContext';
 import type { ThemeColors } from '../../../shared/theme/colors';
 import { spacing } from '../../../shared/theme/spacing';
 import { normalizeSearchText, useTranslation } from '../../../shared/i18n';
 import { useSettings } from '../../settings/context/SettingsContext';
 import type { DayExerciseFormValues, Exercise } from '../types';
+import type { CreateCustomExerciseInput } from '../../exercises/types';
+
+const emptyCreateForm: CreateCustomExerciseInput = {
+  name: '',
+  muscleGroup: null,
+  equipment: null,
+  thumbnailUri: null,
+  videoUri: null,
+};
 
 type Props = NativeStackScreenProps<PlansStackParamList, 'ExercisePicker'>;
 
@@ -37,7 +52,9 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
   const t = translations.plans.exercisePicker;
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { settings } = useSettings();
-  const { exercises, isLoading, isCatalogImporting } = useExerciseCatalog();
+  const { exercises, isLoading, isCatalogImporting, reload } =
+    useExerciseCatalog();
+  const userId = useLocalUserId();
   const [search, setSearch] = useState('');
   const [muscleGroup, setMuscleGroup] = useState<string | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
@@ -50,6 +67,9 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
     restSeconds: settings.defaultRestSeconds,
     notes: null,
   }));
+  const [isCreating, setCreating] = useState(false);
+  const [createForm, setCreateForm] =
+    useState<CreateCustomExerciseInput>(emptyCreateForm);
 
   const muscleGroups = useMemo(() => {
     const groups = new Set<string>();
@@ -91,6 +111,32 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
     await plansService.addExerciseToDay(dayId, selectedExercise.id, form);
     setSelectedExercise(null);
     navigation.goBack();
+  }
+
+  function openCreateSheet() {
+    setCreateForm(emptyCreateForm);
+    setCreating(true);
+  }
+
+  async function handleCreateExercise() {
+    if (!userId || createForm.name.trim() === '') {
+      return;
+    }
+    try {
+      const created = await createCustomExercise(
+        repositories,
+        userId,
+        createForm,
+      );
+      setCreating(false);
+      await reload();
+      openConfigureSheet(created);
+    } catch (error) {
+      Alert.alert(
+        translations.exercises.createErrorTitle,
+        error instanceof Error ? error.message : String(error),
+      );
+    }
   }
 
   return (
@@ -184,6 +230,14 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
         )}
       />
 
+      <View style={styles.footer}>
+        <Button
+          label={t.createButton}
+          variant="secondary"
+          onPress={openCreateSheet}
+        />
+      </View>
+
       <FormSheet
         visible={selectedExercise !== null}
         title={
@@ -208,6 +262,17 @@ export function ExercisePickerScreen({ route, navigation }: Props) {
           </Pressable>
         )}
         <DayExerciseForm values={form} onChange={setForm} />
+      </FormSheet>
+
+      <FormSheet
+        visible={isCreating}
+        title={translations.exercises.createTitle}
+        onCancel={() => setCreating(false)}
+        onSubmit={handleCreateExercise}
+        submitLabel={translations.common.create}
+        submitDisabled={createForm.name.trim() === ''}
+      >
+        <CreateExerciseForm values={createForm} onChange={setCreateForm} />
       </FormSheet>
     </View>
   );
@@ -296,6 +361,11 @@ function createStyles(colors: ThemeColors) {
       color: colors.primary,
       fontWeight: '600',
       marginBottom: spacing.sm,
+    },
+    footer: {
+      padding: spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
     },
   });
 }
