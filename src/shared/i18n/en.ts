@@ -150,6 +150,7 @@ export const en = {
       empty: 'No exercises found.',
       loadingCatalog: 'Loading exercise catalog…',
       configureTitle: 'Configure exercise',
+      createButton: 'Create new exercise',
     },
   },
   workoutSession: {
