@@ -189,6 +189,7 @@ export function PlanEditorScreen({ route, navigation }: Props) {
       <FlatList
         data={days}
         keyExtractor={item => item.day.id}
+        style={styles.list}
         contentContainerStyle={
           days.length === 0 ? styles.emptyContainer : styles.listContent
         }
@@ -313,6 +314,9 @@ function createStyles(colors: ThemeColors) {
       color: colors.text,
       marginTop: spacing.md,
       marginHorizontal: spacing.md,
+    },
+    list: {
+      flex: 1,
     },
     listContent: {
       padding: spacing.md,
