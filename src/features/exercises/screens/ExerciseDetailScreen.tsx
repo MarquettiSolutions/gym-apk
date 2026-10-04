@@ -107,7 +107,16 @@ export function ExerciseDetailScreen({ route }: ExerciseDetailScreenProps) {
       {instructions && (
         <View style={styles.instructionsBlock}>
           <Text style={styles.sectionTitle}>{t.instructionsTitle}</Text>
-          <Text style={styles.instructionsText}>{instructions}</Text>
+          {instructions
+            .split('\n')
+            .map(step => step.trim())
+            .filter(Boolean)
+            .map((step, index) => (
+              <View key={index} style={styles.instructionStep}>
+                <Text style={styles.instructionStepNumber}>{index + 1}.</Text>
+                <Text style={styles.instructionStepText}>{step}</Text>
+              </View>
+            ))}
         </View>
       )}
       {!exercise.isCustom && (
@@ -189,7 +198,18 @@ function createStyles(colors: ThemeColors) {
       color: colors.text,
       marginBottom: spacing.xs,
     },
-    instructionsText: {
+    instructionStep: {
+      flexDirection: 'row',
+      marginBottom: spacing.xs,
+    },
+    instructionStepNumber: {
+      fontSize: 14,
+      color: colors.text,
+      fontWeight: '700',
+      marginRight: spacing.xs,
+    },
+    instructionStepText: {
+      flex: 1,
       fontSize: 14,
       color: colors.text,
       lineHeight: 20,
