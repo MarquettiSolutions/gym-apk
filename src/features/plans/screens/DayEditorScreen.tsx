@@ -340,7 +340,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
           block.groupId ?? block.items[0]?.planDayExercise.id ?? 'empty'
         }
         onDragEnd={handleDragEnd}
-        style={styles.list}
+        containerStyle={styles.list}
         contentContainerStyle={
           blocks.length === 0 ? styles.emptyContainer : styles.listContent
         }
