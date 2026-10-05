@@ -242,6 +242,19 @@ async function main() {
   for (const day of plan.days) {
     const exercises = [];
     for (const ex of day.exercises) {
+      if (ex.exerciseId) {
+        const known = dbRows.some(row => row.id === ex.exerciseId);
+        if (!known) {
+          unresolved.push({
+            name: ex.name ?? ex.exerciseId,
+            candidates: [],
+            error: `exerciseId "${ex.exerciseId}" no existe en la tabla exercises de este dispositivo`,
+          });
+          continue;
+        }
+        exercises.push(ex);
+        continue;
+      }
       const result = resolveExercise(ex.name, index, dbRows);
       if (result.id) {
         exercises.push({ ...ex, exerciseId: result.id });
