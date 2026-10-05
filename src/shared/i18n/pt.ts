@@ -164,6 +164,8 @@ export const pt = {
       retryButton: 'Tentar novamente',
       startButton: 'Começar treino',
       continueButton: 'Continuar treino',
+      completedMessage: 'Você já completou o treino de hoje.',
+      skippedMessage: 'Você pulou este treino hoje.',
     },
     session: {
       finishButton: 'Finalizar treino',

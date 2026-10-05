@@ -28,6 +28,16 @@ export type TodayWorkout =
       // Sesión sin terminar ya empezada hoy para este día, si existe — se
       // usa solo para decidir si el botón dice "Comenzar" o "Continuar".
       existingSessionId: string | null;
+    }
+  | {
+      // Ya existe una sesión de hoy para este día del plan que no está
+      // `in_progress` (se completó o se saltó) — ver issue #75: antes la
+      // pantalla volvía a mostrar "Comenzar" como si no se hubiera
+      // entrenado nada hoy.
+      status: 'completed';
+      plan: typeof plans.$inferSelect;
+      day: typeof planDays.$inferSelect;
+      session: WorkoutSession;
     };
 
 // Estado de una serie dentro de la sesión en curso: `latest` es la fila más

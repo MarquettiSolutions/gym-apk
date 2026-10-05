@@ -162,6 +162,8 @@ export const en = {
       retryButton: 'Retry',
       startButton: 'Start workout',
       continueButton: 'Continue workout',
+      completedMessage: "You already completed today's workout.",
+      skippedMessage: "You skipped today's workout.",
     },
     session: {
       finishButton: 'Finish workout',

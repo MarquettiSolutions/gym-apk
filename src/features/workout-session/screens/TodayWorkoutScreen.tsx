@@ -37,11 +37,12 @@ export function TodayWorkoutScreen({ navigation }: Props) {
   );
 
   useEffect(() => {
+    const dayLabel =
+      workout?.status === 'ready' || workout?.status === 'completed'
+        ? workout.day.label
+        : null;
     navigation.setOptions({
-      title:
-        workout?.status === 'ready' && workout.day.label
-          ? workout.day.label
-          : translations.screens.today.title,
+      title: dayLabel ?? translations.screens.today.title,
     });
   }, [workout, navigation, translations]);
 
@@ -87,6 +88,18 @@ export function TodayWorkoutScreen({ navigation }: Props) {
     return (
       <View style={styles.centered}>
         <Text style={styles.message}>{t.restDayMessage}</Text>
+      </View>
+    );
+  }
+
+  if (workout.status === 'completed') {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.message}>
+          {workout.session.status === 'skipped'
+            ? t.skippedMessage
+            : t.completedMessage}
+        </Text>
       </View>
     );
   }

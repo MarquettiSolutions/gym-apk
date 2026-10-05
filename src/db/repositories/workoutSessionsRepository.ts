@@ -24,6 +24,14 @@ export interface WorkoutSessionsRepository {
     planDayId: string,
     sinceIso: string,
   ): Promise<typeof workoutSessions.$inferSelect | undefined>;
+  // Última sesión para ese día del plan empezada hoy, en cualquier estado
+  // (`in_progress`, `completed` o `skipped`) — permite distinguir "todavía
+  // no entrené hoy" de "ya entrené hoy" en la pantalla "Hoy" (issue #75).
+  getLatestForPlanDay(
+    userId: string,
+    planDayId: string,
+    sinceIso: string,
+  ): Promise<typeof workoutSessions.$inferSelect | undefined>;
   create(values: {
     userId: string;
     planDayId: string;
@@ -80,6 +88,21 @@ export function createWorkoutSessionsRepository(
             eq(workoutSessions.userId, userId),
             eq(workoutSessions.planDayId, planDayId),
             eq(workoutSessions.status, 'in_progress'),
+            gte(workoutSessions.startedAt, sinceIso),
+          ),
+        )
+        .orderBy(desc(workoutSessions.startedAt))
+        .limit(1);
+      return row;
+    },
+    async getLatestForPlanDay(userId, planDayId, sinceIso) {
+      const [row] = await db
+        .select()
+        .from(workoutSessions)
+        .where(
+          and(
+            eq(workoutSessions.userId, userId),
+            eq(workoutSessions.planDayId, planDayId),
             gte(workoutSessions.startedAt, sinceIso),
           ),
         )

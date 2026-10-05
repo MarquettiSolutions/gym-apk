@@ -38,19 +38,23 @@ export function createWorkoutSessionService(repositories: Repositories) {
       }),
     );
 
-    const existingSession =
-      await repositories.workoutSessions.getInProgressForPlanDay(
+    const latestSession =
+      await repositories.workoutSessions.getLatestForPlanDay(
         userId,
         day.id,
         startOfTodayIso(),
       );
+
+    if (latestSession && latestSession.status !== 'in_progress') {
+      return { status: 'completed', plan, day, session: latestSession };
+    }
 
     return {
       status: 'ready',
       plan,
       day,
       exercises: exercisesDetail,
-      existingSessionId: existingSession?.id ?? null,
+      existingSessionId: latestSession?.id ?? null,
     };
   }
 
