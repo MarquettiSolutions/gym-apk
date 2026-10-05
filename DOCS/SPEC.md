@@ -24,7 +24,11 @@ al abrir el detalle, un video corto demostrativo.
 ### No objetivos (fuera de alcance v1)
 - Cuentas de usuario, login, sincronización en la nube, multi-dispositivo.
 - Planes de nutrición/dieta.
-- Rutinas generadas automáticamente por IA (se puede evaluar en versiones futuras).
+- Rutinas generadas automáticamente por IA: evaluado y descartado (2026-10-04) mientras se
+  mantenga el compromiso de cero backend/100% offline — requeriría una API key embebida en el
+  cliente (insegura) o un backend propio (sección 4.3), y ninguna de las dos es aceptable hoy.
+  Solo volvería a ser viable con un modelo corriendo on-device, que es un salto de complejidad
+  grande y no es el objetivo actual.
 - Publicación en Google Play (a evaluar más adelante; v1 es APK instalable directamente).
 
 ## 3. Usuarios y caso de uso principal
