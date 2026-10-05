@@ -71,6 +71,29 @@ describe('WorkoutSessionsRepository', () => {
     expect(found).toBeUndefined();
   });
 
+  it('getLatestForPlanDay encuentra una sesión de hoy aunque ya esté completada', async () => {
+    const { repo, user, day } = await setup();
+    const session = await repo.create({ userId: user.id, planDayId: day.id });
+    await repo.finish(session.id, 'completed');
+
+    const sinceStart = new Date(Date.now() - 1000).toISOString();
+    const found = await repo.getLatestForPlanDay(user.id, day.id, sinceStart);
+
+    expect(found?.id).toBe(session.id);
+    expect(found?.status).toBe('completed');
+  });
+
+  it('getLatestForPlanDay ignora sesiones de días anteriores', async () => {
+    const { repo, user, day } = await setup();
+    const session = await repo.create({ userId: user.id, planDayId: day.id });
+    await repo.finish(session.id, 'completed');
+
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const found = await repo.getLatestForPlanDay(user.id, day.id, tomorrow);
+
+    expect(found).toBeUndefined();
+  });
+
   it('finish marca la sesión como completada y setea finishedAt', async () => {
     const { repo, user, day } = await setup();
     const session = await repo.create({ userId: user.id, planDayId: day.id });

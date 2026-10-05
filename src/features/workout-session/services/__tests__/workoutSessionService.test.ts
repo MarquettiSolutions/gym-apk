@@ -76,6 +76,19 @@ describe('workoutSessionService', () => {
     }
   });
 
+  it('getTodayWorkout devuelve completed si ya se finalizó el entreno de hoy (issue #75)', async () => {
+    const { service, user, day } = await setupActivePlanForToday();
+    const session = await service.startSession(user.id, day.id);
+    await service.finishSession(session.id);
+
+    const workout = await service.getTodayWorkout(user.id);
+
+    expect(workout.status).toBe('completed');
+    if (workout.status === 'completed') {
+      expect(workout.session.id).toBe(session.id);
+    }
+  });
+
   it('startSession resume la sesión sin terminar del mismo día en vez de duplicarla', async () => {
     const { service, user, day } = await setupActivePlanForToday();
 

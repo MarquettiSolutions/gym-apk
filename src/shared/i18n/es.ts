@@ -163,6 +163,8 @@ export const es = {
       retryButton: 'Reintentar',
       startButton: 'Comenzar entrenamiento',
       continueButton: 'Continuar entrenamiento',
+      completedMessage: 'Ya completaste el entrenamiento de hoy.',
+      skippedMessage: 'Hoy omitiste este entrenamiento.',
     },
     session: {
       finishButton: 'Finalizar entrenamiento',
