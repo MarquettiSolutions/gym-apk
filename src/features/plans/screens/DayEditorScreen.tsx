@@ -340,6 +340,7 @@ export function DayEditorScreen({ route, navigation }: Props) {
           block.groupId ?? block.items[0]?.planDayExercise.id ?? 'empty'
         }
         onDragEnd={handleDragEnd}
+        containerStyle={styles.list}
         contentContainerStyle={
           blocks.length === 0 ? styles.emptyContainer : styles.listContent
         }
@@ -527,6 +528,9 @@ function createStyles(colors: ThemeColors) {
       paddingBottom: 0,
       color: colors.muted,
       fontSize: 13,
+    },
+    list: {
+      flex: 1,
     },
     listContent: {
       padding: spacing.md,
